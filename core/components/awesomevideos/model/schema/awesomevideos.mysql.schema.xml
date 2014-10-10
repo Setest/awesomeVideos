@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="awesomevideos" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" phpdoc-package="awesomevideos"
+	   version="1.1">
+
+	<object class="awesomeVideosItem" table="awesomevideos_items" extends="xPDOSimpleObject">
+        <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="special" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="chosen" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="rank" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+        <field key="image" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="created" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+        <field key="updated" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+        <field key="topic" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+        <field key="source" dbtype="varchar" precision="255" phptype="string" null="false" default="youtube"/>
+        <field key="source_detail" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="videoId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="channelId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="description" dbtype="text" phptype="text" null="false" default=""/>
+        <field key="keywords" dbtype="text" phptype="text" null="false" default=""/>
+        <field key="author" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="duration" dbtype="int" precision="10" phptype="integer" attributes="unsigned" null="false" default="0" />
+        <field key="jsondata" dbtype="text" phptype="json" null="false" default=""/>
+        <field key="tvdata" dbtype="text" phptype="json" null="false" default=""/>
+
+        <field key="menuindex" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+
+        <field key="playlist" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+
+        <field key="createdon" dbtype="datetime" phptype="datetime" null="true"/>
+        <field key="createdby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="editedon" dbtype="datetime" phptype="datetime" null="true"/>
+        <field key="editedby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+
+        <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign"/>
+        <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign"/>
+        <aggregate alias="Playlist" class="awesomeVideosPlaylist" local="playlist" foreign="id" owner="foreign" cardinality="one" />
+    </object>
+
+    <object class="awesomeVideosPlaylist" table="awesomevideos_playlists" extends="xPDOSimpleObject">
+        <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
+        <field key="channel" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="channelId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="user" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="playlist" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="playlistId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+    </object>
+
+
+</model>
