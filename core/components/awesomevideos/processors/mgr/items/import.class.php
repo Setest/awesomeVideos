@@ -18,7 +18,45 @@ class awesomeVideosItemsImportProcessor extends modObjectProcessor {
 	 * @return array|string
 	 */
 	public function process() {
-		// $this->modx->log(modX::LOG_LEVEL_INFO,'<pre>');
+		// сбрасываем весь лог, чтоб в след раз точно ничего не появилось лишнего в консоли
+		// $LogTarget = $this->modx->getLogTarget();	// /awesomeVideosimport/
+		$logTarget = $this->modx->getLogTarget();
+		$topic = $logTarget->subscriptions[0];
+
+		if ( is_object($logTarget) && isset($topic) ){
+			$cachePath = $this->modx->getCachePath() . 'registry/mgr';	//  /home/l/ltdsis/copy.sportsreda.ru/public_html/core/cache/
+			$topic = $logTarget->subscriptions[0];
+			$cachePath.=$topic;
+			$connected = $this->modx->cacheManager->deleteTree($cachePath, array('extensions' => array('.msg.php')) );
+
+
+// второй способ - наверное более правильный:
+/*
+//clear cache
+$paths = array(
+    'config.cache.php',
+    'sitePublishing.idx.php',
+    'registry/mgr/workspace/',
+    'lexicon/',
+);
+$contexts = $modx->getCollection('modContext');
+foreach ($contexts as $context) {
+    $paths[] = $context->get('key') . '/';
+}
+
+$options = array(
+    'publishing' => 1,
+    'extensions' => array('.cache.php', '.msg.php', '.tpl.php'),
+);
+if ($modx->getOption('cache_db')) $options['objects'] = '*';
+$results= $modx->cacheManager->clearCache($paths, $options);
+
+return $modx->error->success();
+ */
+
+
+			$this->modx->log(modX::LOG_LEVEL_INFO, date('h:i:s').'<br/>Консоль очищена...<br/>');
+		}
 
 		// if (!$this->checkPermissions()) {
 		// 	return $this->failure($this->modx->lexicon('access_denied'));
@@ -28,20 +66,9 @@ class awesomeVideosItemsImportProcessor extends modObjectProcessor {
 		// $modx->lexicon->load('vidlister:default');
 		// $vidlister = new VidLister($modx);
 
-		// // запустим импорт
-
-		// $this->modx->setLogTarget('HTML_LOG');
-
-		// $this->modx->getService('registry', 'registry.modRegistry');
-		// $this->modx->registry->addRegister('mgr', 'registry.modFileRegister', array('directory' => 'mgr'));
-		// $connected = $this->modx->registry->mgr->connect();
-		// $this->modx->registry->mgr->subscribe("/awesomeVideosimport/");
-		// $this->modx->registry->mgr->send("/awesomeVideosimport/", array("Heineken" => "not so good", "Pabst Blue Ribbon" => "rocks", "Molson Golden" => "ok for Canadian beer"));
-		// $this->modx->registry->mgr->send("/awesomeVideosimport/", "It's Miller Time!", array('kill' => true));
-		// var_dump($this->modx->registry->logging);
+		// запустим импорт
 
 		if ( $this->loadClass() ) {
-			// $this->modx->log(modX::LOG_LEVEL_INFO,'Запускаю импорт...');
 			$this->awesomeVideos->import();
 		}
 
@@ -54,8 +81,11 @@ class awesomeVideosItemsImportProcessor extends modObjectProcessor {
 		$this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('awesomeVideos_console_finish'));
 		// $this->modx->log(modX::LOG_LEVEL_INFO,'</pre>');
 		flush();	// нужно освободить поток
-		sleep(5);	// и если реакция очень быстрая дать задержку чтобы отобразить ответ в консоли от другого скрипта
+		sleep(3);	// и если реакция очень быстрая дать задержку чтобы отобразить ответ в консоли от другого скрипта
 		$this->modx->log(modX::LOG_LEVEL_INFO,'COMPLETED');	// эту строку обязательно надо передать в самом конце, так в rtfm написано
+
+
+
 		return $this->success();
 	}
 
@@ -80,6 +110,7 @@ class awesomeVideosItemsImportProcessor extends modObjectProcessor {
 				$this->modx->log(modX::LOG_LEVEL_INFO,'Loading class with cacheKey');
 				if (!class_exists('awesomeVideos')) {require_once $config['modelPath'].'awesomeVideos/awesomeVideos.class.php';}
 				$config['log']['log_target']=false;
+				$config['log']['log_level']='LOG_LEVEL_INFO';
 				$this->awesomeVideos = new awesomeVideos($this->modx, $config);
 			}elseif( $classPath= MODX_CORE_PATH.'components/awesomeVideos/model/awesomeVideos/awesomeVideos.class.php' && file_exists($classPath) ){
 				if (!class_exists('awesomeVideos')) {require_once $classPath;}

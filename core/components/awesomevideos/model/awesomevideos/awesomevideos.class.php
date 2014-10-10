@@ -78,7 +78,9 @@ class awesomeVideos {
 				'log_target' => !is_null($this->modx->getOption('log_target', $config, null))
 					? $this->modx->getOption('log_target', $config['log'])
 					: $this->modx->getOption('log_target', null, 'ECHO'),	// FILE, HTML, ECHO
-      	'log_level'=>$this->_getModxConst($this->modx->getOption('log_level', null, 'LOG_LEVEL_WARN')),	// INFO, WARN, ERROR, FATAL, DEBUG
+        'log_level'=>$this->_getModxConst($this->modx->getOption('log_level', $config, 'LOG_LEVEL_INFO')),  // INFO, WARN, ERROR, FATAL, DEBUG
+        // 'log_level'=>$this->_getModxConst(3), // INFO, WARN, ERROR, FATAL, DEBUG
+      	// 'log_level'=>123,	// INFO, WARN, ERROR, FATAL, DEBUG
       ),
 
 		), $config);
@@ -98,61 +100,73 @@ class awesomeVideos {
 
     $this->config['imageNoPhoto']=(!empty($this->config['imageNoPhoto']))?$this->config['imageNoPhoto']:$assetsUrl.'img/noimage.jpg';
 
+    // $this->writeLog("LOG LEVEL:".$this->modx->getOption('log_level', $config, 'LOG_LEVEL_WARN'));
+    // $this->writeLog("LOG LEVEL2:".$this->_getModxConst($this->modx->getOption('log_level', $config, 'LOG_LEVEL_WARN')));
+    // $this->writeLog("LOG LEVEL3:".$this->_getModxConst('LOG_LEVEL_WARN'));
+
 
     if ($this->config['log']['status']==true){
-    	$this->modx->message = null;
-    	$this->modx->setLogLevel(modX::$this->config['log']['log_level']);
-			$date = date('Y-m-d__H-i-s');  // использовать в выводе даты : - нельзя, иначе не создается лог в файл
-			$logFileName="{$this->config['log']['log_filename']}_$date.log";
+      $this->modx->message = null;
+      // $this->modx->log(modX::LOG_LEVEL_INFO,'Установленный уровень отладки0: '.print_r($this->config['log'], true) );
+      // $this->modx->log(modX::LOG_LEVEL_INFO,'Установленный уровень отладки1: '.$this->config['log']['log_level']);
+      // $this->modx->log(modX::LOG_LEVEL_INFO,'Установленный уровень отладки: '.$this->modx->getLogLevel());
+      $this->modx->setLogLevel( $this->_getModxConst($this->config['log']['log_level']) );
+      // $this->modx->log(modX::LOG_LEVEL_ERROR,'ПОСЛЕ: '.$this->modx->getLogLevel());
 
-			if ($this->config['log']['log_target']){
-				$this->modx->setLogTarget(array(
-				   'target' => $this->config['log']['log_target'],
-				   'options' => array('filename' => $logFileName )
-				));
-			}
+      $date = date('Y-m-d__H-i-s');  // использовать в выводе даты : - нельзя, иначе не создается лог в файл
+      $logFileName="{$this->config['log']['log_filename']}_$date.log";
 
-			if ($this->config['log']['log_target']=="FILE"){
-				$this->result['log_filename']=$logFileName;
-				$this->result['log_fullPath']=$this->config['corePath']."cache/logs/{$logFileName}";
-				$this->result['log_urlPath']=$this->config['siteUrl']."core/cache/logs/{$logFileName}";
-			}
+      if ($this->config['log']['log_target']){
+        $this->modx->setLogTarget(array(
+           'target' => $this->config['log']['log_target'],
+           'options' => array('filename' => $logFileName )
+        ));
+      }
 
-			$this->writeLog("ModX version:".$modx->getOption('settings_version'));
+      if ($this->config['log']['log_target']=="FILE"){
+        $this->result['log_filename']=$logFileName;
+        $this->result['log_fullPath']=$this->config['corePath']."cache/logs/{$logFileName}";
+        $this->result['log_urlPath']=$this->config['siteUrl']."core/cache/logs/{$logFileName}";
+      }
+
+      $this->writeLog("ModX version:".$modx->getOption('settings_version'));
 
 
-			if ($this->config['log']['log_detail']){
-				$log_detail=debug_backtrace();	// этот вывод жрет ООООЧЕНЬ много памяти
-												// и при малом таймауте возможно даст 500-ю ошибку
-				$this->writeLog("Loaded config: \n\n".print_r($this->config,true )."\n");
-				$this->writeLog("PHP version: ".PHP_VERSION);
-				$this->writeLog("Server API: ".PHP_SAPI);
-				$this->writeLog("Loaded modules: \n\n".print_r(get_loaded_extensions(),true)."\n");
-				$this->writeLog("Run command: \n\n{$log_detail[2][object]->_tag}\n");
-				$this->writeLog("Properties: \n".print_r($log_detail[2][object]->_properties,true));
-				unset($log_detail);
-			}
+      if ($this->config['log']['log_detail']){
+        $log_detail=debug_backtrace();  // этот вывод жрет ООООЧЕНЬ много памяти
+                        // и при малом таймауте возможно даст 500-ю ошибку
+        $this->writeLog("PHP version: ".PHP_VERSION);
+        $this->writeLog("Server API: ".PHP_SAPI);
+        $this->writeLog("Loaded modules: \n\n".print_r(get_loaded_extensions(),true)."\n");
+        $this->writeLog("Run command: \n\n{$log_detail[2][object]->_tag}\n");
+        $this->writeLog("Properties: \n".print_r($log_detail[2][object]->_properties,true));
+        $this->writeLog("Loaded config: \n\n".print_r($this->config,true )."\n");
+        unset($log_detail);
+      }
     }
 
 
 
     if (!isset($this->config['cacheKey'])){
-			$this->config['cacheKey']=$this->getCacheKey();
-	    $this->modx->cacheManager->set('awesomevideos/prep_' . $this->config['cacheKey'], $this->config, $this->config['cacheTime']);
-		}
+      $this->config['cacheKey']=$this->getCacheKey();
+      $this->modx->cacheManager->set('awesomevideos/prep_' . $this->config['cacheKey'], $this->config, $this->config['cacheTime']);
+    }
 
-		$this->modx->addPackage('awesomevideos', $this->config['modelPath']);
-		$this->modx->lexicon->load('awesomevideos:default');
-	}
+    $this->modx->addPackage('awesomevideos', $this->config['modelPath']);
+    $this->modx->lexicon->load('awesomevideos:default');
+  }
 
   /**
    * Возвращает значение константы класса modX
    * @param  [string] $const имя константы
    * @return [mixed]  значение константы
    */
-	private function _getModxConst($const){
-		return constant('modX::'.strtoupper($const));
-	}
+  private function _getModxConst($const){
+    // $this->modx->log(modX::LOG_LEVEL_INFO,'CONST: '.$const);
+    // $res=(is_numeric($const))? $const : constant('modX::'.strtoupper($const));
+    // $this->modx->log(modX::LOG_LEVEL_INFO,'CONST RESULT: '.$res);
+    return (is_numeric($const))? $const : constant('modX::'.strtoupper($const));
+  }
 
 	/**
 	 * Записывает лог, в случае если тот установлен в конфиге
@@ -183,9 +197,11 @@ class awesomeVideos {
 		if ($this->config['log']['log_placeholder']){
 			$this->modx->setPlaceholder($this->config['log']['log_placeholder'],$this->_logContent);
 		}else{
-			$this->modx->log($logLevel, '<pre>'.$message.'</pre>', '', $def);
 			flush();	// иначе в циклах херня происходит
-			// sleep(1);
+      usleep(1000); //
+      $this->modx->log($logLevel, '<pre>'.$message.'</pre>', '', $def);
+      // $this->modx->log(1, '<pre>'.$message.'</pre>', '', $def);
+      // $this->modx->log(modX::LOG_LEVEL_WARN,'Class is not already loaded');
 		}
 		return false;
 	}
@@ -385,18 +401,18 @@ class awesomeVideos {
             $dirObj = $this->modx->fileHandler->make($dir, array(),'modDirectory');
             if(!is_object($dirObj) || !($dirObj instanceof modDirectory)) {
                 $flag = false;
-                $this->modx->log(modX::LOG_LEVEL_ERROR,'[awesomeVideos] Could not get class modDirectory');
+                $this->writeLog('Could not get class modDirectory','','ERROR');
             }
             if($flag){
-                if(!(is_dir($dir) || $dirObj->create())){
-                    $flag = false;
-                    $this->modx->log(modX::LOG_LEVEL_ERROR, "[awesomeVideos] Could not create directory: ".$dir);
-                }
+              if(!(is_dir($dir) || $dirObj->create())){
+                $flag = false;
+                $this->writeLog( "Could not create cache dir: <i>{$dir}</i>",'','ERROR');
+              }
             }else{
-                $this->modx->log(modX::LOG_LEVEL_WARN,"[awesomeVideos] Создали папку кеша: ".$dir);
+              $this->writeLog("Создали папку кеша: <i>{$dir}</i>",'','WARN');
             }
         }else{
-            $this->modx->log(modX::LOG_LEVEL_WARN,"[awesomeVideos] Папка кеша существует: ".$dir);
+            $this->writeLog("Папка кеша существует: <i>{$dir}</i>");
         }
         return $flag;
     }
@@ -452,8 +468,7 @@ class awesomeVideos {
                 if ($this->copyFile($f,$newFileName)){
                     // записываем имя созданного файла в БД
                     $flag=$this->config['imageCachePath'].$videoId.$getExt;
-                    $this->modx->log(modX::LOG_LEVEL_WARN,"FROM: ".$f);
-                    $this->modx->log(modX::LOG_LEVEL_WARN,"TO: ".$newFileName);
+                    $this->writeLog("<p>Копируем файл thumb ~<a href='{$f}'>{$f}</a>~ <br/>в кеш <i>{$newFileName}</i></p>");
                 }
             }
         }
@@ -494,14 +509,14 @@ class awesomeVideos {
     }
 
     protected function insertVideo() {
-        $this->modx->log(modX::LOG_LEVEL_WARN,"Новых материалов на сервере: ".count($this->importList));
+        $this->writeLog("Новых материалов на сервере: ".count($this->importList),'','WARN');
 
         foreach ($this->importList as $videoId => $video) {
 
             // меняем значение если файлик скопировался:\
             $resultImageName = "";
             if ($resultImageName=$this->_createCacheFile($video['image'],$videoId)){
-                $this->modx->log(modX::LOG_LEVEL_WARN,"ResultName: ".$resultImageName);
+              $this->writeLog("ResultName: ".$resultImageName);
             }
 
             $importData=array(
@@ -538,8 +553,9 @@ class awesomeVideos {
      * @return [type]                 [description]
      */
     protected function getVideosById($params=array()) {
-    	$this->writeLog("getVideosById",'','WARN');
-        if (empty($this->importList)) return false;
+      if (!empty($this->importList)) {
+        $this->writeLog("<p>Формирование списка роликов законченно!</p>",'','WARN');
+        $this->writeLog("<b>Получим данные по все новым видеороликам.</br>Всего новых записей для импорта:".count($this->importList)."</b>");
 
         $params = array_merge(array(
             'baseUrl'=>"https://www.googleapis.com/youtube/v3/",
@@ -561,6 +577,8 @@ class awesomeVideos {
             $params['id']=$ids_str;
             $this->createYoutubeQuery($params);
         }
+      }
+      return $this;
     }
 
 
@@ -594,7 +612,7 @@ class awesomeVideos {
         // строим запрос
         $query=$baseUrl."?".urldecode(http_build_query($params));
 
-        $this->writeLog('Параметры запроса: '.print_r($params, true));
+        $this->writeLog('Параметры запроса: <p style="font-size:9px;">'.print_r($params, true).'</p>');
         $this->writeLog('Запрос на youtube: '.$query);
 
 
@@ -608,7 +626,7 @@ class awesomeVideos {
         $request = $this->modx->fromJSON($json);
         $this->writeLog("<b>Тип полученных данных: {$request[kind]} </b>");
         $this->writeLog('Всего данных в ответе: '.$request[pageInfo][totalResults] );
-        $this->writeLog('Подробные данные ответа: '.print_r($request, true) );
+        $this->writeLog('Подробные данные ответа: <p style="font-size:9px;">'.print_r($request, true).'</p>' );
 
         if (!count($request["items"])) return true;
         $count=0;
@@ -619,7 +637,7 @@ class awesomeVideos {
 
         foreach ($request["items"] as $key => $value) {
 
-		        $this->writeLog('item: '.RAND());
+		        // $this->writeLog('item: '.RAND());
             // switch ($value['kind']) {
             $dependenceId=$value['snippet']['channelId'];
             switch ($mainPart) {
@@ -675,7 +693,7 @@ class awesomeVideos {
             // if ($breakInsert) return;
 
 
-            $this->writeLog('<b>Тип источника</b>: '.$curSourceType);
+            // $this->writeLog('<b>Тип источника</b>: '.$curSourceType);
             // if ($curSourceType!=="v"){
                 // if (in_array($curVideoId,$this->vidList) || array_key_exists($curVideoId,$this->importList)) continue;
                 if (in_array($curVideoId,$this->vidList)) continue;
@@ -684,17 +702,24 @@ class awesomeVideos {
                 $thumbs=array_values($value['snippet']['thumbnails']);
                 $this->writeLog('Имеющиеся thumbnails: <p style="font-size:9px;">'.print_r($thumbs, true)."</p>" );
 
-                $bestThumb=(array_key_exists('maxres',$thumbs)) ? $thumbs['maxres'] : end($thumbs);
-                if ($this->_remote_file_exists('https://i.ytimg.com/vi/'.$curVideoId.'/maxresdefault.jpg')){
-                    $bestThumb['url']='https://i.ytimg.com/vi/'.$curVideoId.'/maxresdefault.jpg';
-                }
-                $this->writeLog('Выбрал thumbnail: '.$bestThumb['url'] );
-                $this->writeLog( "<img src=\"{$bestThumb['url']}\" width='200' />" );
+                $bestThumb=(array_key_exists('maxres',$thumbs)) ? $thumbs['maxres']['url'] : current(end($thumbs));
+
+                // if ($this->_remote_file_exists('https://i.ytimg.com/vi/'.$curVideoId.'/maxresdefault.jpg')){
+                    // $bestThumb='https://i.ytimg.com/vi/'.$curVideoId.'/maxresdefault.jpg';
+                // }
+
+                $this->writeLog('Выбрал thumbnail: '.$bestThumb );
+                $this->writeLog( "<a target='_blank' href='{$bestThumb}' title='{$value[snippet][title]}'><img src=\"{$bestThumb}\" width='200' /></a>" );
+                // $this->writeLog('<span qtip="<img src=\''.$bestThumb.'\' />" >0002.JPG</span>');
+                // можно сделать увеличение картинки по наводке через quickTips
+                // http://try.sencha.com/extjs/4.0.7/examples/qtips/qtips/viewer.html
+                // https://github.com/jpdevries/modx-manager-theme/blob/master/root/browser/index.tpl
+                // как в дереве файлов, для минимума кода лучше разобрать modx-browser-rte
 
                 // $this->writeLog('Выбрал thumbnails: '.print_r($bestThumb, true),'','WARN');
                 // $this->modx->log(modX::LOG_LEVEL_WARN,"Выбрал thumbnails: ".print_r($bestThumb, true) );
 
-                $value['snippet']['image']=(!empty($bestThumb)) ? $bestThumb['url'] : false;
+                $value['snippet']['image']=(!empty($bestThumb)) ? $bestThumb : false;
 
                 $tempSourceType=array($curSourceType => $dependenceId);
                 // $tempSourceType=array($curSourceType => $value['snippet']['channelId']);
@@ -704,6 +729,7 @@ class awesomeVideos {
                 $value['snippet']['source_detail']=$this->modx->toJson($tempSourceType);
 
                 if ($curSourceType=="v"){
+                  $this->writeLog('Добавили подробные данные о ролике');
                   $this->importList[ $curVideoId ] = array_merge($this->importList[ $curVideoId ],array(
                       'contentDetails'=>$value['contentDetails'],
                       'statistics'=>$value['statistics'],
@@ -751,7 +777,7 @@ class awesomeVideos {
 
         $count = $this->modx->getCount('awesomeVideosItem',$c);
 
-        $this->writeLog("На текущий момент в базе: {$count} записей");
+        $this->writeLog("На текущий момент в базе: {$count} записей",'','WARN');
 
         if ($count){
             // $videos = $this->modx->getCollection('awesomeVideosItem', $c);
@@ -769,8 +795,10 @@ class awesomeVideos {
     protected function parse_sources($properties = array()) {
         // $sources = $this->modx->getOption('awesomeVideos.video.source_detail',null,false);
         $this->writeLog('Запускаю парсер источника: '.$sources);
-        // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"}]';
-        $sources = '[{"u":"MrSetest"}]';
+        // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"}]';  // makarmagoon
+        $sources = '[{"u":"sportrt"}]';
+        // $sources = '[{"u":"MrSetest"}]';
+        // $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';
         // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"}]';
         // $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"},{"c":"UCtsDl3hsddpyDzHSdrU2OOg2222fd"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"}]';
         // $sources = '[{"c":"UCfQfRkl4w4vwtb9C2ndx1_Q"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"},{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';
@@ -815,10 +843,12 @@ class awesomeVideos {
             }
             $this->createYoutubeQuery($params,$defSourceType);
         }
-        if (!empty($this->importList)) {
-            $this->getVideosById();
-            $this->insertVideo();
-        }
+        // $this->writeLog('Закончили процесс');
+        // if (!empty($this->importList)) {
+        $this->getVideosById()
+             ->insertVideo()
+        ;
+        // }
 
         // $this->modx->log(modX::LOG_LEVEL_INFO,"<pre>".print_r($sources, true)."</pre>");
         // $this->modx->log(modX::LOG_LEVEL_INFO,"<pre>".print_r($this->importList, true)."</pre>");
