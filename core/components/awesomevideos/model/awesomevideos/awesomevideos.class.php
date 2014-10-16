@@ -13,6 +13,7 @@ class awesomeVideos {
 	public $modx;
   protected $vidList = array();
   protected $importList = array();  // массив документов для импорта
+  protected $cacheDir = ''; // итоговый путь папки кеша
 
   /** @var array все настройки класса */
   // protected $config = array();
@@ -64,6 +65,7 @@ class awesomeVideos {
           'active'=>$this->modx->getOption('awesomeVideos.youtube.active',null,true), //make imported videos inactive by default
           'maxResults'=>50    // максимальное кол-во записей которое мы можем получить за один раз, 50 - это ограничение API youtube.
       ),
+      'ctx' => $this->modx->getOption('ctx', $config, $this->modx->context->key),
 
       'log' => array(
       	'log_filename'=>'awesomeVideos',
@@ -97,8 +99,9 @@ class awesomeVideos {
             'imageSourceBaseUrl'=>$msproperties['baseUrl']['value']
         ));
     }
-
     $this->config['imageNoPhoto']=(!empty($this->config['imageNoPhoto']))?$this->config['imageNoPhoto']:$assetsUrl.'img/noimage.jpg';
+
+    $this->cacheDir=$this->config['imageSourceFullBasePath'].$this->config['imageCachePath'];
 
     // $this->writeLog("LOG LEVEL:".$this->modx->getOption('log_level', $config, 'LOG_LEVEL_WARN'));
     // $this->writeLog("LOG LEVEL2:".$this->_getModxConst($this->modx->getOption('log_level', $config, 'LOG_LEVEL_WARN')));
@@ -360,14 +363,40 @@ class awesomeVideos {
         }
     }
 
-    // protected function log_failture() {
-    // }
 
     /**
      * Проверка на существование удаленного файла
      */
     private function _remote_file_exists($url){
-        return(bool)preg_match('~HTTP/1\.\d\s+200\s+OK~', @current(get_headers($url)));
+        // return(bool)preg_match('~HTTP/1\.\d\s+200\s+OK~', @current(get_headers($url)));
+      $headers = get_headers($url);
+      $result = (bool)preg_match( '~HTTP/1\.\d\s+200\s+OK~', @current($headers) );
+
+      $this->writeLog('FILESIZE: '.print_r($headers, true),'','ERROR');
+
+      if ( $fileExist && (bool)preg_match('/^Content-Length: *+\K\d++$/im', implode("\n", $headers), $fileSize ))
+      {
+        $this->writeLog('FILESIZE: '.print_r($fileSize, true),'','ERROR');
+        $result['filesize']=(int)$fileSize[0];
+      }
+      return $result;
+    }
+
+    /**
+     * Получим размер файла (как локального так и удаленного)
+     */
+    private function _remote_filesize($url) {
+        static $regex = '/^Content-Length: *+\K\d++$/im';
+        if (!$fp = @fopen($url, 'rb')) {
+            return false;
+        }
+        if (
+            isset($http_response_header) &&
+            preg_match($regex, implode("\n", $http_response_header), $matches)
+        ) {
+            return (int)$matches[0];
+        }
+        return strlen(stream_get_contents($fp));
     }
 
     /**
@@ -394,8 +423,9 @@ class awesomeVideos {
      * @param $dir полный путь к папке которую необходимо создать
      * @return bool
      */
-    protected function makeDir($dir){
-        $flag = true;
+    protected function makeDir( $dir ){
+        $flag = $this;
+        $dir=isset($dir)?$dir:$this->cacheDir;
         if(!file_exists($dir)){
             $this->modx->getService('fileHandler','modFileHandler');
             $dirObj = $this->modx->fileHandler->make($dir, array(),'modDirectory');
@@ -412,7 +442,7 @@ class awesomeVideos {
               $this->writeLog("Создали папку кеша: <i>{$dir}</i>",'','WARN');
             }
         }else{
-            $this->writeLog("Папка кеша существует: <i>{$dir}</i>");
+            $this->writeLog("Папка кеша существует: <i>{$dir}</i>",'','WARN');
         }
         return $flag;
     }
@@ -455,25 +485,41 @@ class awesomeVideos {
 
 
     protected function _createCacheFile($f,$videoId) {
-        $flag = false;
-        // проверяем существует ли папка кеша для изображений, если нет создаем ее
-        $cacheDir=$this->config['imageSourceFullBasePath'].$this->config['imageCachePath'];
-        if ($this->makeDir($cacheDir)) {
-            // копируем файлик и если успешно передаем значение обратно и сохраняем в БД
-            // $rrr=$this->_remote_file_exists($f);
-            $fileHeaders=$this->_remoteFileData($f);
-            $getExt=$this->_fileExt($fileHeaders['content-type']);
-            if (!empty($getExt)){
-                $newFileName=$cacheDir.$videoId.$getExt;
-                if ($this->copyFile($f,$newFileName)){
-                    // записываем имя созданного файла в БД
-                    $flag=$this->config['imageCachePath'].$videoId.$getExt;
-                    $this->writeLog("<p>Копируем файл thumb ~<a href='{$f}'>{$f}</a>~ <br/>в кеш <i>{$newFileName}</i></p>");
+      $flag = false;
+      // проверяем существует ли папка кеша для изображений, если нет создаем ее
+      // $cacheDir=$this->config['imageSourceFullBasePath'].$this->config['imageCachePath'];
+      // if ($this->makeDir($cacheDir)) {
+          // копируем файлик и если успешно передаем значение обратно и сохраняем в БД
+          // $rrr=$this->_remote_file_exists($f);
+          $fileHeaders=$this->_remoteFileData($f);
+          // $this->writeLog( "<p>ИНФА</p>".print_r($fileHeaders, true) );
+
+          $getExt=$this->_fileExt($fileHeaders['content-type']);
+          if (!empty($getExt)){
+              $newFileName=$this->cacheDir.$videoId.$getExt;
+              // if ($this->copyFile($f,$newFileName)){
+                  // записываем имя созданного файла в БД
+                  // $flag=$this->config['imageCachePath'].$videoId.$getExt;
+              // }
+              $flag=$this->config['imageCachePath'].$videoId.$getExt;
+              if (!file_exists($newFileName)
+                  || ( file_exists($newFileName) && ( filesize ($newFileName) <> $fileHeaders['content-length'] ) )
+              ){
+                if(copy($f, $newFileName)){
+                  chmod($to, octdec($this->config['new_file_permissions']));
+                  $this->writeLog("<p>Скопировали файл thumb ~<a href='{$f}'>{$f}</a>~ <br/>в кеш <i>{$newFileName}</i></p>");
+                }else{
+                  $flag = false;
+                  $this->writeLog("<p>Не удалось скопировать файл thumb ~<a href='{$f}'>{$f}</a>~ <br/>в кеш <i>{$newFileName}</i></p>",'','ERROR');
                 }
-            }
-        }
-        return $flag;
+              }else{
+                $this->writeLog("<p>Файл thumb <i>{$newFileName}</i></p> уже существует!",'','WARN');
+              }
+          }
+      // }
+      return $flag;
     }
+
 
     /**
      * Создает запись в БД и возвращает последний Id
@@ -508,10 +554,49 @@ class awesomeVideos {
         return ((60 * 60 * $duration->h) + (60 * $duration->i) + $duration->s);
     }
 
+    /**
+     * Функция сравнения массивов, используется совместно с uasort
+     * @param  array  $a
+     * @param  array  $b
+     * @return [int]
+     */
+    private static function sortByCreateDate ($a, $b) {
+      $a_cmp=(int)$a['created'];
+      $b_cmp=(int)$b['created'];
+
+      if ($a_cmp == $b_cmp) {
+          return 0;
+      }
+      return ($a_cmp > $b_cmp) ? (1) : (-1);
+    }
+
     protected function insertVideo() {
         $this->writeLog("Новых материалов на сервере: ".count($this->importList),'','WARN');
 
+        // получим последний документ из таблицы
+        // получим у него rank
+        // и будем всем остальным прибавлять rank
+
+        $rank=0;
+        $c = $this->modx->newQuery('awesomeVideosItem');
+        $c -> sortby('rank','DESC');
+        $c -> limit(1);
+        $lastObj = $this->modx->getObject('awesomeVideosItem', $c);
+        if ($lastObj){
+          $rank=$lastObj->get('rank');
+          $rank++;
+        }
+        // $this->writeLog("<p>RANK = {$rank}</p>",'','ERROR');
+
+        // отсортируем записи по дате создания
+        if ( uasort($this->importList, array($this, 'sortByCreateDate') ) ){
+          $this->writeLog("Произошла ошибка при сортировке данных",'','ERROR');
+        }
+
+
         foreach ($this->importList as $videoId => $video) {
+
+            $this->writeLog("<p>Итоговые данные!</p>".print_r($video,true),'','WARN');
 
             // меняем значение если файлик скопировался:\
             $resultImageName = "";
@@ -522,23 +607,30 @@ class awesomeVideos {
             $importData=array(
                 'active' => (int) $this->config['import']['active'],
                 'image'  =>  $resultImageName,
-                'created' => strtotime($video['publishedAt']),
-                'updated' => strtotime($video['publishedAt']),  // даты обновления больше нет
+                'created'  =>  $video['created'],
+                // 'created' => strtotime($video['publishedAt']),  // [publishedAt] => 2013-09-13T11:42:30.000Z
+                // 'created' => date('%d %b %Y %H:%M', strtotime($video['publishedAt']),  // [publishedAt] => 2013-09-13T11:42:30.000Z
+                // 'updated' => strtotime($video['publishedAt']),  // даты обновления больше нет
                 'source' => 'youtube',
+                'source_detail' => $video['source_detail'],
                 'videoId' =>  $videoId,
+                'rank' =>  $rank,
                 'name' => $video['title'],
                 'description' => $video['description'],
                 'source_detail' => $video['source_detail'],
-                'author' => $video['channelTitle'],    // как такового тоже нет, надо брать отдельным запросом
+                // 'author' => $video['channelTitle'],    // как такового тоже нет, надо брать отдельным запросом
+                'author' => $video['author'],    // как такового тоже нет, надо брать отдельным запросом
                 // 'keywords' => $media->group->keywords,
                 'duration' => $this->timeToSeconds($video['contentDetails']['duration']),
             );
 
             $videoObj = $this->modx->newObject('awesomeVideosItem');
             $videoObj->fromArray($importData);
-            // if ($videoObj->save() == false) {          // сохраняем
-            //     $modx->log(modX::LOG_LEVEL_ERROR, "НЕ УДАЛОСЬ сохранить видео с ID = ".$videoId);
-            // }
+            if ($videoObj->save() == false) {          // сохраняем
+              $this->writeLog("<p>НЕ УДАЛОСЬ сохранить видео с ID = {$videoId}</p>",'','ERROR');
+            }else{
+              $rank++;
+            }
 
 
 
@@ -555,13 +647,14 @@ class awesomeVideos {
     protected function getVideosById($params=array()) {
       if (!empty($this->importList)) {
         $this->writeLog("<p>Формирование списка роликов законченно!</p>",'','WARN');
-        $this->writeLog("<b>Получим данные по все новым видеороликам.</br>Всего новых записей для импорта:".count($this->importList)."</b>");
+        $this->writeLog("<b>Получим данные по всем новым видеороликам.</br>Всего новых записей для импорта:".count($this->importList)."</b>");
 
         $params = array_merge(array(
             'baseUrl'=>"https://www.googleapis.com/youtube/v3/",
             'mainPart'=>'videos',
             'part'=>'id,snippet,contentDetails,status,statistics,recordingDetails',
             'key'=>$this->config['import']['apiKey'],
+            'order'=>'date', // по-умолчанию сортируется по relevance - релевантность видео по запросу, https://developers.google.com/youtube/v3/docs/search/list
             // 'maxResults'=>$this->config['import']['maxResults'],
             // 'pageToken'=>''
         ),$params);
@@ -587,9 +680,10 @@ class awesomeVideos {
      *
      * @param  [type]  $params        [description]
      * @param  boolean $defSourceType [description]
+     * @param  [array] $prevMainAttr [Глобальные данные которые передаются по наследству в каждое видео, быть может уберу потом.]
      * @return [type]                 [description]
      */
-    protected function createYoutubeQuery($params=array(), $defSourceType=false) {
+    protected function createYoutubeQuery($params=array(), $defSourceType=false, $prevMainAttr=array() ) {
         if (empty($params)) return false;
         $breakInsert=false;
 
@@ -670,8 +764,14 @@ class awesomeVideos {
                         'mainPart'=>'search',
                         'type'=>'video',
                         'channelId'=>$value['id']
+                        // 'channelDetail'=>$value
                     ),$newParams);
+                    $this->channels[$value['id']] = $value['snippet'];
+                    // $prevMainAttr['channelDetail']=array_merge(array('id'=>$value['id']), $value['snippet']);
+                    // $this->writeLog("CHD:".print_r($prevMainAttr, true));
+
                     if ($defSourceType && array_key_exists('u',$defSourceType)){
+                        $prevMainAttr['author']=$newParams['forUsername'];
                         $this->writeLog("Получили канал ~{$value[id]}~ пользователя: ~{$newParams['forUsername']}~");
                         $curSourceType="u";
                         $breakInsert=true;
@@ -681,7 +781,7 @@ class awesomeVideos {
                         $curSourceType="c";
                     }
                     $this->writeLog('<b>Сформировали запроса на получение списка видео канала</b>');
-                    $this->createYoutubeQuery($newParams,$defSourceType);
+                    $this->createYoutubeQuery($newParams,$defSourceType,$prevMainAttr);
                     continue 2;
                     break;
                 default:
@@ -728,16 +828,22 @@ class awesomeVideos {
                 }
                 $value['snippet']['source_detail']=$this->modx->toJson($tempSourceType);
 
+
                 if ($curSourceType=="v"){
-                  $this->writeLog('Добавили подробные данные о ролике');
+                  $this->writeLog('Добавляем подробные данные о ролике');
+                  if (empty($this->importList[ $curVideoId ]['author'])){
+                    $this->importList[ $curVideoId ]['author']=$value['snippet']['channelTitle'];
+                  }
                   $this->importList[ $curVideoId ] = array_merge($this->importList[ $curVideoId ],array(
+                      'created'=>strtotime($value['snippet']['publishedAt']),
                       'contentDetails'=>$value['contentDetails'],
                       'statistics'=>$value['statistics'],
                       'recordingDetails'=>$value['recordingDetails']
                   ));
+                }else{
+                  $this->importList[ $curVideoId ]=array_merge($prevMainAttr,$value['snippet']);
                 }
 
-                $this->importList[ $curVideoId ]=$value['snippet'];
                 $count++;
             // }else{
                 // это уже второй проход для получения детальной информации о видео, поэтому мы скомбинируем
@@ -753,7 +859,7 @@ class awesomeVideos {
 		        $this->writeLog('След страница: '.$request['nextPageToken']);
             $params['mainPart']=$mainPart;
             $params['pageToken']=$request['nextPageToken'];
-            $this->createYoutubeQuery($params,$defSourceType);
+            $this->createYoutubeQuery($params,$defSourceType,$prevMainAttr);
         }
         // $this->modx->log(modX::LOG_LEVEL_INFO,"Новых материалов на сервере: ".$count);
 
@@ -796,9 +902,9 @@ class awesomeVideos {
         // $sources = $this->modx->getOption('awesomeVideos.video.source_detail',null,false);
         $this->writeLog('Запускаю парсер источника: '.$sources);
         // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"}]';  // makarmagoon
-        $sources = '[{"u":"sportrt"}]';
+        // $sources = '[{"u":"sportrt"}]';
         // $sources = '[{"u":"MrSetest"}]';
-        // $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';
+        $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';  // канал с несколькими видео
         // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"}]';
         // $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"},{"c":"UCtsDl3hsddpyDzHSdrU2OOg2222fd"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"}]';
         // $sources = '[{"c":"UCfQfRkl4w4vwtb9C2ndx1_Q"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"},{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';
@@ -846,6 +952,7 @@ class awesomeVideos {
         // $this->writeLog('Закончили процесс');
         // if (!empty($this->importList)) {
         $this->getVideosById()
+             ->makeDir()
              ->insertVideo()
         ;
         // }

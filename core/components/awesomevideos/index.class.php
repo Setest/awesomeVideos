@@ -30,11 +30,12 @@ abstract class awesomeVideosMainController extends modExtraManagerController {
 		$this->addHtml('
 		<script type="text/javascript">
 			awesomeVideos.config = ' . $this->modx->toJSON($this->awesomeVideos->config) . ';
-			awesomeVideos.config.connector_url = "' . $this->awesomeVideos->config['connectorUrl'] . '";
 		</script>
 		');
+			// awesomeVideos.config.connector_url = "' . $this->awesomeVideos->config['connectorUrl'] . '";
 
 
+/*
     $config_js = preg_replace(array('/^\n/', '/\t{6}/'), '', "
         awesomeVideosConfig = {
             ctx: '{$ctx}'
@@ -48,6 +49,7 @@ abstract class awesomeVideosMainController extends modExtraManagerController {
         };
     ");
 		$this->addHtml('<script type="text/javascript">'.$config_js.'</script>');
+*/
 
 
 		parent::initialize();

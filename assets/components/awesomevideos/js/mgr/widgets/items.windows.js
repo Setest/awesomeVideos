@@ -170,7 +170,7 @@ awesomeVideos.window.CreateItem = function(config) {
 				forceLayout: true
 			},
 			items: [{
-					title: _('awesomeVideos.video'),
+					title: _('awesomeVideos_item_form_tab_main'),
 					items: [{
 							xtype: 'hidden',
 							name: 'id'
@@ -206,8 +206,8 @@ awesomeVideos.window.CreateItem = function(config) {
 									name: 'image',
 									id: 'image',
 									hideFiles: true,
-									wctx: awesomeVideosConfig.ctx,
-									source: awesomeVideosConfig.imageSourceId,
+									wctx: awesomeVideos.config.ctx,
+									source: awesomeVideos.config.imageSourceId,
 									hideSourceCombo: true,
 									setValue: function(data) {
 										// обновляем превью, это собятие срабатывает и при открытии окна и при выборе картинки
@@ -216,7 +216,7 @@ awesomeVideos.window.CreateItem = function(config) {
 										if (Ext.isEmpty(this.value)) {
 											d.update('');
 										} else {
-											d.update('<img src="' + MODx.config.connectors_url + 'system/phpthumb.php?h=150&w=150&src=' + this.value + '&wctx=' + awesomeVideosConfig.ctx + '&source=' + awesomeVideosConfig.imageSourceId + '" alt="" />');
+											d.update('<img src="' + MODx.config.connectors_url + 'system/phpthumb.php?h=150&w=150&src=' + this.value + '&wctx=' + awesomeVideos.config.ctx + '&source=' + awesomeVideos.config.imageSourceId + '" alt="" />');
 										}
 									},
 									listeners: {
@@ -226,7 +226,7 @@ awesomeVideos.window.CreateItem = function(config) {
 	                                if (Ext.isEmpty(data.url)) {
 	                                    d.update('');
 	                                } else {
-	                                    d.update('<img src="'+MODx.config.connectors_url+'system/phpthumb.php?h=150&w=150&src='+data.url+'&wctx='+awesomeVideosConfig.ctx+'&source='+awesomeVideosConfig.imageSourceId+'" alt="" />');
+	                                    d.update('<img src="'+MODx.config.connectors_url+'system/phpthumb.php?h=150&w=150&src='+data.url+'&wctx='+awesomeVideos.config.ctx+'&source='+awesomeVideos.config.imageSourceId+'" alt="" />');
 	                                    // d.update('<img src="'+MODx.config.connectors_url+'system/phpthumb.php?h=150&w=150&src='+data.url+'&wctx={$ctx}&source={$source}" alt="" />');
 	                                }
 	*/
@@ -360,7 +360,7 @@ awesomeVideos.window.CreateItem = function(config) {
 	                }*/
 					]
 				}, {
-					title: "TV параметры",
+					title: _('awesomeVideos_item_form_tab_tv'),
 					id: 'tabTvList',
 					items: [{
 						xtype: 'modx-panel',
@@ -390,11 +390,17 @@ awesomeVideos.window.CreateItem = function(config) {
 	awesomeVideos.window.CreateItem.superclass.constructor.call(this, config);
 	this.on('beforeClose', function() {
 		// alert ('beforeClose');
-		MODx.unloadTVRTE();
+		// MODx.unloadTVRTE();
 	}, this);
 };
 Ext.extend(awesomeVideos.window.CreateItem, MODx.Window, {});
 Ext.reg('awesomevideos-item-window-create', awesomeVideos.window.CreateItem);
+
+// VidLister={};
+// VidLister.window.Video = function(config) {}
+// Ext.extend(VidLister.window.Video,MODx.Window,{});
+// Ext.reg('vidlister-window-video',VidLister.window.Video);
+
 // awesomeVideos.window.UpdateItem = function (config) {
 // 	config = config || {};
 // 	if (!config.id) {

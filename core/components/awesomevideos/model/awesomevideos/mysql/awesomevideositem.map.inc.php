@@ -12,7 +12,6 @@ $xpdo_meta_map['awesomeVideosItem']= array (
     'rank' => 0,
     'image' => '',
     'created' => 0,
-    'updated' => 0,
     'topic' => 0,
     'source' => 'youtube',
     'source_detail' => '',
@@ -27,9 +26,9 @@ $xpdo_meta_map['awesomeVideosItem']= array (
     'tvdata' => '',
     'menuindex' => 0,
     'playlist' => 0,
-    'createdon' => NULL,
+    'createdon' => 0,
     'createdby' => 0,
-    'editedon' => NULL,
+    'editedon' => 0,
     'editedby' => 0,
   ),
   'fieldMeta' => 
@@ -77,16 +76,8 @@ $xpdo_meta_map['awesomeVideosItem']= array (
     'created' => 
     array (
       'dbtype' => 'int',
-      'precision' => '10',
-      'phptype' => 'integer',
-      'null' => false,
-      'default' => 0,
-    ),
-    'updated' => 
-    array (
-      'dbtype' => 'int',
-      'precision' => '10',
-      'phptype' => 'integer',
+      'precision' => '20',
+      'phptype' => 'timestamp',
       'null' => false,
       'default' => 0,
     ),
@@ -141,15 +132,15 @@ $xpdo_meta_map['awesomeVideosItem']= array (
     'description' => 
     array (
       'dbtype' => 'text',
-      'phptype' => 'text',
-      'null' => false,
+      'phptype' => 'string',
+      'null' => true,
       'default' => '',
     ),
     'keywords' => 
     array (
       'dbtype' => 'text',
-      'phptype' => 'text',
-      'null' => false,
+      'phptype' => 'string',
+      'null' => true,
       'default' => '',
     ),
     'author' => 
@@ -157,7 +148,7 @@ $xpdo_meta_map['awesomeVideosItem']= array (
       'dbtype' => 'varchar',
       'precision' => '255',
       'phptype' => 'string',
-      'null' => false,
+      'null' => true,
       'default' => '',
     ),
     'duration' => 
@@ -180,7 +171,7 @@ $xpdo_meta_map['awesomeVideosItem']= array (
     array (
       'dbtype' => 'text',
       'phptype' => 'json',
-      'null' => false,
+      'null' => true,
       'default' => '',
     ),
     'menuindex' => 
@@ -201,9 +192,11 @@ $xpdo_meta_map['awesomeVideosItem']= array (
     ),
     'createdon' => 
     array (
-      'dbtype' => 'datetime',
-      'phptype' => 'datetime',
-      'null' => true,
+      'dbtype' => 'int',
+      'precision' => '20',
+      'phptype' => 'timestamp',
+      'null' => false,
+      'default' => 0,
     ),
     'createdby' => 
     array (
@@ -213,12 +206,15 @@ $xpdo_meta_map['awesomeVideosItem']= array (
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
+      'index' => 'index',
     ),
     'editedon' => 
     array (
-      'dbtype' => 'datetime',
-      'phptype' => 'datetime',
-      'null' => true,
+      'dbtype' => 'int',
+      'precision' => '20',
+      'phptype' => 'timestamp',
+      'null' => false,
+      'default' => 0,
     ),
     'editedby' => 
     array (
@@ -228,6 +224,26 @@ $xpdo_meta_map['awesomeVideosItem']= array (
       'phptype' => 'integer',
       'null' => false,
       'default' => 0,
+      'index' => 'index',
+    ),
+  ),
+  'indexes' => 
+  array (
+    'createdby' => 
+    array (
+      'alias' => 'editedby',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'createdby' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
+      ),
     ),
   ),
   'aggregates' => 

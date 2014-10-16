@@ -2,10 +2,10 @@
 /**
  * Loads the header for mgr pages.
  *
- * @package vidlister
+ * @package awesomevideos
  * @subpackage controllers
  */
-$modx->regClientStartupScript($awesomeVideos->config['jsUrl'].'mgr/vidlister.js');
+$modx->regClientStartupScript($awesomeVideos->config['jsUrl'].'mgr/awesomevideos.js');
 
 
 function LoadRichTextEditor($modx) {

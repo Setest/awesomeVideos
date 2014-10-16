@@ -38,30 +38,34 @@ $_lang['awesomeVideos_item_user'] = 'Владелец';
 $_lang['awesomeVideos_item_playlist'] = 'Плейлист';
 $_lang['awesomeVideos_item_playlistId'] = 'ID плейлиста';
 
+$_lang['awesomeVideos_item_form_tab_main'] = 'Основные';
+$_lang['awesomeVideos_item_form_tab_tv'] = 'TV параметры';
+
+
 $_lang['awesomeVideos_playlists_import'] = 'Импортировать плейлисты';
 $_lang['awesomeVideos_playlists_autofill'] = 'Связать ролики с плейлистами';
 
 $_lang['awesomeVideos_console_finish'] = 'Импорт завершен!';
 
 
-$_lang['awesomeVideos_item_create'] = 'Создать предмет';
-$_lang['awesomeVideos_item_update'] = 'Изменить Предмет';
-$_lang['awesomeVideos_item_enable'] = 'Включить Предмет';
-$_lang['awesomeVideos_items_enable'] = 'Включить Предметы';
-$_lang['awesomeVideos_item_disable'] = 'Отключить Предмет';
-$_lang['awesomeVideos_items_disable'] = 'Отключить Предметы';
-$_lang['awesomeVideos_item_remove'] = 'Удалить Предмет';
-$_lang['awesomeVideos_items_remove'] = 'Удалить Предметы';
-$_lang['awesomeVideos_item_remove_confirm'] = 'Вы уверены, что хотите удалить этот Предмет?';
-$_lang['awesomeVideos_items_remove_confirm'] = 'Вы уверены, что хотите удалить эти Предметы?';
+$_lang['awesomeVideos_item_create'] = 'Создать видео';
+$_lang['awesomeVideos_item_update'] = 'Изменить видео';
+$_lang['awesomeVideos_item_enable'] = 'Включить видео';
+$_lang['awesomeVideos_items_enable'] = 'Включить видео ролики';
+$_lang['awesomeVideos_item_disable'] = 'Отключить видео';
+$_lang['awesomeVideos_items_disable'] = 'Отключить видео ролики';
+$_lang['awesomeVideos_item_remove'] = 'Удалить видео';
+$_lang['awesomeVideos_items_remove'] = 'Удалить видео ролики';
+$_lang['awesomeVideos_item_remove_confirm'] = 'Вы уверены, что хотите удалить этот видео?';
+$_lang['awesomeVideos_items_remove_confirm'] = 'Вы уверены, что хотите удалить эти видео ролики?';
 $_lang['awesomeVideos_item_active'] = 'Включено';
 
-$_lang['awesomeVideos_item_err_name'] = 'Вы должны указать имя Предмета.';
-$_lang['awesomeVideos_item_err_ae'] = 'Предмет с таким именем уже существует.';
-$_lang['awesomeVideos_item_err_nf'] = 'Предмет не найден.';
-$_lang['awesomeVideos_item_err_ns'] = 'Предмет не указан.';
-$_lang['awesomeVideos_item_err_remove'] = 'Ошибка при удалении Предмета.';
-$_lang['awesomeVideos_item_err_save'] = 'Ошибка при сохранении Предмета.';
+$_lang['awesomeVideos_item_err_name'] = 'Вы должны указать имя видеоролика.';
+$_lang['awesomeVideos_item_err_ae'] = 'Видеоролик с таким именем уже существует.';
+$_lang['awesomeVideos_item_err_nf'] = 'Видеоролик не найден.';
+$_lang['awesomeVideos_item_err_ns'] = 'Видеоролик не указан.';
+$_lang['awesomeVideos_item_err_remove'] = 'Ошибка при удалении видеоролика.';
+$_lang['awesomeVideos_item_err_save'] = 'Ошибка при сохранении видеоролика.';
 
 $_lang['awesomeVideos_grid_search'] = 'Поиск';
 $_lang['awesomeVideos_grid_actions'] = 'Действия';

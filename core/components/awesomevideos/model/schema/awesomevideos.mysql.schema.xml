@@ -8,29 +8,35 @@
         <field key="chosen" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="rank" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
         <field key="image" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
-        <field key="created" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
-        <field key="updated" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+        <field key="created" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
         <field key="topic" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
         <field key="source" dbtype="varchar" precision="255" phptype="string" null="false" default="youtube"/>
         <field key="source_detail" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="videoId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="channelId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
-        <field key="description" dbtype="text" phptype="text" null="false" default=""/>
-        <field key="keywords" dbtype="text" phptype="text" null="false" default=""/>
-        <field key="author" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="description" dbtype="text" phptype="string" null="true" default=""/>
+        <field key="keywords" dbtype="text" phptype="string" null="true" default=""/>
+        <field key="author" dbtype="varchar" precision="255" phptype="string" null="true" default=""/>
         <field key="duration" dbtype="int" precision="10" phptype="integer" attributes="unsigned" null="false" default="0" />
         <field key="jsondata" dbtype="text" phptype="json" null="false" default=""/>
-        <field key="tvdata" dbtype="text" phptype="json" null="false" default=""/>
+        <field key="tvdata" dbtype="text" phptype="json" null="true" default=""/>
 
         <field key="menuindex" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
 
         <field key="playlist" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
 
-        <field key="createdon" dbtype="datetime" phptype="datetime" null="true"/>
-        <field key="createdby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <field key="editedon" dbtype="datetime" phptype="datetime" null="true"/>
-        <field key="editedby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="createdon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
+        <field key="createdby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"  index="index" />
+        <field key="editedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
+        <field key="editedby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0"  index="index" />
+
+        <index alias="createdby" name="createdby" primary="false" unique="false" type="BTREE">
+            <column key="createdby" length="" collation="A" null="false" />
+        </index>
+        <index alias="editedby" name="createdby" primary="false" unique="false" type="BTREE">
+            <column key="createdby" length="" collation="A" null="false" />
+        </index>
 
         <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign"/>
         <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign"/>
