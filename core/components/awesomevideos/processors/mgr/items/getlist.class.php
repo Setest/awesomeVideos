@@ -2,10 +2,18 @@
 // set_time_limit(10);
 // ini_set("max_execution_time", "600"); // включаем 10 минут на ограничение работы скрипта
 // ini_set("max_input_time", "600"); // включаем 10 минут на ограничение работы скрипта
+error_reporting(E_ALL ^ E_NOTICE);  ini_set('display_errors', true);
 
 /**
  * Enable an Item
  */
+
+require_once 'gettopic.class.php';
+
+// class awesomeVideosItemsGetTopicOnlyProcessor extends awesomeVideosItemsGetTopicProcessor {
+
+// }
+
 class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
 	public $objectType = 'awesomeVideosItem';
 	public $classKey = 'awesomeVideosItem';
@@ -16,6 +24,11 @@ class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
 
 	//public $permission = 'save';
 
+
+  public function process() {
+  	$this->getTopic=new awesomeVideosItemsGetTopicProcessor($this->modx);
+  	return parent::process();
+  }
 
 	public function prepareQueryAfterCount(xPDOQuery $c) {
 		return $c;
@@ -50,7 +63,11 @@ class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
 	}
 
 	public function prepareRow(xPDOObject $object) {
-		$comment = $object->toArray();
+		$data = $object->toArray();
+
+		if ($data['topic']){
+			$data['topic_val']=($res=$this->getTopic->getTopicVal($data['topic']))?$res:'';
+		}
 		// $resources = & $this->resources;
 		// if (!array_key_exists($comment['resource'], $resources)) {
 		// 	if ($resource = $this->modx->getObject('modResource', $comment['resource'])) {
@@ -67,7 +84,7 @@ class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
 		// $comment['updated'] = $this->formatDate($comment['updated']);
 
 
-		return $comment;
+		return $data;
 	}
 
 

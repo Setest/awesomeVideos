@@ -9,7 +9,7 @@
         <field key="rank" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
         <field key="image" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="created" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
-        <field key="topic" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
+        <field key="topic" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="source" dbtype="varchar" precision="255" phptype="string" null="false" default="youtube"/>
         <field key="source_detail" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="videoId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
@@ -21,8 +21,6 @@
         <field key="duration" dbtype="int" precision="10" phptype="integer" attributes="unsigned" null="false" default="0" />
         <field key="jsondata" dbtype="text" phptype="json" null="false" default=""/>
         <field key="tvdata" dbtype="text" phptype="json" null="true" default=""/>
-
-        <field key="menuindex" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
 
         <field key="playlist" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
 
@@ -44,6 +42,7 @@
     </object>
 
     <object class="awesomeVideosPlaylist" table="awesomevideos_playlists" extends="xPDOSimpleObject">
+        <field key="rank" dbtype="int" precision="10" phptype="integer" null="false" default="0"/>
         <field key="active" dbtype="tinyint" precision="1" phptype="boolean" null="true" default="0"/>
         <field key="channel" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="channelId" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>

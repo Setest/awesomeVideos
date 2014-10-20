@@ -6,7 +6,7 @@ awesomeVideos.window.CreateItem = function(config) {
 		url: awesomeVideos.config.connectorUrl,
 		autoHeight: true,
 		baseParams: {
-			action: 'mgr/video/update'
+			action: 'mgr/items/update'
 		},
 		width: 900,
 		closeAction: 'close',
@@ -21,41 +21,14 @@ awesomeVideos.window.CreateItem = function(config) {
 		//     }
 		// }]
 		keys: [{
-			key: Ext.EventObject.ENTER, shift: true, fn: function () {
+			key: Ext.EventObject.ENTER,
+			shift: true,
+			fn: function() {
 				this.submit()
-			}, scope: this
+			},
+			scope: this
 		}],
 		listeners: {
-			'close': {
-				fn: function(obj, newval, prevval) {
-					alert(1);
-				},
-				scope: this
-			},
-			'beforeclose': {
-				fn: function(obj, newval, prevval) {
-					alert(2);
-				},
-				scope: this
-			},
-			'beforehide': {
-				fn: function(obj, newval, prevval) {
-					alert(3);
-				},
-				scope: this
-			},
-			'destroy': {
-				fn: function(obj, newval, prevval) {
-					alert(5);
-				},
-				scope: this
-			},
-			'hide': {
-				fn: function(obj, newval, prevval) {
-					alert(4);
-				},
-				scope: this
-			}
 			/*            'beforehide' : function(window) {
 	            // if (some_condition == true) {
 	                Ext.Msg.confirm( 'Confirm close of window', 'You really wanna close this window ?', function( answer ) {
@@ -172,18 +145,35 @@ awesomeVideos.window.CreateItem = function(config) {
 			items: [{
 					title: _('awesomeVideos_item_form_tab_main'),
 					items: [{
+							xtype: 'checkboxgroup',
+							fieldLabel: 'Auto Layout',
+							items: [{
+								xtype: 'xcheckbox',
+								name: 'active',
+								inputValue: 1,
+								fieldLabel: _('awesomeVideos_item_active'),
+								// hideLabel: true,
+								// boxLabel: _('awesomeVideos_item_active'),
+								// labelAlign: 'right'
+								labelStyle: 'color: green; float: left; margin-right: 10px;',
+							}, {
+								xtype: 'xcheckbox',
+								fieldLabel: _('awesomeVideos_item_special'),
+								labelStyle: 'float: left; margin-right: 10px;',
+								name: 'special',
+								inputValue: 1
+							}, {
+								xtype: 'xcheckbox',
+								fieldLabel: _('awesomeVideos_item_chosen'),
+								labelStyle: 'color: red; float: left; margin-right: 10px;',
+								name: 'chosen',
+								inputValue: 1
+							}, {
+								xtype: 'spacer'	// для того чтобы прижать чекбоксы влево
+							}, ]
+						}, {
 							xtype: 'hidden',
 							name: 'id'
-						}, {
-							xtype: 'xcheckbox',
-							fieldLabel: _('awesomeVideos_item_active'),
-							name: 'active',
-							inputValue: 1
-						}, {
-							xtype: 'xcheckbox',
-							fieldLabel: _('awesomeVideos_item_special'),
-							name: 'special',
-							inputValue: 1
 						}, {
 							xtype: 'modx-panel-tv-image',
 							fieldLabel: _('awesomeVideos_item_image'),
@@ -210,9 +200,11 @@ awesomeVideos.window.CreateItem = function(config) {
 									source: awesomeVideos.config.imageSourceId,
 									hideSourceCombo: true,
 									setValue: function(data) {
-										// обновляем превью, это собятие срабатывает и при открытии окна и при выборе картинки
+										console.log('DDDDATA', data);
+										// обновляем превью, это событие срабатывает и при открытии окна и при выборе картинки
 										this.constructor.prototype.setValue.apply(this, arguments);
 										var d = Ext.get('image-preview');
+										if (!d) return;
 										if (Ext.isEmpty(this.value)) {
 											d.update('');
 										} else {
@@ -390,17 +382,15 @@ awesomeVideos.window.CreateItem = function(config) {
 	awesomeVideos.window.CreateItem.superclass.constructor.call(this, config);
 	this.on('beforeClose', function() {
 		// alert ('beforeClose');
-		// MODx.unloadTVRTE();
+		MODx.unloadTVRTE();
 	}, this);
 };
 Ext.extend(awesomeVideos.window.CreateItem, MODx.Window, {});
 Ext.reg('awesomevideos-item-window-create', awesomeVideos.window.CreateItem);
-
 // VidLister={};
 // VidLister.window.Video = function(config) {}
 // Ext.extend(VidLister.window.Video,MODx.Window,{});
 // Ext.reg('vidlister-window-video',VidLister.window.Video);
-
 // awesomeVideos.window.UpdateItem = function (config) {
 // 	config = config || {};
 // 	if (!config.id) {

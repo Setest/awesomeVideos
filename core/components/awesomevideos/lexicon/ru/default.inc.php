@@ -6,6 +6,9 @@ $_lang['awesomeVideos_desc'] = 'Показывает YouTube видео на В�
 $_lang['awesomeVideos_menu_desc'] = 'Пример расширения для разработки.';
 $_lang['awesomeVideos_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 
+$_lang['awesomeVideos_err'] = 'Ошибка!';
+$_lang['awesomeVideos_err_ajax'] = 'Ошибка получения данных!';
+
 $_lang['awesomeVideos_items'] = 'Видео';
 $_lang['awesomeVideos_item'] = 'Видео';
 $_lang['awesomeVideos_item_new'] = 'Новое видео';
@@ -42,10 +45,15 @@ $_lang['awesomeVideos_item_form_tab_main'] = 'Основные';
 $_lang['awesomeVideos_item_form_tab_tv'] = 'TV параметры';
 
 
-$_lang['awesomeVideos_playlists_import'] = 'Импортировать плейлисты';
+$_lang['awesomeVideos_playlist_new'] = 'Добавить плейлист';
+$_lang['awesomeVideos_playlists_import'] = 'Импорт плейлистов';
 $_lang['awesomeVideos_playlists_autofill'] = 'Связать ролики с плейлистами';
 
 $_lang['awesomeVideos_console_finish'] = 'Импорт завершен!';
+
+
+$_lang['awesomeVideos_item_topic_empty'] = 'Ничего не выбранно';
+$_lang['awesomeVideos_item_topic_notfound'] = 'Значение не найденно';
 
 
 $_lang['awesomeVideos_item_create'] = 'Создать видео';
@@ -56,11 +64,16 @@ $_lang['awesomeVideos_item_disable'] = 'Отключить видео';
 $_lang['awesomeVideos_items_disable'] = 'Отключить видео ролики';
 $_lang['awesomeVideos_item_remove'] = 'Удалить видео';
 $_lang['awesomeVideos_items_remove'] = 'Удалить видео ролики';
-$_lang['awesomeVideos_item_remove_confirm'] = 'Вы уверены, что хотите удалить этот видео?';
+$_lang['awesomeVideos_item_remove_confirm'] = 'Вы уверены, что хотите удалить это видео?';
 $_lang['awesomeVideos_items_remove_confirm'] = 'Вы уверены, что хотите удалить эти видео ролики?';
 $_lang['awesomeVideos_item_active'] = 'Включено';
 
+$_lang['awesomeVideos_item_err_class'] = 'Не могу загрузить основной класc.';
+
 $_lang['awesomeVideos_item_err_name'] = 'Вы должны указать имя видеоролика.';
+$_lang['awesomeVideos_item_err_videoId'] = 'Вы должны указать ID видеоролика.';
+$_lang['awesomeVideos_item_err_videoIdNotExist'] = 'Видео с ID = [[+id]] не существует на сервере youTube, будьте внимательны!';
+
 $_lang['awesomeVideos_item_err_ae'] = 'Видеоролик с таким именем уже существует.';
 $_lang['awesomeVideos_item_err_nf'] = 'Видеоролик не найден.';
 $_lang['awesomeVideos_item_err_ns'] = 'Видеоролик не указан.';

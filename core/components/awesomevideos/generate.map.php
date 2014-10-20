@@ -41,8 +41,10 @@ $modx->addPackage($package, $Model);
 $manager->removeObjectContainer('awesomeVideosItem');
 $manager->removeObjectContainer('awesomeVideosPlaylist');
 
+// создадим таблицы в БД:
 $manager->createObjectContainer('awesomeVideosItem');
 $manager->createObjectContainer('awesomeVideosPlaylist');
+
 
 
 

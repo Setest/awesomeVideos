@@ -34,6 +34,11 @@ $manager = $modx->getManager();
 /** @var xPDOGenerator $generator */
 $generator = $manager->getGenerator();
 
+// создадим таблицу в БД, убрать из итогового BUILD
+// $created = $m->createObjectContainer('Doodle');
+// return $created ? 'Table created.' : 'Table not created.';
+
+
 // Remove old model
 rrmdir($sources['model'] . PKG_NAME_LOWER . '/mysql');
 

@@ -13,7 +13,7 @@ class awesomeVideos {
 	public $modx;
   protected $vidList = array();
   protected $importList = array();  // массив документов для импорта
-  protected $cacheDir = ''; // итоговый путь папки кеша
+  public $cacheDir = ''; // итоговый путь папки кеша
 
   /** @var array все настройки класса */
   // protected $config = array();
@@ -67,6 +67,8 @@ class awesomeVideos {
       ),
       'ctx' => $this->modx->getOption('ctx', $config, $this->modx->context->key),
 
+      'topicSource' => $this->modx->getOption('awesomeVideos.video.topic.source', null, false),
+
       'log' => array(
       	'log_filename'=>'awesomeVideos',
       	'status'=>$this->modx->getOption('awesomeVideos.main.log', null, true),
@@ -86,6 +88,11 @@ class awesomeVideos {
       ),
 
 		), $config);
+
+    if (strpos($this->config['topicSource'], '[') === false ) {
+      // это только для быстрой выборки статичных данных внутри грида.
+      $this->config['topicSource']=false;
+    }
 
     $this->config['imageCachePath']=ltrim($this->config['imageCachePath'],'/');
     $this->config['imageCachePath']=rtrim($this->config['imageCachePath'],'/').'/';
@@ -352,7 +359,28 @@ class awesomeVideos {
     //     }
     // }
 
+    /**
+     * Импорт плейлистов
+     * @param  array  $properties [description]
+     * @return [type]             [description]
+     */
+    public function importPlaylists($properties = array()) {
+        $this->writeLog("Запускаю импорт...");
+        // $this->modx->log(modX::LOG_LEVEL_INFO,'Запускаю импорт...');
 
+        // if ($this->parse_sources()){
+            $this->writeLog("Завершено успешно",'','WARN');
+        // }else{
+        //     $this->writeLog("Импорт завершен с ошибками",'','ERROR');
+        // }
+    }
+
+
+    /**
+     * Импорт видеороликов
+     * @param  array  $properties [description]
+     * @return [type]             [description]
+     */
     public function import($properties = array()) {
 	    	$this->writeLog("Запускаю импорт...");
         // $this->modx->log(modX::LOG_LEVEL_INFO,'Запускаю импорт...');
@@ -589,7 +617,7 @@ class awesomeVideos {
         // $this->writeLog("<p>RANK = {$rank}</p>",'','ERROR');
 
         // отсортируем записи по дате создания
-        if ( uasort($this->importList, array($this, 'sortByCreateDate') ) ){
+        if ( !uasort($this->importList, array($this, 'sortByCreateDate') ) ){
           $this->writeLog("Произошла ошибка при сортировке данных",'','ERROR');
         }
 
@@ -614,6 +642,7 @@ class awesomeVideos {
                 'source' => 'youtube',
                 'source_detail' => $video['source_detail'],
                 'videoId' =>  $videoId,
+                'channelId' => $video['channelId'],
                 'rank' =>  $rank,
                 'name' => $video['title'],
                 'description' => $video['description'],
@@ -674,6 +703,51 @@ class awesomeVideos {
       return $this;
     }
 
+    /**
+     * Генерирует запрос к серверу за инфой по видео, из тех что мы вытащили отдельно из каналов.
+     *
+     * @param  [type]  $params        [description]
+     * @return [type]                 [description]
+     */
+    public function getVideoByIdsFromYouTube($params=array()) {
+      $this->writeLog("Получим видео".print_r($params, true),'','ERROR');
+      if ( empty($params['id']) && empty($params['ids']) ) return false;
+
+      // $params=array_merge(array1)
+
+      $params = array_merge(array(
+          'part'=>'id,snippet,contentDetails,status,statistics,recordingDetails',
+          'key'=>$this->config['import']['apiKey'],
+          'order'=>'date', // по-умолчанию сортируется по relevance - релевантность видео по запросу, https://developers.google.com/youtube/v3/docs/search/list
+          'id'=>array(),
+          'ids'=>array()
+      ),$params);
+
+
+      $resIds=implode(',',array_unique( array_merge(
+        (is_string($params['ids'])) ? explode(',', $params['ids']) : $params['ids'],
+        (is_string($params['id'])) ? explode(',', $params['id']) : $params['id']
+      )));
+
+      unset($params['ids']);
+
+      $params['id']=$resIds;
+
+      // print_r ($params);
+
+      // строим запрос
+      $query="https://www.googleapis.com/youtube/v3/videos?".urldecode(http_build_query($params));
+
+      $json = file_get_contents($query);
+      // $this->modx->log(modX::LOG_LEVEL_INFO,"<pre>".print_r($http_response_header, true)."</pre>");
+      if(!strpos($http_response_header[0], "200")){
+          // $modx->log(modX::LOG_LEVEL_ERROR, 'Ошибка: '.$json);|
+          $this->writeLog('Ошибка запроса'.$query,'','ERROR');
+          return false;
+      }
+
+      return $this->modx->fromJSON($json);
+    }
 
     /**
      * description
@@ -963,8 +1037,6 @@ class awesomeVideos {
 
          return true;
     }
-
-
-
-
 }
+
+// return 'awesomeVideos';

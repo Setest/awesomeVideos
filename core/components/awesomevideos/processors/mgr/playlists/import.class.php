@@ -7,9 +7,9 @@
 /**
  * Enable an Item
  */
-class awesomeVideosItemsImportProcessor extends modObjectProcessor {
-	public $objectType = 'awesomeVideosItem';
-	public $classKey = 'awesomeVideosItem';
+class awesomeVideosPlaylistsImportProcessor extends modObjectProcessor {
+	public $objectType = 'awesomeVideosPlaylist';
+	public $classKey = 'awesomeVideosPlaylist';
 	public $languageTopics = array('awesomevideos');
 	//public $permission = 'save';
 
@@ -58,33 +58,14 @@ return $modx->error->success();
 			$this->modx->log(modX::LOG_LEVEL_INFO, date('h:i:s').'<br/>Консоль очищена...<br/>');
 		}
 
-		// if (!$this->checkPermissions()) {
-		// 	return $this->failure($this->modx->lexicon('access_denied'));
-		// }
-
-		// $modx->getService('vidlister','VidLister',$modx->getOption('vidlister.core_path',null,$modx->getOption('core_path').'components/vidlister/').'model/vidlister/',$scriptProperties);
-		// $modx->lexicon->load('vidlister:default');
-		// $vidlister = new VidLister($modx);
-
-		// запустим импорт
-
 		if ( $this->loadClass() ) {
-			$this->awesomeVideos->import();
+			$this->awesomeVideos->importPlaylists();
 		}
 
-		// пример вывода сообщений
-		// $this->modx->log(modX::LOG_LEVEL_INFO,'раз'.RAND());
-		// $this->modx->log(modX::LOG_LEVEL_ERROR,'два'.RAND());
-		// $this->modx->log(modX::LOG_LEVEL_WARN,'три'.RAND());
-
-
 		$this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('awesomeVideos_console_finish'));
-		// $this->modx->log(modX::LOG_LEVEL_INFO,'</pre>');
 		flush();	// нужно освободить поток
 		sleep(3);	// и если реакция очень быстрая дать задержку чтобы отобразить ответ в консоли от другого скрипта
 		$this->modx->log(modX::LOG_LEVEL_INFO,'COMPLETED');	// эту строку обязательно надо передать в самом конце, так в rtfm написано
-
-
 
 		return $this->success();
 	}
@@ -101,9 +82,12 @@ return $modx->error->success();
 		$this->modx->log(modX::LOG_LEVEL_INFO,'Cache key: '.$cacheKey);
 
 		$this->modx->log(modX::LOG_LEVEL_INFO,'Loading class');
+
 		if (!empty($this->modx->awesomeVideos) && $this->modx->awesomeVideos instanceof awesomeVideos) {
 			$this->awesomeVideos = & $this->modx->awesomeVideos;
 		}
+		// не понятно... можно обойтись только getService, т.к. класс уже загружен через контроллер, но походу нужно передавать
+		// в контроллере параметры логирования. Т.к. второй раз через getService мы получаем только ссылку на имеющийся объект.
 		// elseif (!$this->awesomeVideos = & $this->modx->getService('awesomevideos', 'awesomeVideos', $this->modx->getOption('awesomevideos_core_path', null, $this->modx->getOption('core_path') . 'components/awesomevideos/') . 'model/awesomevideos/')){
 		else {
 			$this->modx->log(modX::LOG_LEVEL_WARN,'Class is not already loaded');
@@ -117,7 +101,8 @@ return $modx->error->success();
 				if (!class_exists('awesomeVideos')) {require_once $classPath;}
 				$this->awesomeVideos = new awesomeVideos($this->modx, array());
 			}else{
-				$this->modx->log(modX::LOG_LEVEL_ERROR,'Can`t load main class');
+				$classPath= MODX_CORE_PATH.'components/awesomeVideos/model/awesomeVideos/awesomeVideos.class.php';
+				$this->modx->log(modX::LOG_LEVEL_ERROR,'Can`t load main class2 '.$classPath);
 				return false;
 			}
 
@@ -129,4 +114,4 @@ return $modx->error->success();
 
 }
 
-return 'awesomeVideosItemsImportProcessor';
+return 'awesomeVideosPlaylistsImportProcessor';

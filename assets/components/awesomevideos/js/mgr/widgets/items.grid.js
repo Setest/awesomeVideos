@@ -3,6 +3,11 @@ awesomeVideos.grid.Items = function(config) {
     if (!config.id) {
         config.id = 'awesomevideos-grid-items';
     }
+
+    var editor = new Ext.ux.grid.RowEditor({
+        saveText: 'Update'
+    });
+
     // console.warn("z5",config);
     Ext.applyIf(config, {
         id: 'awesomevideos-grid-items',
@@ -23,15 +28,25 @@ awesomeVideos.grid.Items = function(config) {
             action: 'mgr/items/getlist'
 
         },
+        sm: new Ext.grid.CheckboxSelectionModel(),
         sortBy:'rank',
         sortDir:'DESC',
-        save_action: 'mgr/video/updateFromGrid',
+        save_action: 'mgr/items/updatefromgrid',
         viewConfig: {
             emptyText: 'No pages found',
-            sm: new Ext.grid.RowSelectionModel({
-                singleSelect: true
-            }),
-            forceFit: true
+            forceFit: true,
+            enableRowBody: true,
+            autoFill: true,
+            showPreview: true,
+            scrollOffset: 0,
+            // getRowClass: function (rec, ri, p) {
+            //     return !rec.data.active
+            //         ? 'awesomevideos-row-disabled'
+            //         : '';
+            // }
+            listeners : {
+
+             }
         },
         tbar: [{
             text: _('awesomeVideos_import'),
@@ -50,8 +65,8 @@ awesomeVideos.grid.Items = function(config) {
             listeners: {
                 render: {
                     fn: function(tf) {
-                        console.warn("z3", this.config);
-                        console.warn("z4", config);
+                        // console.warn("z3", this.config);
+                        // console.warn("z4", config);
                         tf.getEl().addKeyListener(Ext.EventObject.ENTER, function() {
                             this._doSearch(tf);
                         }, this);
@@ -69,7 +84,10 @@ awesomeVideos.grid.Items = function(config) {
                     scope: this
                 }
             }
-        }]
+        }],
+        // plugins: [editor],   // прикольное inline редактирование правда пришлось от него пока отказаться
+        // http://cpansearch.perl.org/src/VANSTYN/JavaScript-ExtJS-V3-3.4.11/share/ext-3.4.1/examples/grid/row-editor.html
+        //
         // dnd - с помощью стандартного метода
         // ,plugins: [new Ext.ux.dd.GridDragDropRowOrder({
         //     copy: false
@@ -80,15 +98,34 @@ awesomeVideos.grid.Items = function(config) {
         //         'beforerowmove': {fn:this._onBeforeRowMove,scope:this}
         //     }
         // })]
-        ,
+
         listeners: {
-            // 'rowclick': {fn:function() {
-            // 'afterRemoveRow': {fn:function() {
-            // 'afterAutoSave': {fn:function() {
-            // alert (777);
-            // that.refresh();
-            // },scope:this}
-            "render": {
+            celldblclick : function(grid, rowIndex, columnIndex, e) {
+                var row = grid.getStore().getAt(rowIndex),
+                    fieldName = grid.getColumnModel().getDataIndex(columnIndex),
+                    config = grid.getColumnModel().getColumnAt(columnIndex),
+                    data = row.get(fieldName),
+                    ids = this._getSelectedIds()
+                ;
+
+                if (ids.length > 1) return false;
+                if (!config.editor){
+                    this.updateVideo(grid, e, row);
+                    console.log('cellClick-OOOOK', grid);
+                }
+                // console.log('cellClick-grid', grid);
+                // console.log('cellClick-rec', record);
+                // console.log('cellClick-fieldName', fieldName);
+                // console.log('cellClick-config', config);
+                // console.log('cellClick-data', data);
+            },
+            // rowDblClick: function (grid, rowIndex, e) {
+                // console.log("DBL click",arguments);
+                // var row = grid.store.getAt(rowIndex);
+                // this.updateVideo(grid, e, row);
+            // },
+
+            render: {
                 scope: this,
                 fn: function(grid) {
                     // Enable sorting Rows via Drag & Drop
@@ -303,14 +340,14 @@ console.log ("cindex",cindex);
             hideable: true
         }, {
             header: _('awesomeVideos_item_topic'),
+            id: 'topic',
             dataIndex: 'topic',
             sortable: true,
             width: 4,
             renderer: function(value, obj, curRow, x, y, jsonStore) {
-                // срабатывает при построении грида, то что будет возвращено через return? отобразиться на экране
-                // но не попадет в value данного combobox-a
-                // console.log("ZZZ",arguments);
-                // alert (123);
+                // срабатывает при построении грида, то что будет возвращено через return отобразиться на экране
+                // но не попадет в value данного combobox-a !!!
+                // return curRow.json.topic_val;
                 return curRow.json.topic_val;
             },
             editor: {
@@ -327,27 +364,39 @@ console.log ("cindex",cindex);
                 triggerAction: 'all',
                 mode: 'remote',
                 valueField: 'id',
-                displayField: 'topic'
-                // ,hiddenName : 'topic_val' // название поля в которое будет опроавленно значение valueField
+                displayField: 'topic',
+
+                // ,hiddenName : 'topic_val' // название поля в которое будет отправленно значение valueField
                 // если оно не равно значению displayField, то значение выпадающего списка при первом открытии будет пустовать до тех пор пока не тычнем на него
-                // ,hiddenValue: 'topic_val'  // если ниче не выбрали то по-умолчанию отправляется с полем hiddenName это значение
-                // ,inputValue: 'topic_val'    // если ниче не выбрали то по-умолчанию отправляется с полем hiddenName это значение
-                ,
+                // ,hiddenValue: 'id'  // если ниче не выбрали то по-умолчанию отправляется с полем hiddenName это значение
+                // ,inputValue: 'id'    // если ниче не выбрали то по-умолчанию отправляется с полем hiddenName это значение
+
+                // store: {
+                //     constructor: function() {
+                //         this.superclass().constructor.call(this);
+                //         // No need to call this, you're not adding any events
+                //         // this.addEvents('load','beforeload');
+                //         this.on('load', function(store,records,options) {
+                //             alert (111);
+                //             this.loaded = true;
+                //         }, this);
+                //     },
+                // },
+
+                // listeners: {
+                //     scope: this,
+                //     'select': function(combo,store,index) {
+                //         console.log("ZZZ",arguments);
+                //             // alert (123);
+                //         return 123;
+                //     }
+                // },
                 baseParams: {
-                    action: 'mgr/video/gettopic'
+                    action: 'mgr/items/gettopic'
                 },
-                allowBlank: true // значит: можно оставлять пустым? (да,нет)
-                ,
-                emptyText: 'не выбрана' //надпись в поле если ничего не указано
-                /*,listeners: {
-                            "afterAutoSave": {
-                                  scope: this,
-                                  fn: function(grid) {
-                                    alert (123);
-                                    return 777;
-                                }
-                            }
-                        }*/
+                allowBlank: true, // значит: можно оставлять пустым? (да,нет)
+                emptyText: _('awesomeVideos_item_topic_empty'), //надпись в поле если ничего не указано
+                valueNotFoundText: _('awesomeVideos_item_topic_notfound')   // если в store не нашел
             }
         }, {
             header: _('awesomeVideos_item_author'),
@@ -372,6 +421,52 @@ console.log ("cindex",cindex);
         }]
     });
     awesomeVideos.grid.Items.superclass.constructor.call(this, config);
+
+
+    // если у нас используется локальное хранилище, то перегрузим грид изменив его store
+    var editor = this.getColumnModel().getColumnById('topic').editor;
+    console.log('EDITOR',editor);
+    if (awesomeVideos.config.topicSource){
+        // var res=Ext.applyIf(editor, {
+        var res=Ext.override(editor, {
+            mode: 'local',
+            store: new Ext.data.ArrayStore({
+                id: 0,
+                fields: [
+                    'id',
+                    'topic'
+                ],
+                data: function(data){
+                    var data = Ext.decode(data),
+                        result = new Array;
+                    for(var i=0 ; i < data.length; i++){
+                        result.push( new Array ( data[i].id, data[i].topic) )
+                    }
+                    return result;
+                }(awesomeVideos.config.topicSource)
+            })
+        })
+    }
+    editor.store.on('loadexception', function(proxy,options, response) {
+        // отлавливаем ошибки в разделе topic
+        // console.log(arguments);
+        if (response.status==200 && Ext.decode(response.responseText).success==false){
+            MODx.msg.status({
+                title: _('awesomeVideos_err_ajax'),
+                message: Ext.decode(response.responseText).message,
+                delay: 3
+            });
+        }
+    }, editor.store);
+
+
+    // Clear selection on grid refresh
+    this.store.on('load', function () {
+        if (this._getSelectedIds().length) {
+            this.getSelectionModel().clearSelections();
+        }
+    }, this);
+
 };
 Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
     windows: {},
@@ -423,6 +518,17 @@ Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
         this.refresh();
     },
+    _getSelectedIds: function () {
+        var ids = [];
+        var selected = this.getSelectionModel().getSelections();
+        for (var i in selected) {
+            if (!selected.hasOwnProperty(i)) {
+                continue;
+            }
+            ids.push(selected[i]['id']);
+        }
+        return ids;
+    },
     getMenu: function() {
         var m = [{
             text: _('awesomeVideos_item_update'),
@@ -431,7 +537,18 @@ Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
             text: _('awesomeVideos_item_remove'),
             handler: this.removeVideo
         }];
+
+        var ids = this._getSelectedIds();
+        if (ids.length>1){
+            m.shift();
+        }
         this.addContextMenuItem(m);
+
+        // var row = grid.getStore().getAt(rowIndex);
+        // var menu = awesomeVideos.utils.getMenu(row.data['actions'], this, ids);
+
+        // this.addContextMenuItem(menu);
+
         return true;
     },
     doImport: function(btn, e) {
@@ -505,8 +622,17 @@ Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
         MODx.loadRTE('description'); // запускаем WYSIWYG
         this.getTVs(this.VideoWindow, e, true);
     },
-    updateVideo: function(btn, e) {
-        // return;
+    updateVideo: function(btn, e, row) {
+        var record = this.menu.record || row.data;
+        if (typeof row !=='undefined'){
+            record=row.data;
+        }else if(typeof this.menu !=='undefined'){
+            record=this.menu.record ;
+        }else{ return; }
+        // console.log("THIS",this);
+        // console.log("THIS MENU",this.menu);
+        // console.log("THIS MENU record",this.menu.record);
+        // console.warn("THIS MENU record233",record);
         // console.log(typeof(this.VideoWindow));
         if (typeof(this.VideoWindow) !== "undefined") {
             // нужно уничтожить окно
@@ -535,23 +661,32 @@ Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
         // console.log("DESTROY",this.VideoWindow);
         this.VideoWindow.new_scripts = false;
         this.VideoWindow.already_loaded = false;
+        // this.VideoWindow.reset();    // обнуляет окно - фактически активирует его
         this.VideoWindow.show(e.target);
         this.VideoWindow.setTitle(_('awesomeVideos_item_update'));
-        this.VideoWindow.setValues(this.menu.record);
+        this.VideoWindow.setValues(record);
         MODx.loadRTE('description'); // запускаем WYSIWYG
-        // console.log("THIS",this);
         // console.log("target",e);
         // console.log("VideoWindow",this.VideoWindow);
         this.getTVs(this.VideoWindow, e);
     },
     removeVideo: function() {
+        var ids = this._getSelectedIds();
+        if (!ids.length) {
+            return false;
+        }
+
         MODx.msg.confirm({
-            title: _('awesomeVideos_item_remove'),
-            text: _('awesomeVideos_item_remove.confirm'),
+            title: ids.length > 1
+                ? _('awesomeVideos_items_remove')
+                : _('awesomeVideos_item_remove'),
+            text: ids.length > 1
+                ? _('awesomeVideos_items_remove_confirm')
+                : _('awesomeVideos_item_remove_confirm'),
             url: this.config.url,
             params: {
-                action: 'mgr/video/remove',
-                id: this.menu.record.id
+                action: 'mgr/items/remove',
+                ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
                 'success': {

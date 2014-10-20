@@ -20,11 +20,12 @@ awesomeVideos.grid.Playlists = function (config) {
 
         ,viewConfig: {
             emptyText: 'No pages found',
-            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             forceFit: true
         }
-
-        ,fields: ['id','active', 'channel','user','playlist','playlistId']
+        ,sm: new Ext.grid.CheckboxSelectionModel()
+        ,sortBy:'rank'
+        ,sortDir:'DESC'
+        ,fields: ['id','rank','active','channel','channelId','user','playlist','playlistId']
         ,paging: true
         ,border: true
         ,frame: false
@@ -36,6 +37,12 @@ awesomeVideos.grid.Playlists = function (config) {
             ,dataIndex: 'id'
             ,sortable: true
             ,width: 1
+        }, {
+            header: _('rank'),
+            dataIndex: 'rank',
+            sortable: true,
+            // hidden: true, // скрывает колонку,
+            width: 1
         },{
             header: _('awesomeVideos_item_active')
             ,dataIndex: 'active'
@@ -54,6 +61,11 @@ awesomeVideos.grid.Playlists = function (config) {
             ,sortable: true
             ,width: 10
         },{
+            header: _('awesomeVideos_item_channelId')
+            ,dataIndex: 'channelId'
+            ,sortable: true
+            ,width: 10
+        },{
             header: _('awesomeVideos_item_user')
             ,dataIndex: 'user'
             ,sortable: true
@@ -65,64 +77,29 @@ awesomeVideos.grid.Playlists = function (config) {
             ,dataIndex: 'playlist'
             ,sortable: true
             ,width: 4
-            ,hidden: true
-            ,hideable: true
+            // ,hidden: true
+            // ,hideable: true
         },{
             header: _('awesomeVideos_item_playlistId')
             ,dataIndex: 'playlistId'
             ,sortable: true
             ,width: 4
-            ,hidden: true
-            ,hideable: true
-        },{
-            header: _('awesomeVideos_item_topic')
-            ,dataIndex: 'topic'
-            ,sortable: true
-            ,width: 4
-            ,renderer: function(value,obj,curRow,x,y,jsonStore) {
-                // срабатывает при построении грида, то что будет возвращено через return? отобразиться на экране
-                // но не попадет в value данного combobox-a
-                // console.log("ZZZ",arguments);
-                // alert (123);
-                return curRow.json.topic_val;
-            }
-            ,editor:{
-                    xtype: 'modx-combo'
-                        ,fieldLabel: _('awesomeVideos_item_topic')
-                        // ,html:  '<div id="image-preview2" style="">777</div>'
-                        ,name: 'topic'
-                        ,width: '100%'
-                        ,anchor:'100%'  // ширина элемента в окне
-                        ,url: awesomeVideos.config.connectorUrl
-                        ,fields: ['id','topic']
-                        ,triggerAction: 'all'
-                        ,mode: 'remote'
-
-                        ,valueField: 'id'
-                        ,displayField: 'topic'
-
-                        ,baseParams: { action: 'mgr/playlists/gettopic' }
-                        ,allowBlank: true   // значит: можно оставлять пустым? (да,нет)
-                        ,emptyText: 'не выбрана' //надпись в поле если ничего не указано
-                        /*,listeners: {
-                            "afterAutoSave": {
-                                  scope: this,
-                                  fn: function(grid) {
-                                    alert (123);
-                                    return 777;
-                                }
-                            }
-                        }*/
-
-                    }
-        }]
-        ,tbar: [{
+            // ,hidden: true
+            // ,hideable: true
+        }
+        ]
+        ,tbar: [
+            {
                 text: _('awesomeVideos_playlists_import')
                 ,handler: this.doImport
             },{
                 text: _('awesomeVideos_playlists_autofill')
-                ,handler: this.addVideo
-        }]
+                ,handler: this.relatedVideos
+            },{
+                text: _('awesomeVideos_playlist_new'),
+                handler: this.addVideo
+            }
+        ]
     });
 	awesomeVideos.grid.Playlists.superclass.constructor.call(this, config);
 };
@@ -141,58 +118,55 @@ Ext.extend(awesomeVideos.grid.Playlists, MODx.grid.Grid, {
         ];
         this.addContextMenuItem(m);
         return true;
-    }
-    ,doImport: function(btn,e) {
-        var that=this;
+    },
+    doImport: function(btn, e) {
+        var that = this,
+            topic = '/awesomeVideosimport/'
         if (this.console == null || this.console == undefined) {
+            // открываем консоль и сообщаем через topic где отслеживать события
             this.console = MODx.load({
-                xtype: 'modx-console'
-                ,title: _('awesomeVideos_import')
-                ,register: 'mgr'
-                ,topic: '/awesomeVideosimport/'
-                ,show_filename: 0
-                ,listeners: {
-                    'shutdown': {fn:function() {
-                        // когда нажали на закрытие окна, происходит перезагрузка страницы
-                        // по идее можно просто обновить таблицу, так будет быстрее.
-                        // window.location.reload();
-                        that.refresh();
-                    },scope:this}
-               }
+                xtype: 'modx-console',
+                title: _('awesomeVideos_import'),
+                register: 'mgr',
+                topic: topic,
+                show_filename: 0,
+                listeners: {
+                    'shutdown': {
+                        fn: function() {
+                            // когда нажали на закрытие окна, происходит перезагрузка страницы
+                            // по идее можно просто обновить таблицу, так будет быстрее.
+                            // window.location.reload();
+                            that.refresh();
+                        },
+                        scope: this
+                    }
+                }
             });
         };
         this.console.show(Ext.getBody());
-        // var rrr=this.console;
-        // var rrr=this.console.VideoWindow.el.get('tvslist').update(responce.output);;
-        // var eee=this.console.el.select( 'x-form-text');
-        // var eee=Ext.select('panel[cls=x-form-text modx-console-text]');
-        // var eee=Ext.select('x-form-text');
-        // var eee=rrr.query("panel[cls~=x-form-text]")
-        // var eee=rrr.down(".x-form-text")
-        // var eee=rrr.down('#body');
-        // var eee=Ext.ComponentQuery.query('panel[cls=x-form-text modx-console-text]');
-        // console.log("CONS",eee);
-
+        // отправляем запрос на импорт
         MODx.Ajax.request({
-            url: awesomeVideos.config.connectorUrl
-            ,disableCaching: true
-            ,params: {
-                // action: 'mgr/playlists/import'
-                action: 'mgr/playlists/import_new'
-                ,register: 'mgr'
-                ,topic: '/awesomeVideosimport/'
-            }
-            ,listeners: {
-                'success':{fn:function() {
-                    this.console.fireEvent('complete');
-                },scope:this}
+            url: awesomeVideos.config.connectorUrl,
+            disableCaching: true,
+            params: {
+                action: 'mgr/playlists/import',
+                register: 'mgr',
+                topic: topic // сообщаем в каком топике будем размещать логи
+                ,
+                cacheKey: awesomeVideos.config.cacheKey || false
+            },
+            listeners: {
+                'success': {
+                    fn: function() {
+                        this.console.fireEvent('complete');
+                    },
+                    scope: this
+                }
             }
         });
-
         return true;
-
     }
-    ,addVideo: function(btn,e) {
+    ,relatedVideos: function(btn,e) {
     }
     ,removeVideo: function() {
         MODx.msg.confirm({
