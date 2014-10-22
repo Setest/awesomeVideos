@@ -1,10 +1,15 @@
 <?php
-// error_reporting(E_ALL ^ E_NOTICE);  ini_set('display_errors', true);
-class awesomeVideosItemUpdateProcessor extends modObjectUpdateProcessor {
+
+/**
+ * Create an Item
+ */
+
+class awesomeVideosItemCreateProcessor extends modObjectCreateProcessor {
 	public $objectType = 'awesomeVideosItem';
 	public $classKey = 'awesomeVideosItem';
 	public $languageTopics = array('awesomevideos');
-	//public $permission = 'save';
+	//public $permission = 'create';
+
 
 	/**
 	 * We doing special check of permission
@@ -20,42 +25,13 @@ class awesomeVideosItemUpdateProcessor extends modObjectUpdateProcessor {
 		return true;
 	}
 
-	public function afterSave() {
-
-		if ($chosen = $this->getProperty('chosen')){
-			// ИЗБРАННЫМ может быть только текущий объект!!! таковы правила проекта.
-			$c = $this->modx->newQuery($this->classKey);
-			$c->command('update');
-			$c->set(array(
-				'chosen'  => 0
-			));
-			$c->where(array(
-				'id:!='    => (int)$this->getProperty('id'),
-			));
-
-			if (!$stmt = $c->prepare() or !$stmt->execute())
-			{
-				$error=$stmt->errorInfo();
-				return $this->modx->error->failure($error[2]." in query: ".$c->toSQL());
-			}
-		}
-		return true;
-	}
-
-
 	/**
 	 * @return bool
 	 */
 	public function beforeSet() {
 
-		// print_r($this->getProperties());
-		// echo 123;
-		$id = (int)$this->getProperty('id');
 		$name = trim($this->getProperty('name'));
 		$videoId = trim($this->getProperty('videoId'));
-		if (empty($id)) {
-			return $this->modx->lexicon('awesomeVideos_item_err_ns');
-		}
 
 		if (empty($videoId)) {
 			$this->modx->error->addField('videoId', $this->modx->lexicon('awesomeVideos_item_err_videoId'));
@@ -71,9 +47,9 @@ class awesomeVideosItemUpdateProcessor extends modObjectUpdateProcessor {
 		if (empty($name)) {
 			$this->modx->error->addField('name', $this->modx->lexicon('awesomeVideos_item_err_name'));
 		}
-
-		if ($this->modx->getCount($this->classKey, array('videoId' => $videoId, 'id:!=' => $id))) {
+		if ($this->modx->getCount($this->classKey, array('videoId' => $videoId))) {
 			$this->modx->error->addField('videoId', $this->modx->lexicon('awesomeVideos_item_err_videoIdExist'));
+			return $this->modx->lexicon('awesomeVideos_item_err_videoIdExist');
 		}
 
 		// $video->setProperties($scriptProperties);
@@ -101,14 +77,34 @@ class awesomeVideosItemUpdateProcessor extends modObjectUpdateProcessor {
 		return parent::beforeSet();
 	}
 
+	public function afterSave() {
+
+		if ($chosen = $this->getProperty('chosen')){
+			// ИЗБРАННЫМ может быть только текущий объект!!! таковы правила проекта.
+			$c = $this->modx->newQuery($this->classKey);
+			$c->command('update');
+			$c->set(array(
+				'chosen'  => 0
+			));
+			$c->where(array(
+				'id:!='    => (int)$this->getProperty('id'),
+			));
+
+			if (!$stmt = $c->prepare() or !$stmt->execute())
+			{
+				$error=$stmt->errorInfo();
+				return $this->modx->error->failure($error[2]." in query: ".$c->toSQL());
+			}
+		}
+		return true;
+	}
+
   /**
    * {@inheritDoc}
    * @return mixed
    */
   public function process() {
   	// подгрузим основной класс
-  	// print_r($this->loadClass());
-
 		if ($this->loadClass() !== true) {
 			return $this->failure();
 		}
@@ -121,9 +117,6 @@ class awesomeVideosItemUpdateProcessor extends modObjectUpdateProcessor {
 	 * @return bool
 	 */
 	private function loadClass() {
-		// $obj=$this->object->xpdo->awesomevideos
-
-			// echo 123;
 		if (!$this->awesomeVideos = & $this->modx->getService('awesomevideos', 'awesomeVideos', $this->modx->getOption('awesomevideos_core_path', null, $this->modx->getOption('core_path') . 'components/awesomevideos/') . 'model/awesomevideos/',
 			 array()
 		 ))
@@ -135,4 +128,4 @@ class awesomeVideosItemUpdateProcessor extends modObjectUpdateProcessor {
 
 }
 
-return 'awesomeVideosItemUpdateProcessor';
+return 'awesomeVideosItemCreateProcessor';

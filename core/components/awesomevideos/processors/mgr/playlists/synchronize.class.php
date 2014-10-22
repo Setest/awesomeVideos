@@ -7,7 +7,7 @@
 /**
  * Enable an Item
  */
-class awesomeVideosPlaylistsImportProcessor extends modObjectProcessor {
+class awesomeVideosPlaylistsSynchronizeProcessor extends modObjectProcessor {
 	public $objectType = 'awesomeVideosPlaylist';
 	public $classKey = 'awesomeVideosPlaylist';
 	public $languageTopics = array('awesomevideos');
@@ -28,43 +28,37 @@ class awesomeVideosPlaylistsImportProcessor extends modObjectProcessor {
 			$topic = $logTarget->subscriptions[0];
 			// echo $topic;
 			$cachePath.=$topic;
-			$connected = $this->modx->cacheManager->deleteTree($cachePath, array('extensions' => array('.msg.php')) );
-
-
-// второй способ - наверное более правильный:
-/*
-//clear cache
-$paths = array(
-    'config.cache.php',
-    'sitePublishing.idx.php',
-    'registry/mgr/workspace/',
-    'lexicon/',
-);
-$contexts = $modx->getCollection('modContext');
-foreach ($contexts as $context) {
-    $paths[] = $context->get('key') . '/';
-}
-
-$options = array(
-    'publishing' => 1,
-    'extensions' => array('.cache.php', '.msg.php', '.tpl.php'),
-);
-if ($modx->getOption('cache_db')) $options['objects'] = '*';
-$results= $modx->cacheManager->clearCache($paths, $options);
-
-return $modx->error->success();
- */
-
+			$connected = $this->modx->cacheManager->deleteTree($cachePath, array('extensions' => array('.cache.php', '.msg.php', '.tpl.php')) );
 
 			$this->modx->log(modX::LOG_LEVEL_INFO, date('h:i:s').'<br/>Консоль очищена...<br/>');
 		}
 
 		if ( $this->loadClass() ) {
-			$this->awesomeVideos->importType = 'Playlist';
-			$this->awesomeVideos->import();
+
+      $c = $this->modx->newQuery($this->classKey);
+			$c->where(array(
+				 'playlistId:!=' => ""
+				,'active' => 1
+			));
+			$c->select('id,playlistId');
+				// $c->prepare();
+				// print "<br />". $c->toSQL();
+			if ($total=$this->modx->getCount($this->classKey,$c)){
+				$this->modx->log(modX::LOG_LEVEL_INFO, '<br/>Найдено плейлистов: '.$total);
+				if ($c->prepare() && $c->stmt->execute() && $pls = $c->stmt->fetchAll(PDO::FETCH_ASSOC)) {
+					// $this->modx->log(modX::LOG_LEVEL_INFO, '<br/>PLS: '.print_r($pls, true));
+					// $this->modx->log(modX::LOG_LEVEL_INFO, '<br/>SQL: '.$c->toSQL());
+					if ($this->awesomeVideos->synchronize($pls)){
+						$this->modx->log(modX::LOG_LEVEL_INFO, '<br/>'.date('h:i:s').'<br/>'.$this->modx->lexicon('awesomeVideos_synchronize_finish'));
+					}else{
+						$this->modx->log(modX::LOG_LEVEL_INFO, '<br/>'.date('h:i:s').'<br/>'.$this->modx->lexicon('awesomeVideos_synchronize_finish_with_err'));
+					}
+				}
+			}else{
+				$this->modx->log(modX::LOG_LEVEL_WARN, 'Плейлистов не обнаружено!');
+			}
 		}
 
-		$this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('awesomeVideos_console_finish'));
 		flush();	// нужно освободить поток
 		sleep(3);	// и если реакция очень быстрая дать задержку чтобы отобразить ответ в консоли от другого скрипта
 		$this->modx->log(modX::LOG_LEVEL_INFO,'COMPLETED');	// эту строку обязательно надо передать в самом конце, так в rtfm написано
@@ -116,4 +110,4 @@ return $modx->error->success();
 
 }
 
-return 'awesomeVideosPlaylistsImportProcessor';
+return 'awesomeVideosPlaylistsSynchronizeProcessor';

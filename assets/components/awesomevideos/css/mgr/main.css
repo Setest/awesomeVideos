@@ -25,6 +25,12 @@ ul.awesomevideos-row-actions .btn {
 	color: #555;
 }
 
+.awesomevideos-shortInfo{
+	color: grey;
+	font-size: 0.8em;
+	padding-left: 10px;
+}
+
 .action-red {
 	color: darkred !important;
 }

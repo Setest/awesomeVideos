@@ -4,11 +4,10 @@ awesomeVideos.window.CreateItem = function(config) {
 	Ext.applyIf(config, {
 		title: _('awesomeVideos_item_update'),
 		url: awesomeVideos.config.connectorUrl,
-		autoHeight: true,
 		baseParams: {
 			action: 'mgr/items/update'
 		},
-		width: 900,
+		// width: 900,
 		closeAction: 'close',
 		new_scripts: false, // храним список вновь загруженных скриптов
 		already_loaded: false, // храним список вновь загруженных скриптов
@@ -28,32 +27,10 @@ awesomeVideos.window.CreateItem = function(config) {
 			},
 			scope: this
 		}],
-		listeners: {
-			/*            'beforehide' : function(window) {
-	            // if (some_condition == true) {
-	                Ext.Msg.confirm( 'Confirm close of window', 'You really wanna close this window ?', function( answer ) {
-	                    if( answer == "yes" ) {
-	                        window.destroy();
-	                    }
-	                });
-	                return false;
-	            // }
 
-	        },
-	        'destroy' : function(window) {
-	              // do something after the window destruction //
-	              alert('Another window smashed');
-	        },
-	        'beforeclose': function(window) {
-	            Ext.Msg.confirm("Hey", "Are you sure you want to close?", function(answer) {
-	                if (answer == "yes") {
-	                    window.events.beforeclose.clearListeners();
-	                    window.close();
-	                }
-	            });
-	            return false;
-	        }*/
-		},
+		autoHeight: false,
+    width:Ext.getBody().getViewSize().width*0.8, //80%
+		listeners: {},
 		loadScripts: function(code) {
 			code = code || this.new_scripts;
 			if (typeof(code) === "undefined" || code == "" || code == false) return;
@@ -117,19 +94,19 @@ awesomeVideos.window.CreateItem = function(config) {
 					if (curTab.activeTab.id == "tabTvList") this.loadScripts();
 				},
 				scope: this
-			}
-			// ,autoHeight: true
-			// ,autoWidth: true
-			,
-			deferredRender: false
+			},
+			deferredRender: false,
 			// ,autoScroll: true
-			,
-			forceLayout: true
-			// ,width: 800
-			// ,height: '70%'
-			,
+			forceLayout: true,
+
+			autoHeight: false,
+			autoWidth: false,
+			height:Ext.getBody().getViewSize().height*0.7,
+	    // width:Ext.getBody().getViewSize().width*0.5, //80%
 			bodyStyle: {
-				maxHeight: '700px'
+				// background: 'red',
+				maxHeight: '700px',
+				padding: '30px',
 			},
 			borderStyle: 'padding: 10px 10px 10px 10px;',
 			border: true,
@@ -146,7 +123,7 @@ awesomeVideos.window.CreateItem = function(config) {
 					title: _('awesomeVideos_item_form_tab_main'),
 					items: [{
 							xtype: 'checkboxgroup',
-							fieldLabel: 'Auto Layout',
+							fieldLabel: '',
 							items: [{
 								xtype: 'xcheckbox',
 								name: 'active',
@@ -241,15 +218,14 @@ awesomeVideos.window.CreateItem = function(config) {
 							xtype: 'textfield',
 							fieldLabel: _('awesomeVideos_item_id'),
 							name: 'videoId',
-							width: '98%',
+							anchor: '90%',
 							allowBlank: false
 						}, {
 							xtype: 'modx-combo',
 							fieldLabel: _('awesomeVideos_item_topic'),
 							// ,html:  '<div id="image-preview2" style="">777</div>'
 							name: 'topic',
-							width: '100%',
-							anchor: '100%', // ширина элемента в окне
+							anchor: '90%', // ширина элемента в окне
 							url: awesomeVideos.config.connectorUrl,
 							fields: ['id', 'topic'],
 							triggerAction: 'all',
@@ -261,7 +237,7 @@ awesomeVideos.window.CreateItem = function(config) {
 							hiddenValue: 'id', // если ниче не выбрали то по-умолчанию отправляется с полем hiddenName это значение
 							// ,inputValue: 'id'	// если ниче не выбрали то по-умолчанию отправляется с полем hiddenName это значение
 							baseParams: {
-								action: 'mgr/video/gettopic'
+								action: 'mgr/items/gettopic'
 							},
 							allowBlank: true, // значит: можно оставлять пустым? (да,нет)
 							// ,blankText: '5555444'
@@ -293,56 +269,94 @@ awesomeVideos.window.CreateItem = function(config) {
 									scope: this
 								}
 							}
-						}, {
-							xtype: 'modx-combo',
-							fieldLabel: _('awesomeVideos_item_source'),
-							name: 'source',
-							width: '100%',
-							anchor: '100%', // ширина элемента в окне
-							url: awesomeVideos.config.connectorUrl,
-							fields: ['source'],
-							displayField: 'source',
-							valueField: 'source',
-							baseParams: {
-								action: 'mgr/video/getsources'
-							},
-							allowBlank: false,
-							editable: true,
-							forceSelection: false,
-							typeAhead: true // you can also input text, not only choise from list
-						}, {
+						},
+						{
+              xtype: 'modx-combo',
+              fieldLabel: _('awesomeVideos_item_playlist'),
+              name: 'playlist',
+              anchor: '90%',
+              fields: ['id', 'playlist'],
+              triggerAction: 'all',
+              mode: 'remote',
+              valueField: 'id',
+              displayField: 'playlist',
+              hiddenName: 'playlist',	// !!!
+              hiddenValue: 'id',
+              url: awesomeVideos.config.connectorUrl,
+              baseParams: {
+                  action: 'mgr/playlists/getlist',
+                  shortInfo: true
+              },
+              listeners: {
+                  scope: this,
+                  'select': function(combo) {
+                      console.log("select",arguments);
+                      var str = Ext.util.Format;
+                      combo.el.dom.value = str.stripTags(combo.el.dom.value);
+                  },
+                  'show': function(combo,store,index) {
+                  // 'change': function(combo,store,index) {
+                      console.log("show",arguments);
+                      var str = Ext.util.Format;
+                      combo.el.dom.value = str.stripTags(combo.el.dom.value);
+                  }
+              },
+              allowBlank: true, // значит: можно оставлять пустым? (да,нет)
+              emptyText: _('awesomeVideos_item_topic_empty'), //надпись в поле если ничего не указано
+              valueNotFoundText: _('awesomeVideos_item_topic_notfound')   // если в store не нашел
+            },
+						// {
+						// 	xtype: 'modx-combo',
+						// 	fieldLabel: _('awesomeVideos_item_source'),
+						// 	name: 'source',
+						// 	anchor: '90%', // ширина элемента в окне
+						// 	url: awesomeVideos.config.connectorUrl,
+						// 	fields: ['source'],
+						// 	displayField: 'source',
+						// 	valueField: 'source',
+						// 	baseParams: {
+						// 		action: 'mgr/video/getsources'
+						// 	},
+						// 	allowBlank: true,
+						// 	editable: false,
+						// 	forceSelection: false,
+						// 	typeAhead: true // you can also input text, not only choise from list
+						// },
+						{
 							xtype: 'textfield',
 							fieldLabel: _('awesomeVideos_item_author'),
 							name: 'author',
-							width: '98%',
+							anchor: '90%',
 							allowBlank: false
 						}, {
 							// xtype: 'numberfield'
 							xtype: 'hidden',
 							fieldLabel: _('awesomeVideos_item_duration'),
 							name: 'duration',
-							width: '98%',
+							anchor: '90%',
 							allowBlank: false
 						}, {
 							xtype: 'textfield',
 							fieldLabel: _('awesomeVideos_item_name'),
 							name: 'name',
-							width: '98%',
+							anchor: '90%',
 							allowBlank: false
 						}, {
 							xtype: 'textfield',
 							fieldLabel: _('awesomeVideos_item_keywords'),
 							name: 'keywords',
-							width: '98%',
+							anchor: '90%',
 							allowBlank: true
 						}, {
 							xtype: 'textarea',
 							// xtype: 'richtext'
 							fieldLabel: _('awesomeVideos_item_description'),
 							id: 'description',
-							cls: 'modx-richtext',
+							// cls: 'modx-richtext',
 							name: 'description',
-							width: '98%',
+							anchor: '90%',
+							// width: '50%',
+							// maxWidth: 200,
 							height: 200,
 							allowBlank: true
 						}
@@ -364,18 +378,6 @@ awesomeVideos.window.CreateItem = function(config) {
 						deferredRender: true
 					}]
 				}
-				// прячем раздел "продвинутые" - нах не нужен
-				/*,{
-	            title: _('awesomeVideos_item_advanced')
-	            ,items: [{
-	                xtype: 'textarea'
-	                ,fieldLabel: _('awesomeVideos_item_jsondata')
-	                ,name: 'jsondata'
-	                ,width: '98%'
-	                ,height: 300
-	                ,allowBlank: true
-	            }]
-	        }*/
 			]
 		}]
 	});
@@ -387,56 +389,3 @@ awesomeVideos.window.CreateItem = function(config) {
 };
 Ext.extend(awesomeVideos.window.CreateItem, MODx.Window, {});
 Ext.reg('awesomevideos-item-window-create', awesomeVideos.window.CreateItem);
-// VidLister={};
-// VidLister.window.Video = function(config) {}
-// Ext.extend(VidLister.window.Video,MODx.Window,{});
-// Ext.reg('vidlister-window-video',VidLister.window.Video);
-// awesomeVideos.window.UpdateItem = function (config) {
-// 	config = config || {};
-// 	if (!config.id) {
-// 		config.id = 'awesomevideos-item-window-update';
-// 	}
-// 	Ext.applyIf(config, {
-// 		title: _('awesomevideos_item_update'),
-// 		width: 550,
-// 		autoHeight: true,
-// 		url: awesomeVideos.config.connector_url,
-// 		action: 'mgr/item/update',
-// 		fields: this.getFields(config),
-// 		keys: [{
-// 			key: Ext.EventObject.ENTER, shift: true, fn: function () {
-// 				this.submit()
-// 			}, scope: this
-// 		}]
-// 	});
-// 	awesomeVideos.window.UpdateItem.superclass.constructor.call(this, config);
-// };
-// Ext.extend(awesomeVideos.window.UpdateItem, MODx.Window, {
-// 	getFields: function (config) {
-// 		return [{
-// 			xtype: 'hidden',
-// 			name: 'id',
-// 			id: config.id + '-id',
-// 		}, {
-// 			xtype: 'textfield',
-// 			fieldLabel: _('awesomevideos_item_name'),
-// 			name: 'name',
-// 			id: config.id + '-name',
-// 			anchor: '99%',
-// 			allowBlank: false,
-// 		}, {
-// 			xtype: 'textarea',
-// 			fieldLabel: _('awesomevideos_item_description'),
-// 			name: 'description',
-// 			id: config.id + '-description',
-// 			anchor: '99%',
-// 			height: 150,
-// 		}, {
-// 			xtype: 'xcheckbox',
-// 			boxLabel: _('awesomevideos_item_active'),
-// 			name: 'active',
-// 			id: config.id + '-active',
-// 		}];
-// 	}
-// });
-// Ext.reg('awesomevideos-item-window-update', awesomeVideos.window.UpdateItem);

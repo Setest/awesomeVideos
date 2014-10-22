@@ -214,12 +214,12 @@ console.log ("cindex",cindex);
         }
         // ,fields: ['id', 'active','special','chosen','image', 'source','source_detail', 'videoId', 'name', 'description', 'keywords','topic', 'author', 'duration', 'created', 'jsondata']
         ,
-        fields: ['id', 'rank', 'active', 'special', 'chosen', 'image', 'source', 'source_detail', 'videoId', 'name', 'description', 'keywords', 'topic', 'author', 'duration', 'created', 'jsondata'],
+        fields: ['id', 'rank', 'active', 'special', 'chosen', 'image', 'source', 'source_detail', 'videoId', 'name', 'description', 'keywords', 'topic', 'playlist', 'author', 'duration', 'created', 'jsondata'],
         paging: true,
         border: true,
         frame: false,
         remoteSort: true,
-        anchor: '97%',
+        anchor: '100%',
         autoExpandColumn: 'name',
         columns: [{
             header: _('id'),
@@ -399,10 +399,56 @@ console.log ("cindex",cindex);
                 valueNotFoundText: _('awesomeVideos_item_topic_notfound')   // если в store не нашел
             }
         }, {
+            header: _('awesomeVideos_item_playlist'),
+            id: 'playlist',
+            dataIndex: 'playlist',
+            sortable: true,
+            width: 5,
+            renderer: function(value, obj, curRow, x, y, jsonStore) {
+                // срабатывает при построении грида, то что будет возвращено через return отобразиться на экране
+                // но не попадет в value данного combobox-a !!!
+                // return curRow.json.topic_val;
+                return curRow.json.playlist_val;
+            },
+            editor: {
+                xtype: 'modx-combo',
+                fieldLabel: _('awesomeVideos_item_playlist'),
+                name: 'playlist',
+                anchor: '100%',
+                width: '100%',
+                fields: ['id', 'playlist'],
+                triggerAction: 'all',
+                mode: 'remote',
+                valueField: 'id',
+                displayField: 'playlist',
+                url: awesomeVideos.config.connectorUrl,
+                baseParams: {
+                    action: 'mgr/playlists/getlist',
+                    shortInfo: true
+                },
+                listeners: {
+                    scope: this,
+                    'show': function(combo) {
+                        // console.log("show",arguments);
+                        var str = Ext.util.Format;
+                        combo.el.dom.value = str.stripTags(combo.el.dom.value);
+                    },
+                    'select': function(combo,store,index) {
+                    // 'change': function(combo,store,index) {
+                        // console.log("select",arguments);
+                        var str = Ext.util.Format;
+                        combo.el.dom.value = str.stripTags(combo.el.dom.value);
+                    }
+                },
+                allowBlank: true, // значит: можно оставлять пустым? (да,нет)
+                emptyText: _('awesomeVideos_item_topic_empty'), //надпись в поле если ничего не указано
+                valueNotFoundText: _('awesomeVideos_item_topic_notfound')   // если в store не нашел
+            }
+        }, {
             header: _('awesomeVideos_item_author'),
             dataIndex: 'author',
             sortable: true,
-            width: 4
+            width: 3
         }, {
             header: _('awesomeVideos_item_duration'),
             dataIndex: 'duration',
@@ -556,6 +602,7 @@ Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
             topic = '/awesomeVideosimport/'
         if (this.console == null || this.console == undefined) {
             // открываем консоль и сообщаем через topic где отслеживать события
+            // Ext.override(Ext.Ajax, { timeout: 60000 });
             this.console = MODx.load({
                 xtype: 'modx-console',
                 title: _('awesomeVideos_import'),
@@ -607,6 +654,9 @@ Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
         }
         this.VideoWindow = this.VideoWindow || MODx.load({
             xtype: 'awesomevideos-item-window-create',
+            baseParams: {
+                action: 'mgr/items/create'
+            },
             listeners: {
                 'success': {
                     fn: this.refresh,

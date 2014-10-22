@@ -8,15 +8,9 @@ error_reporting(E_ALL ^ E_NOTICE);  ini_set('display_errors', true);
  * Enable an Item
  */
 
-require_once 'gettopic.class.php';
-
-// class awesomeVideosItemsGetTopicOnlyProcessor extends awesomeVideosItemsGetTopicProcessor {
-
-// }
-
-class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
-	public $objectType = 'awesomeVideosItem';
-	public $classKey = 'awesomeVideosItem';
+class awesomeVideosPlaylistGetListProcessor extends modObjectGetListProcessor {
+	public $objectType = 'awesomeVideosPlaylist';
+	public $classKey = 'awesomeVideosPlaylist';
 	public $languageTopics = array('awesomevideos');
 
   public $defaultSortField = 'rank';
@@ -26,38 +20,26 @@ class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
 
 
   public function process() {
-  	$this->getTopic=new awesomeVideosItemsGetTopicProcessor($this->modx);
+  	// $this->getTopic=new awesomeVideosItemsGetTopicProcessor($this->modx);
   	return parent::process();
   }
 
 	public function prepareQueryAfterCount(xPDOQuery $c) {
 		return $c;
 	}
+
 	public function prepareQueryBeforeCount(xPDOQuery $c) {
-
-// var_dump($this->getProperty('sort'));
-
-// 		if (!$this->getProperty('sort')) {
-// 			$this->setProperty('dir', 'DESC');
-// 			$this->setProperty('sort', 'rank');
-// 		}
-
 		if ($query = $this->getProperty('query')) {
 			$c->where(array(
-				 'name:LIKE' => "%$query%"
-				,'OR:source_detail:LIKE' => "%$query%"
-				,'OR:videoId:LIKE' => "%$query%"
+				 'playlist:LIKE' => "%$query%"
+				,'OR:playlistId:LIKE' => "%$query%"
+				,'OR:channel:LIKE' => "%$query%"
 				,'OR:channelId:LIKE' => "%$query%"
 				,'OR:description:LIKE' => "%$query%"
-				,'OR:keywords:LIKE' => "%$query%"
-				,'OR:author:LIKE' => "%$query%"
+				,'OR:user:LIKE' => "%$query%"
 			));
 		}
 		// можно добавить поиск по имени пользователя который сделал импорт или изменил запись, но тут надо втыкать join
-
-	  // if (empty($sortKey)) $sortKey = $this->getProperty('sort');
-	  // $c->sortby($sortKey,$this->getProperty('dir'));
-
 		// $c->prepare();print "<br />". $c->toSQL();
 		return $c;
 	}
@@ -65,19 +47,21 @@ class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
 	public function prepareRow(xPDOObject $object) {
 		$data = $object->toArray();
 
-		// $ad = $object->getOne('awesomeVideosPlaylist');
-		$playlist = $object->getOne('Playlist');
-		if ($playlist){
-			$data = array_merge($data, array(
-				'playlist_val'=>$playlist->get('playlist')
-			));
-		}
-		// print_r($ad->toArray());
-		// return;
+		if ( $this->getProperty('shortInfo') ){
 
-		if ($data['topic']){
-			$data['topic_val']=($res=$this->getTopic->getTopicVal($data['topic']))?$res:'';
+			$ch=($data['channel'])
+			? "<span class='awesomevideos-shortInfo'>(Ch: {$data['channel']})</span>"
+			: '';
+
+			$data = array(
+				'id'=>$data['id'],
+				'playlist'=>$data['playlist'].$ch,
+			);
 		}
+
+		// if ($data['topic']){
+			// $data['topic_val']=($res=$this->getTopic->getTopicVal($data['topic']))?$res:'';
+		// }
 		// $resources = & $this->resources;
 		// if (!array_key_exists($comment['resource'], $resources)) {
 		// 	if ($resource = $this->modx->getObject('modResource', $comment['resource'])) {
@@ -97,15 +81,6 @@ class awesomeVideosItemsGetListProcessor extends modObjectGetListProcessor {
 		return $data;
 	}
 
-
-	public function formatDate($date = '') {
-		if (empty($date) || $date == '0000-00-00 00:00:00') {
-			return $this->modx->lexicon('no');
-		}
-		// return strftime('%d %b %Y %H:%M', strtotime($date));
-		return strftime('%d %b %Y %H:%M', $date);
-	}
-
 }
 
-return 'awesomeVideosItemsGetListProcessor';
+return 'awesomeVideosPlaylistGetListProcessor';

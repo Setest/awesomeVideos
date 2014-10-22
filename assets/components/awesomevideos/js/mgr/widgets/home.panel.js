@@ -46,6 +46,7 @@ awesomeVideos.panel.Home = function(config) {
                 },
                 items: [{
                     xtype: 'awesomevideos-grid-playlists',
+                    cls: 'main-wrapper',
                     preventRender: true
                 }]
             }

@@ -58,9 +58,12 @@ class awesomeVideosHomeManagerController extends awesomeVideosMainController {
 		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/misc/utils.js');
 		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/misc/rowEditor.js');
 
-		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/widgets/items.grid.js');
 		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/widgets/playlists.grid.js');
+		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/widgets/playlists.windows.js');
+
+		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/widgets/items.grid.js');
 		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/widgets/items.windows.js');
+
 		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/widgets/home.panel.js');
 		$this->addJavascript($this->awesomeVideos->config['jsUrl'] . 'mgr/sections/home.js');
 

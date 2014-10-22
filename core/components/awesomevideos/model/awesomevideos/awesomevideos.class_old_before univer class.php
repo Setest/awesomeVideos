@@ -11,13 +11,12 @@
 class awesomeVideos {
 	/* @var modX $modx */
 	public $modx;
-  protected $itemsList = array();
+  protected $vidList = array();
   protected $importList = array();  // массив документов для импорта
   public $cacheDir = ''; // итоговый путь папки кеша
-  public $importType = 'Item'; // тип данных для импорта, есть Item и Playlist
+  public $importType = 'Videos'; // тип данных для импорта, есть Videos и Playlists
 
   public $classKey = 'awesomeVideosItem';
-  protected $synchronize = false; // при true - идет процесс синхронизации
 
   /** @var array все настройки класса */
   // protected $config = array();
@@ -315,21 +314,21 @@ class awesomeVideos {
      * @return string The processed content of the Chunk
      */
     public function getChunk($name,$properties = array()) {
-      $chunk = null;
-      if (!isset($this->chunks[$name])) {
-          $chunk = $this->_getTplChunk($name);
-          if (empty($chunk)) {
-              $chunk = $this->modx->getObject('modChunk',array('name' => $name));
-              if ($chunk == false) return false;
-          }
-          $this->chunks[$name] = $chunk->getContent();
-      } else {
-          $o = $this->chunks[$name];
-          $chunk = $this->modx->newObject('modChunk');
-          $chunk->setContent($o);
-      }
-      $chunk->setCacheable(false);
-      return $chunk->process($properties);
+        $chunk = null;
+        if (!isset($this->chunks[$name])) {
+            $chunk = $this->_getTplChunk($name);
+            if (empty($chunk)) {
+                $chunk = $this->modx->getObject('modChunk',array('name' => $name));
+                if ($chunk == false) return false;
+            }
+            $this->chunks[$name] = $chunk->getContent();
+        } else {
+            $o = $this->chunks[$name];
+            $chunk = $this->modx->newObject('modChunk');
+            $chunk->setContent($o);
+        }
+        $chunk->setCacheable(false);
+        return $chunk->process($properties);
     }
     /**
      * Returns a modChunk object from a template file.
@@ -341,16 +340,42 @@ class awesomeVideos {
      * false.
      */
     protected function _getTplChunk($name,$postfix = '.chunk.tpl') {
-      $chunk = false;
-      $f = $this->config['chunksPath'].strtolower($name).$postfix;
-      if (file_exists($f)) {
-          $o = file_get_contents($f);
-          $chunk = $this->modx->newObject('modChunk');
-          $chunk->set('name',$name);
-          $chunk->setContent($o);
-      }
-      return $chunk;
+        $chunk = false;
+        $f = $this->config['chunksPath'].strtolower($name).$postfix;
+        if (file_exists($f)) {
+            $o = file_get_contents($f);
+            $chunk = $this->modx->newObject('modChunk');
+            $chunk->set('name',$name);
+            $chunk->setContent($o);
+        }
+        return $chunk;
     }
+
+
+
+    // public function getData($properties = array()) {
+    //     $this->modx->log(modX::LOG_LEVEL_INFO,'Запускаю импорт');
+    //     if ($this->parse_sources()){
+    //         $this->modx->log(modX::LOG_LEVEL_WARN,'Завершено успешно');
+    //     }else{
+    //         $this->modx->log(modX::LOG_LEVEL_ERROR,'Есть ошибки.');
+    //     }
+    // }
+
+    /**
+     * Импорт плейлистов
+     * @param  array  $properties [description]
+     * @return [type]             [description]
+     */
+/*    public function importPlaylists($properties = array()) {
+        $this->writeLog("Запускаю импорт...");
+        $this->importType = 'Playlists';
+        if ($this->parse_sources()){
+            $this->writeLog("Завершено успешно",'','WARN');
+        }else{
+            $this->writeLog("Импорт завершен с ошибками",'','ERROR');
+        }
+    }*/
 
 
     /**
@@ -359,73 +384,15 @@ class awesomeVideos {
      * @return [type]             [description]
      */
     public function import($properties = array()) {
-      $this->classKey='awesomeVideos'.$this->importType;
-      $this->writeLog("Запускаю импорт...");
-      $this->writeLog("Текущий classKey: {$this->classKey}");
-      // $this->modx->log(modX::LOG_LEVEL_INFO,'Запускаю импорт...');
-      if ($this->parse_sources()){
-          $this->writeLog("Завершено успешно",'','WARN');
-      }else{
-          $this->writeLog("Импорт завершен с ошибками",'','ERROR');
-      }
-    }
-
-    /**
-     * Синхронизация плейлистов и видеороликов
-     * @param  array  $pls массив ID плейлистов
-     * @param  array  $params доп параметры для отправки запроса на youtube
-     * @return [type]             [description]
-     */
-    public function synchronize($pls = array(), $params = array()) {
-      $flag=true;
-      $this->classKey='awesomeVideos'.$this->importType;
-      $this->synchronize=true;
-    	$this->writeLog("Запускаю парсер плейлистов...");
-      $this->writeLog("Текущий classKey: {$this->classKey}");
-
-      // создадим массив всех текущих видеороликов у которых не указаны плейлисты
-      $this->create_video_list(array('playlist'=>0));
-
-      // $this->writeLog("Есть видео: ".print_r($this->itemsList, true),'','WARN');
-
-      $params = array_merge(array(
-          'mainPart'=>'playlistItems',
-          'part'=>'id,snippet'
-      ),$params);
-
-      $count=0;
-      foreach ($pls as $key => $value) {
-        $this->writeLog("Обрабатывается плейлист: ".$value['playlistId'],'','WARN');
-
-        $params['playlistId']=$value['playlistId'];
-        if ($this->createYoutubeQuery($params)){ // заполнили $this->importList [ $value['playlistId'] ]
-          $this->writeLog("Текущий лист содержит: ".print_r($this->importList[ $value['playlistId'] ], true),'','WARN');
-          // сформируем запрос на получени нужных id и произведем массовую замену.
-          $c = $this->modx->newQuery($this->classKey);
-          $c->command('update');
-          $c->where(array(
-             'videoId:IN' => $this->importList [ $value['playlistId'] ]
-            ,'active' => 1
-            // ,'playlist' => 0
-          ));
-          $c->set(array('playlist' => $value['id']));
-
-          // $c->select('id,videoId,name,playlist');
-          // $c->prepare(); $this->writeLog("XXX: ".$c->toSQL(),'','WARN');
-          if ($c->prepare() && $itog=$c->stmt->execute() ) {
-            $count=+$c->stmt->rowCount();
-            $this->writeLog("Плейлист {$value['playlistId']} cинхронизирован успешно",'','WARN');
-          }else{
-            $flag=false;
-            $this->writeLog("Произошла ошибка при синхронизации плейлиста: {$value['playlistId']}",'','ERROR');
-          }
-
+        $this->classKey='awesome'.{$this->importType}.'Item';
+        $this->writeLog("Запускаю импорт...");
+	    	$this->writeLog("Текущий classKey: {$this->classKey}");
+        // $this->modx->log(modX::LOG_LEVEL_INFO,'Запускаю импорт...');
+        if ($this->parse_sources()){
+			    	$this->writeLog("Завершено успешно",'','WARN');
+        }else{
+			    	$this->writeLog("Импорт завершен с ошибками",'','ERROR');
         }
-      }
-
-      $this->writeLog("Всего синхронизированно <b>{$count}</b> видеозаписей.",'','WARN');
-
-      return $flag;
     }
 
 
@@ -592,7 +559,7 @@ class awesomeVideos {
      * @return [type]        [description]
      */
     protected function createRecord($param=array()) {
-        /*$video = $modx->newObject($this->classKey);
+        /*$video = $modx->newObject('awesomeVideosItem');
         $video->fromArray(array(
             'active' => (int) $this->config['import']['active'],
             'created' => strtotime($xmlvideo->published),
@@ -643,10 +610,10 @@ class awesomeVideos {
         // и будем всем остальным прибавлять rank
 
         $rank=0;
-        $c = $this->modx->newQuery($this->classKey);
+        $c = $this->modx->newQuery('awesomeVideosItem');
         $c -> sortby('rank','DESC');
         $c -> limit(1);
-        $lastObj = $this->modx->getObject($this->classKey, $c);
+        $lastObj = $this->modx->getObject('awesomeVideosItem', $c);
         if ($lastObj){
           $rank=$lastObj->get('rank');
           $rank++;
@@ -669,54 +636,31 @@ class awesomeVideos {
               $this->writeLog("ResultName: ".$resultImageName);
             }
 
-            if ($this->importType == 'Playlist'){
-              // для плейлиста импорт немного другой
-              $importData=array(
-                  'rank' =>  $rank,
-                  'active' => (int) $this->config['import']['active'],
-                  'image'  =>  $resultImageName,
-                  'channel' => $video['channel'],
-                  'channelId' => $video['channelId'],
-                  'user' => ($video['author'])?$video['author']:$video['channelTitle'],    // как такового тоже нет, надо брать отдельным запросом
-                  // 'user' => $video['user'],    // как такового тоже нет, надо брать отдельным запросом
-                  'created'  =>  $video['created'],
-                  'playlist' => $video['title'],
-                  'playlistId' =>  $videoId,
-                  'description' => $video['description'],
-                  // 'author' => $video['author'],    // как такового тоже нет, надо брать отдельным запросом
-                  // 'keywords' => $media->group->keywords,
-                  // 'duration' => $this->timeToSeconds($video['contentDetails']['duration']),
-              );
+            $importData=array(
+                'active' => (int) $this->config['import']['active'],
+                'image'  =>  $resultImageName,
+                'created'  =>  $video['created'],
+                // 'created' => strtotime($video['publishedAt']),  // [publishedAt] => 2013-09-13T11:42:30.000Z
+                // 'created' => date('%d %b %Y %H:%M', strtotime($video['publishedAt']),  // [publishedAt] => 2013-09-13T11:42:30.000Z
+                // 'updated' => strtotime($video['publishedAt']),  // даты обновления больше нет
+                'source' => 'youtube',
+                'source_detail' => $video['source_detail'],
+                'videoId' =>  $videoId,
+                'channelId' => $video['channelId'],
+                'rank' =>  $rank,
+                'name' => $video['title'],
+                'description' => $video['description'],
+                'source_detail' => $video['source_detail'],
+                // 'author' => $video['channelTitle'],    // как такового тоже нет, надо брать отдельным запросом
+                'author' => $video['author'],    // как такового тоже нет, надо брать отдельным запросом
+                // 'keywords' => $media->group->keywords,
+                'duration' => $this->timeToSeconds($video['contentDetails']['duration']),
+            );
 
-            }else{
-              $importData=array(
-                  'active' => (int) $this->config['import']['active'],
-                  'image'  =>  $resultImageName,
-                  'created'  =>  $video['created'],
-                  // 'created' => strtotime($video['publishedAt']),  // [publishedAt] => 2013-09-13T11:42:30.000Z
-                  // 'created' => date('%d %b %Y %H:%M', strtotime($video['publishedAt']),  // [publishedAt] => 2013-09-13T11:42:30.000Z
-                  // 'updated' => strtotime($video['publishedAt']),  // даты обновления больше нет
-                  'source' => 'youtube',
-                  'source_detail' => $video['source_detail'],
-                  'videoId' =>  $videoId,
-                  'channelId' => $video['channelId'],
-                  'rank' =>  $rank,
-                  'name' => $video['title'],
-                  'description' => $video['description'],
-                  'source_detail' => $video['source_detail'],
-                  // 'author' => $video['channelTitle'],    // как такового тоже нет, надо брать отдельным запросом
-                  'author' => $video['author'],    // как такового тоже нет, надо брать отдельным запросом
-                  // 'keywords' => $media->group->keywords,
-                  'duration' => $this->timeToSeconds($video['contentDetails']['duration']),
-              );
-            }
-
-            $videoObj = $this->modx->newObject($this->classKey);
+            $videoObj = $this->modx->newObject('awesomeVideosItem');
             $videoObj->fromArray($importData);
-
-            // continue; // прерываем для тестирования
             if ($videoObj->save() == false) {          // сохраняем
-              $this->writeLog("<p>НЕ УДАЛОСЬ сохранить документ с ID = {$videoId}</p>",'','ERROR');
+              $this->writeLog("<p>НЕ УДАЛОСЬ сохранить видео с ID = {$videoId}</p>",'','ERROR');
             }else{
               $rank++;
             }
@@ -734,10 +678,9 @@ class awesomeVideos {
      * @return [type]                 [description]
      */
     protected function getVideosById($params=array()) {
-      if ($this->importType == 'Playlist') return $this;
       if (!empty($this->importList)) {
-        $this->writeLog("<p>Формирование списка законченно!</p>",'','WARN');
-        $this->writeLog("<b>Получим подробные данные по всем новым записям.</br>Всего новых записей для импорта:".count($this->importList)."</b>");
+        $this->writeLog("<p>Формирование списка роликов законченно!</p>",'','WARN');
+        $this->writeLog("<b>Получим данные по всем новым видеороликам.</br>Всего новых записей для импорта:".count($this->importList)."</b>");
 
         $params = array_merge(array(
             'baseUrl'=>"https://www.googleapis.com/youtube/v3/",
@@ -770,26 +713,14 @@ class awesomeVideos {
      * @param  [type]  $params        [description]
      * @return [type]                 [description]
      */
-    public function getInfoByIdsFromYouTube($params=array(),$type='videos') {
+    public function getVideoByIdsFromYouTube($params=array()) {
       $this->writeLog("Получим видео".print_r($params, true),'','ERROR');
       if ( empty($params['id']) && empty($params['ids']) ) return false;
 
       // $params=array_merge(array1)
 
-      switch ($type) {
-        case 'videos':
-          $part='id,snippet,contentDetails,status,statistics,recordingDetails';
-          break;
-        case 'playlists':
-          $part='id,snippet';
-          break;
-        default:
-          $part='id,snippet';
-          break;
-      }
-
       $params = array_merge(array(
-          'part'=>$part,
+          'part'=>'id,snippet,contentDetails,status,statistics,recordingDetails',
           'key'=>$this->config['import']['apiKey'],
           'order'=>'date', // по-умолчанию сортируется по relevance - релевантность видео по запросу, https://developers.google.com/youtube/v3/docs/search/list
           'id'=>array(),
@@ -809,9 +740,7 @@ class awesomeVideos {
       // print_r ($params);
 
       // строим запрос
-      $query="https://www.googleapis.com/youtube/v3/{$type}?".urldecode(http_build_query($params));
-
-      // echo $query;
+      $query="https://www.googleapis.com/youtube/v3/videos?".urldecode(http_build_query($params));
 
       $json = file_get_contents($query);
       // $this->modx->log(modX::LOG_LEVEL_INFO,"<pre>".print_r($http_response_header, true)."</pre>");
@@ -836,7 +765,6 @@ class awesomeVideos {
         if (empty($params)) return false;
         $breakInsert=false;
 
-        $this->writeLog('Параметры ДО: <p style="font-size:9px;">'.print_r($params, true).'</p>');
         $params = array_merge(array(
             'baseUrl'=>"https://www.googleapis.com/youtube/v3/",
             'mainPart'=>'search',
@@ -856,7 +784,6 @@ class awesomeVideos {
         // строим запрос
         $query=$baseUrl."?".urldecode(http_build_query($params));
 
-        $this->writeLog('TEST: '.date('h:i:s'));
         $this->writeLog('Параметры запроса: <p style="font-size:9px;">'.print_r($params, true).'</p>');
         $this->writeLog('Запрос на youtube: '.$query);
 
@@ -895,12 +822,10 @@ class awesomeVideos {
                     break;
                 // case 'youtube#playlistItem':
                 case 'playlists':
-                    // if ($params['channelId']){
-                      $curVideoId=$value['id'];
-                      $curSourceType="p";
+                    if ($params['channelId']){
                       // если получили список плейлистов для канала
                       // $this->createYoutubeQuery($newParams,$defSourceType,$prevMainAttr);
-                    // }
+                    }
                     break;
                 case 'playlistItems':
                     // echo ("77777777\n\r");
@@ -939,14 +864,6 @@ class awesomeVideos {
                         $this->writeLog("Получили канал2 ~{$value[id]}~ ???: ~{$newParams['forUsername']}~");
                         $curSourceType="c";
                     }
-
-                    if ($this->importType == 'Playlist'){
-                      $prevMainAttr['channel']=$value['snippet']['title'];
-                      $newParams['mainPart']='playlists';
-                      // $curVideoId=$value['id'];
-                      // $curSourceType="p";
-                    }
-
                     $this->writeLog('<b>Сформировали запроса на получение списка видео канала</b>');
                     $this->createYoutubeQuery($newParams,$defSourceType,$prevMainAttr);
                     continue 2;
@@ -962,17 +879,10 @@ class awesomeVideos {
 
             // $this->writeLog('<b>Тип источника</b>: '.$curSourceType);
             // if ($curSourceType!=="v"){
-                // if (in_array($curVideoId,$this->itemsList) || array_key_exists($curVideoId,$this->importList)) continue;
+                // if (in_array($curVideoId,$this->vidList) || array_key_exists($curVideoId,$this->importList)) continue;
+                if (in_array($curVideoId,$this->vidList)) continue;
 
-                if ($this->synchronize){
-                  // идет процесс синхронизации, нам не нужны только ID видеороликов
-                  $this->importList[ $dependenceId ][] = $curVideoId;
-                  continue;
-                }
-                elseif (in_array($curVideoId,$this->itemsList)) continue;
-
-
-                $this->writeLog("Получаем картинку для документа ~{$curVideoId}~ <i>{$value[snippet][title]}</i>");
+                $this->writeLog("Получаем картинку для видео ~{$curVideoId}~ <i>{$value[snippet][title]}</i>");
                 $thumbs=array_values($value['snippet']['thumbnails']);
                 $this->writeLog('Имеющиеся thumbnails: <p style="font-size:9px;">'.print_r($thumbs, true)."</p>" );
 
@@ -1015,14 +925,7 @@ class awesomeVideos {
                       'recordingDetails'=>$value['recordingDetails']
                   ));
                 }else{
-                  if ($mainPart=="playlists") {
-                    $value['snippet']['channel'] = $value['snippet']['channelTitle'];
-                    $value['snippet']['channelTitle'] = ''; // тут надо получать данных из канала - о том какое имя пользователя
-                  }
-
-                  $this->importList[ $curVideoId ]=array_merge($prevMainAttr,$value['snippet'],array(
-                      'created'=>strtotime($value['snippet']['publishedAt'])
-                  ));
+                  $this->importList[ $curVideoId ]=array_merge($prevMainAttr,$value['snippet']);
                 }
 
                 $count++;
@@ -1047,37 +950,34 @@ class awesomeVideos {
         return true;
     }
 
-    protected function create_video_list($criteria = array()) {
-
-        $fieldName = ($this->importType == 'Playlist') ? 'playlistId' : 'videoId';
-
-        $c = $this->modx->newQuery($this->classKey,$criteria);
-        $c->setClassAlias($this->classKey);
+    protected function create_video_list() {
+        $c = $this->modx->newQuery('awesomeVideosItem');
+        $c->setClassAlias('awesomeVideosItem');
         $c->select(array(
-            // $this->modx->getSelectColumns($this->classKey, $c->getAlias(), '')
-            $this->modx->getSelectColumns($this->classKey, $c->getAlias(), '', array('id', $fieldName))
-            // 'id', $fieldName
+            // $this->modx->getSelectColumns('awesomeVideosItem', $c->getAlias(), '')
+            $this->modx->getSelectColumns('awesomeVideosItem', $c->getAlias(), '', array('id', 'videoId'))
+            // 'id', 'videoId'
             // ,'topic_val' => $modx->getSelectColumns('modResource', 'topic', '', array('pagetitle'))
         ));
-        // $c->where(array('source' => 'youtube'));
+        $c->where(array('source' => 'youtube'));
         // $c->where(array('deleted' => '1'));
 
         // $c->prepare();
         // $this->modx->log(modX::LOG_LEVEL_INFO,$c->toSQL());
 
-        $count = $this->modx->getCount($this->classKey,$c);
+        $count = $this->modx->getCount('awesomeVideosItem',$c);
 
         $this->writeLog("На текущий момент в базе: {$count} записей",'','WARN');
 
         if ($count){
-            // $videos = $this->modx->getCollection($this->classKey, $c);
-            $videos = $this->modx->getIterator($this->classKey, $c);  // быстрее чем getcollection, жрет меньше памяти и нельзя в нем использовать другие связи типа getmany
+            // $videos = $this->modx->getCollection('awesomeVideosItem', $c);
+            $videos = $this->modx->getIterator('awesomeVideosItem', $c);  // быстрее чем getcollection, жрет меньше памяти и нельзя в нем использовать другие связи типа getmany
             foreach ($videos as $video) {
                 // $video = $video->toArray();
-                $this->itemsList[$video->id]=$video->$fieldName;
+                $this->vidList[$video->id]=$video->videoId;
                 // $this->modx->log(modX::LOG_LEVEL_INFO,"запись:".print_r($video,true));
             }
-            $this->itemsList = array_unique($this->itemsList);
+            $this->vidList = array_unique($this->vidList);
         }
         return true;
     }
@@ -1088,19 +988,12 @@ class awesomeVideos {
      * @return [type]             [description]
      */
     protected function parse_sources($properties = array()) {
-        $sources = $this->modx->getOption('awesomeVideos.video.source_detail',null,false);
+        // $sources = $this->modx->getOption('awesomeVideos.video.source_detail',null,false);
         $this->writeLog('Запускаю парсер источника: '.$sources);
-
-        // $sources = '[{"c":"UCAFY-PK5UIckMd065VEdsYg"},{"p":"PLIclYYqEg9iOKDeaEcfs7UomiN3FHJEHI"},{"c":"UCADP9yUrK4kVoeIHbZlty2Q"},{"u":"paxpaxru"}]';  // много видео больше 200-ста
-        // $sources = '[{"p":"PLIclYYqEg9iOKDeaEcfs7UomiN3FHJEHI"},{"c":"UCADP9yUrK4kVoeIHbZlty2Q"},{"u":"paxpaxru"}]';  // много видео больше 200-ста
-
-        // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"}]';  // makarmagoon, тут нет плейлистов
+        // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"}]';  // makarmagoon
         // $sources = '[{"u":"sportrt"}]';
-        // $sources = '[{"p":"PLRmjK6gsZMUv0QRpMF71EYp64iIUymghM"}]';  // большой плейлист
-        // $sources = '[{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"}]';  // sport  - спортивная афиша
         // $sources = '[{"u":"MrSetest"}]';
-        // $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';  // канал backbone с несколькими видео и плейлистами
-        // $sources = '[{"u":"sportrt"},{"c":"UCtsDl3hsddpyDzHSdrU2OOg"},{"p":"PLRmjK6gsZMUv0QRpMF71EYp64iIUymghM"}]';
+        $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';  // канал с несколькими видео
         // $sources = '[{"c":"UCsjEcIIR9nVFI1RYE9rawfg"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"}]';
         // $sources = '[{"c":"UCtsDl3hsddpyDzHSdrU2OOg"},{"c":"UCtsDl3hsddpyDzHSdrU2OOg2222fd"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"}]';
         // $sources = '[{"c":"UCfQfRkl4w4vwtb9C2ndx1_Q"},{"u":"MrSetest"},{"p":"PLK2K6UAy2uj8iTbSMEAmG2dcoW7vwhkcD"},{"c":"UCtsDl3hsddpyDzHSdrU2OOg"}]';
@@ -1118,7 +1011,7 @@ class awesomeVideos {
             switch (key($value)) {
                 case 'c':
                     // $channelUrl = "https://www.googleapis.com/youtube/v3/playlists?part=id,snippet&channelId=$channel&key=$apiKey";
-                    if ($this->importType == 'Playlist'){
+                    if ($this->importType == 'Playlists'){
                   		$this->writeLog('Получим плейлисты с канала: '.current($value));
                       $params=array(
                           'mainPart'=>'playlists',
@@ -1146,7 +1039,7 @@ class awesomeVideos {
                     break;
                 case 'p':
 
-                    if ($this->importType == 'Playlist'){
+                    if ($this->importType == 'Playlists'){
                       $this->writeLog('Получим данные плейлиста: '.current($value));
                       $params=array(
                           'mainPart'=>'playlists',
