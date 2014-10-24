@@ -609,6 +609,7 @@ Ext.extend(awesomeVideos.grid.Items, MODx.grid.Grid, {
                 register: 'mgr',
                 topic: topic,
                 show_filename: 0,
+                autoScroll: true,
                 listeners: {
                     'shutdown': {
                         fn: function() {

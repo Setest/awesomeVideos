@@ -1,0 +1,473 @@
+[{
+    "name": "ajax",
+    "desc": "awesomeVideos_prop_ajax",
+    "xtype": "combo-boolean",
+    "options": [],
+    "value": true,
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Использовать AJAX",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "idx",
+    "desc": "awesomeVideos_prop_idx",
+    "xtype": "numberfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Список ID ресурсов через запятую, которые обязательны для вывода, если добавить знак \"-\" перед ресурсом,\nто он будет исключен из выборки.",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "limit",
+    "desc": "awesomeVideos_prop_limit",
+    "xtype": "numberfield",
+    "options": [],
+    "value": "10",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Максимальное кол-во элементов на странице",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "offset",
+    "desc": "awesomeVideos_prop_offset",
+    "xtype": "numberfield",
+    "options": [],
+    "value": "0",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Первый элемент (0 = first)",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "pagination",
+    "desc": "awesomeVideos_prop_pagination",
+    "xtype": "list",
+    "options": [{
+        "text": "Сниппет",
+        "value": "snippet",
+        "name": "Сниппет"
+    }, {
+        "text": "scroll",
+        "value": "scroll",
+        "name": "scroll"
+    }, {
+        "text": "button",
+        "value": "button",
+        "name": "button"
+    }, {
+        "text": "carousel ???",
+        "value": "carousel",
+        "name": "carousel ???"
+    }],
+    "value": "button",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Способ пагинации по-умолчанию. Вы можете выбрать свой сниппет, который будет работать в соответствии\nс правилами пагинации описаной в RTFM.",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "paginationSnippet",
+    "desc": "awesomeVideos_prop_paginationSnippet",
+    "xtype": "textfield",
+    "options": [],
+    "value": "getPage",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Снипет выполняющий пагинацию.",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "part",
+    "desc": "awesomeVideos_prop_part",
+    "xtype": "list",
+    "options": [{
+        "value": "video",
+        "text": "video",
+        "name": "video"
+    }, {
+        "value": "playlist",
+        "text": "playlist",
+        "name": "playlist"
+    }],
+    "value": "video",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Тип данных получаемых по-умолчанию.",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "totalVar",
+    "desc": "awesomeVideos_prop_totalVar",
+    "xtype": "textfield",
+    "options": [],
+    "value": "total",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "TotalVar имя для getPage",
+    "area": "",
+    "area_trans": "",
+    "menu": null
+}, {
+    "name": "includeTVs",
+    "desc": "awesomeVideos_prop_includeTVs",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Список ТВ параметров для выборки, через запятую. Например: \"action,time\" дадут плейсхолдеры [[+action]] и [[+time]].",
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}, {
+    "name": "prepareTVs",
+    "desc": "awesomeVideos_prop_prepareTVs",
+    "xtype": "textfield",
+    "options": [],
+    "value": "1",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Список ТВ параметров, которые нужно подготовить перед выводом. По умолчанию, установлено в \"1\", что означает подготовку всех ТВ, указанных в \"&includeTVs=``\"",
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}, {
+    "name": "processTVs",
+    "desc": "awesomeVideos_prop_processTVs",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Список ТВ параметров, которые нужно обработать перед выводом. Если установить в \"1\" - будут обработаны все ТВ, указанные в \"&includeTVs=``\". По умолчанию параметр пуст.",
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}, {
+    "name": "tvFilters",
+    "desc": "awesomeVideos_prop_tvFilters",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Список фильтрова по ТВ, с разделителями AND и OR. Разделитель, указанный в параметре \"&tvFiltersOrDelimiter\" представляет логическое условие OR и по нему условия группируются в первую очередь.  Внутри каждой группы вы можете задать список значений, разделив их \"&tvFiltersAndDelimiter\". Поиск значений может проводиться в каком-то конкретном ТВ, если он указан (\"myTV==value\"), или в любом (\"value\"). Пример вызова: \"&tvFilters=`filter2==one,filter1==bar%||filter1==foo`\". <br />Обратите внимание: фильтрация использует оператор LIKE и знак \"%\" является метасимволом. <br />И еще: Поиск идёт по значениям, которые физически находятся в БД, то есть, сюда не подставляются значения по умолчанию из настроек ТВ.",
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}, {
+    "name": "tvFiltersAndDelimiter",
+    "desc": "awesomeVideos_prop_tvFiltersAndDelimiter",
+    "xtype": "textfield",
+    "options": [],
+    "value": ",",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Разделитель для условий AND в параметре \"&tvFilters\". По умолчанию: \",\".",
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}, {
+    "name": "tvFiltersOrDelimiter",
+    "desc": "awesomeVideos_prop_tvFiltersOrDelimiter",
+    "xtype": "textfield",
+    "options": [],
+    "value": "||",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Разделитель для условий OR в параметре \"&tvFilters\". По умолчанию: \"||\".",
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}, {
+    "name": "tvPrefix",
+    "desc": "awesomeVideos_prop_tvPrefix",
+    "xtype": "textfield",
+    "options": [],
+    "value": "tv.",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Префикс для ТВ параметров.",
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}, {
+    "name": "tpl",
+    "desc": "awesomeVideos_prop_tpl",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Имя чанка для оформления ресурса. Если не указан, то содержимое полей ресурса будет распечатано на экран.",
+    "area": "Template",
+    "area_trans": "Template",
+    "menu": null
+}, {
+    "name": "tplFirst",
+    "desc": "awesomeVideos_prop_tplFirst",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Имя чанка для первого ресурса в результатах.",
+    "area": "Template",
+    "area_trans": "Template",
+    "menu": null
+}, {
+    "name": "tplLast",
+    "desc": "awesomeVideos_prop_tplLast",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Имя чанка для последнего ресурса в результатах.",
+    "area": "Template",
+    "area_trans": "Template",
+    "menu": null
+}, {
+    "name": "tplOdd",
+    "desc": "awesomeVideos_prop_tplOdd",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Имя чанка для каждого второго ресурса.",
+    "area": "Template",
+    "area_trans": "Template",
+    "menu": null
+}, {
+    "name": "tplPagingButton",
+    "desc": "awesomeVideos_prop_tplPagingButton",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Имя чанки кнопки выполняющую для получения ресурсов",
+    "area": "Template",
+    "area_trans": "Template",
+    "menu": null
+}, {
+    "name": "tplPagingSnippet",
+    "desc": "awesomeVideos_prop_tplPagingSnippet",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Чанк-обертка раздела постраничной навигации",
+    "area": "Template",
+    "area_trans": "Template",
+    "menu": null
+}, {
+    "name": "tplWrapper",
+    "desc": "awesomeVideos_prop_tplWrapper",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Чанк-обёртка, для заворачивания всех результатов. Понимает один плейсхолдер: [[+output]]. Не работает вместе с параметром \"toSeparatePlaceholders\".",
+    "area": "Template",
+    "area_trans": "Template",
+    "menu": null
+}, {
+    "name": "outputSeparator",
+    "desc": "awesomeVideos_prop_outputSeparator",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Необязательная строка для разделения результатов работы.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "scheme",
+    "desc": "awesomeVideos_prop_scheme",
+    "xtype": "list",
+    "options": [{
+        "text": "-1 (relative to site_url)",
+        "value": -1,
+        "name": "-1 (relative to site_url)"
+    }, {
+        "text": "full (absolute, prepended with site_url)",
+        "value": "full",
+        "name": "full (absolute, prepended with site_url)"
+    }, {
+        "text": "abs (absolute, prepended with base_url)",
+        "value": "abs",
+        "name": "abs (absolute, prepended with base_url)"
+    }, {
+        "text": "http (absolute, forced to http scheme)",
+        "value": "http",
+        "name": "http (absolute, forced to http scheme)"
+    }, {
+        "text": "https (absolute, forced to https scheme)",
+        "value": "https",
+        "name": "https (absolute, forced to https scheme)"
+    }],
+    "value": "-1",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Схема формирования url, передаётся в modX::makeUrl().",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "select",
+    "desc": "awesomeVideos_prop_select",
+    "xtype": "textarea",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Список полей для выборки, через запятую. Можно указывать JSON строку с массивом, например {\"modResource\":\"id,pagetitle,content\"}.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "showLog",
+    "desc": "awesomeVideos_prop_showLog",
+    "xtype": "combo-boolean",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Показывать дополнительную информацию о работе сниппета. Только для авторизованных в контекте \"mgr\".",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "showSpecial",
+    "desc": "awesomeVideos_prop_showSpecial",
+    "xtype": "combo-boolean",
+    "options": [],
+    "value": true,
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "showUnactive",
+    "desc": "awesomeVideos_prop_showUnactive",
+    "xtype": "combo-boolean",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Показывать неопубликованные ресурсы.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "sortby",
+    "desc": "awesomeVideos_prop_sortby",
+    "xtype": "textfield",
+    "options": [],
+    "value": "publishedon",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Любое поле ресурса для сортировки, включая ТВ параметр, если он указан в параметре \"includeTVs\". Можно указывать JSON строку с массивом нескольких полей. Для случайно сортировки укажите \"RAND()\"",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "sortdir",
+    "desc": "awesomeVideos_prop_sortdir",
+    "xtype": "list",
+    "options": [{
+        "text": "ASC",
+        "value": "ASC",
+        "name": "ASC"
+    }, {
+        "text": "DESC",
+        "value": "DESC",
+        "name": "DESC"
+    }],
+    "value": "DESC",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Направление сортировки: по убыванию или возрастанию.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "toPlaceholder",
+    "desc": "awesomeVideos_prop_toPlaceholder",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Если не пусто, сниппет сохранит все данные в плейсхолдер с этим именем, вместо вывода не экран.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "toSeparatePlaceholders",
+    "desc": "awesomeVideos_prop_toSeparatePlaceholders",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Если вы укажете слово в этом параметре, то ВСЕ результаты будут выставлены в разные плейсхолдеры, начинающиеся с этого слова и заканчивающиеся порядковым номером строки, от нуля. Например, указав в параметре \"myPl\", вы получите плейсхолдеры [[+myPl0]], [[+myPl1]] и т.д.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "where",
+    "desc": "awesomeVideos_prop_where",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Массив дополнительных параметров выборки, закодированный в JSON.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}, {
+    "name": "wrapIfEmpty",
+    "desc": "awesomeVideos_prop_wrapIfEmpty",
+    "xtype": "list",
+    "options": [{
+        "text": "false",
+        "value": "0",
+        "name": "false"
+    }, {
+        "text": "true",
+        "value": "1",
+        "name": "true"
+    }, {
+        "text": "tplWrapperEmpty",
+        "value": "\"-1\"",
+        "name": "tplWrapperEmpty"
+    }],
+    "value": "0",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "desc_trans": "Включает вывод чанка-обертки (tplWrapper) даже если результатов нет.",
+    "area": "Unused",
+    "area_trans": "Unused",
+    "menu": null
+}]

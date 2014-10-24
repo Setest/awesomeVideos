@@ -8,7 +8,14 @@
 /**
  * The base class for awesomeVideos.
  */
-class awesomeVideos {
+
+require_once 'awesomevideoshelper.class.php';
+
+// class awesomeVideosItemsGetTopicOnlyProcessor extends awesomeVideosItemsGetTopicProcessor {
+
+// }
+
+class awesomeVideos extends awesomeVideosHelper {
 	/* @var modX $modx */
 	public $modx;
   protected $itemsList = array();
@@ -22,7 +29,6 @@ class awesomeVideos {
   /** @var array все настройки класса */
   // protected $config = array();
   // protected $_settings = array();
-  // private $_logContent = '';	// хранит весь лог который потом передастся через плейсхолдер
 
   /**
    * @param modX &$modx A reference to the modX object
@@ -84,7 +90,7 @@ class awesomeVideos {
 					// : false,
 				// 'log_target' => $this->modx->getOption('awesomeVideos.main.log_target', null, 'ECHO'),	// FILE, HTML, ECHO
 				'log_target' => !is_null($this->modx->getOption('log_target', $config, null))
-					? $this->modx->getOption('log_target', $config['log'])
+					? $this->modx->getOption('log_target', $config['log_target'])
 					: $this->modx->getOption('log_target', null, 'ECHO'),	// FILE, HTML, ECHO
         'log_level'=>$this->_getModxConst($this->modx->getOption('log_level', $config, 'LOG_LEVEL_INFO')),  // INFO, WARN, ERROR, FATAL, DEBUG
         // 'log_level'=>$this->_getModxConst(3), // INFO, WARN, ERROR, FATAL, DEBUG
@@ -127,10 +133,12 @@ class awesomeVideos {
       $this->modx->setLogLevel( $this->_getModxConst($this->config['log']['log_level']) );
       // $this->modx->log(modX::LOG_LEVEL_ERROR,'ПОСЛЕ: '.$this->modx->getLogLevel());
 
-      $date = date('Y-m-d__H-i-s');  // использовать в выводе даты : - нельзя, иначе не создается лог в файл
-      $logFileName="{$this->config['log']['log_filename']}_$date.log";
+
+      // var_dump($this->config['log']['log_target']);
 
       if ($this->config['log']['log_target']){
+        $date = date('Y-m-d__H-i-s');  // использовать в выводе даты : - нельзя, иначе не создается лог в файл
+        $logFileName="{$this->config['log']['log_filename']}_$date.log";
         $this->modx->setLogTarget(array(
            'target' => $this->config['log']['log_target'],
            'options' => array('filename' => $logFileName )
@@ -170,55 +178,7 @@ class awesomeVideos {
     $this->modx->lexicon->load('awesomevideos:default');
   }
 
-  /**
-   * Возвращает значение константы класса modX
-   * @param  [string] $const имя константы
-   * @return [mixed]  значение константы
-   */
-  private function _getModxConst($const){
-    // $this->modx->log(modX::LOG_LEVEL_INFO,'CONST: '.$const);
-    // $res=(is_numeric($const))? $const : constant('modX::'.strtoupper($const));
-    // $this->modx->log(modX::LOG_LEVEL_INFO,'CONST RESULT: '.$res);
-    return (is_numeric($const))? $const : constant('modX::'.strtoupper($const));
-  }
 
-	/**
-	 * Записывает лог, в случае если тот установлен в конфиге
-	 * @param  [string, array] $message  сообщения для лога
-	 * @param  [string] $def      уровень различия, можно послать любое значение, оно отразиться в строке лога как префикс
-	 * @param  [string] $logLevel уровень сообщения, установлен по-умолчанию в конфиге, но можно послать: INFO, WARN, ERROR, FATAL, DEBUG
-	 * @return [bool]   в зависимости от совершения записи в лог
-	 */
-	public function writeLog( $message, $def='', $logLevel = null ){
-		// $this->modx->log(modX::LOG_LEVEL_WARN,"XXX: ".print_r($this->config['log'],true ));
-		if (!$this->config['log']['status']){return false;}
-
-		if (!isset($logLevel)){
-			$logLevel = $this->config['log']['log_level'];
-		}else if (is_string($logLevel)) {
-			$logLevel=$this->_getModxConst("LOG_LEVEL_".$logLevel);
-		}
-
-		if (is_array($message)) $message=print_r($message,true);
-
-		if ($this->config['log']['log_target']=='ECHO') $message="<pre>$message</pre>";
-
-		// перезапишем данные в плейсхолдере
-		// strftime('%Y-%m-%d %H:%M:%S')
-		$time= sprintf( "%2.4f s", $this->modx->getMicroTime() );
-		$this->_logContent.="#{$time}# ".$message;
-
-		if ($this->config['log']['log_placeholder']){
-			$this->modx->setPlaceholder($this->config['log']['log_placeholder'],$this->_logContent);
-		}else{
-			flush();	// иначе в циклах херня происходит
-      usleep(1000); //
-      $this->modx->log($logLevel, '<pre>'.$message.'</pre>', '', $def);
-      // $this->modx->log(1, '<pre>'.$message.'</pre>', '', $def);
-      // $this->modx->log(modX::LOG_LEVEL_WARN,'Class is not already loaded');
-		}
-		return false;
-	}
 
   /**
    * Initializes the class into the proper context
@@ -243,11 +203,13 @@ class awesomeVideos {
           break;
           default:
           	// подгружаем все для клиента
-						/*$this->config = array_merge($this->config, $scriptProperties);
-						$this->config['ctx'] = $ctx;
-						//$initializing = !empty($this->modx->loadedjscripts[$this->config['jsUrl'] . 'web/config.js']);
+            // проверяем было ли загружено ранее, т.к. делать это можно только один раз
+            // и не из ajax запроса.
 
-						if (!defined('MODX_API_MODE') || !MODX_API_MODE) {
+            if (!defined('MODX_API_MODE') || !MODX_API_MODE) {
+              // $initializing = !empty($this->modx->loadedjscripts[$this->config['jsUrl'] . 'web/default.js']);
+  						$this->modx->regClientStartupScript($this->config['jsUrl'] . 'web/default.js');
+              // $this->config = array_merge($this->config, $scriptProperties);
 
 					    // if ($css = $this->modx->getOption('awesomeVideos.video.frontend_css')) {
 					    //     $this->modx->regClientCSS($this->config['cssUrl'].$css);
@@ -266,7 +228,7 @@ class awesomeVideos {
 					    //     }
 					    // }
 
-							$config = $this->makePlaceholders($this->config);
+							/*$config = $this->makePlaceholders($this->config);
 							if ($css = trim($this->modx->getOption('mse2_frontend_css'))) {
 								$this->modx->regClientCSS(str_replace($config['pl'], $config['vl'], $css));
 							}
@@ -279,8 +241,8 @@ class awesomeVideos {
 								</script>
 								'), true);
 								$this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
-							}
-						}*/
+							}*/
+						}
           break;
       }
       return true;
