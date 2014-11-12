@@ -417,17 +417,24 @@ abstract class awesomeVideosHelper{
         unset($config['log_filename']);
       }
 
+      // $defTarget = $this->modx->getLogTarget();
+      $defTarget = ( !is_object($this->config['log']['log_target']) ) ? 'FILE' : $this->config['log']['log_target'] ;
+
+
       $this->logOld=array(
         'log_target' => $this->modx->setLogTarget(array(
-          'target' => $this->config['log']['log_target'],
+          // 'target' => $this->config['log']['log_target'],
+          'target' => $defTarget,
           'options' => $defOptions
         )),
         'log_level' => $this->modx->setLogLevel( $this->_getModxConst($config['log_level']) )
       );
+      // $curTarget=&$this->modx->getLogTarget();
 
-      $curTarget=&$this->modx->getLogTarget();
+   // echo ($curTarget."<br/>");
 
-      if ($curTarget['target']=='HTML' && $config['isstyled']){
+      // if ($curTarget['target']=='HTML' && $config['isstyled']){
+      if ($config['log_target']=='HTML' && $config['isstyled']){
         // $this->modx->regClientCSS('assets/css/123.css');
         $this->modx->regClientCSS("
           <style>
@@ -514,8 +521,12 @@ abstract class awesomeVideosHelper{
     if (!$this->config['log']['status']){return false;}
 
     if (is_array($message)) $message=print_r($message,true);
-    $curTarget=&$this->modx->getLogTarget();
+    // $curTarget=&$this->modx->getLogTarget();
+    // $curTarget = [];
+    $curTarget['target']=$this->config['log']['log_target'];
     $clearMessage = $message;
+
+    // print_r ($this->config['log']);
 
     // strftime('%Y-%m-%d %H:%M:%S')
     // $microtime=$this->modx->getMicroTime();
@@ -553,7 +564,8 @@ abstract class awesomeVideosHelper{
 
 
     // if ($curTarget['target']=='HTML' && $this->$config['log']['isstyled']){
-    if ($this->config['log']['isstyled']){
+    if ($this->config['log']['isstyled'] && $curTarget['target']!=='ECHO'){
+      // echo 111;
       $message = '<div class="wrap_log_'.strtolower($logLevelStr).'"><h5>[' . strftime('%Y-%m-%d %H:%M:%S') . '] (' . $logLevelStr .' '. $logDef . ')</h5><pre>' . $message . '</pre></div>' . "\n";
       $this->_logContent[]=$message;
     }else{
@@ -564,11 +576,11 @@ abstract class awesomeVideosHelper{
     if ($this->config['log']['log_placeholder']){
       // echo $this->config['log']['log_placeholder'];
       $this->modx->setPlaceholder($this->config['log']['log_placeholder'], implode($delim, $this->_logContent));
-    }else if($curTarget['target']=='HTML'){
-      // echo $message;
-      // $this->modx->log($logLevel, $message, '', $def);
-    }else{
+    // }else if($curTarget['target']=='HTML'){
+    }else if( is_object($curTarget['target']) ){
       $this->modx->log($logLevel, $message, '', $def);
+    }else{
+      echo $message;
     }
 
     return false;

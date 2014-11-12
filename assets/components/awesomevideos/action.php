@@ -85,7 +85,7 @@ switch ($action) {
 	  // $result = ($result = $f(array_merge($snippetProperties, $config) )) ? $result : array();
 	  $result = ($result = $f($config)) ? $result : array();
 	  $log = $modx->getPlaceholder($config['log']['log_placeholder']);
-	  print_r($result);die();
+	  // print_r($result);die();
 		$response = array_merge(array(
 			'success' => true,
 			'log' => $log,
