@@ -86,9 +86,9 @@ class awesomeVideos extends awesomeVideosHelper {
 
       'log' => array(
       	'log_filename'=>'awesomeVideos',
-        'status'=>$this->modx->getOption('awesomeVideos.main.log', null, true),
+        'log_status'=>$this->modx->getOption('awesomeVideos.main.log', null, true),
 
-        // 'status'=>$this->modx->getOption('log_status', $config, true),
+        // 'log_status'=>$this->modx->getOption('log_status', $config, true),
         // 'isstyled'=>$this->modx->getOption('log_isstyled', $config, true),
 
       	'log_placeholder'=>$this->modx->getOption('log_placeholder', null, false), //getImgLog

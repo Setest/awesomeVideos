@@ -85,6 +85,18 @@ $_lang['awesomeVideos_prop_pageNextTpl'] = 'Чанк оформления ссы
 $_lang['awesomeVideos_prop_pagePrevTpl'] = 'Чанк оформления ссылки на предыдущую страницу.';
 
 
+/////////
+// LOG //
+/////////
+
+$_lang['awesomeVideos_prop_log_status'] = 'Включить лог?';
+$_lang['awesomeVideos_prop_log_isstyled'] = 'Разукрашиваем данные в логе? (только при target == HTML)';
+$_lang['awesomeVideos_prop_log_detail'] = 'Детализировать лог? (выводит много инфы, если таймаут выполнения скрипта маленький может выдать 500-ю ошибку)';
+$_lang['awesomeVideos_prop_log_target'] = 'Тип вывода данных, при FILE ищите файл лога в кеше.';
+$_lang['awesomeVideos_prop_log_level'] = 'Уровень вывода данных';
+$_lang['awesomeVideos_prop_log_placeholder'] = 'Имя плейсхолдера в который будет попадать лог, если имя указано данные всегда попадают ТОЛЬКО в плейсхолдер';
+
+
 $_lang['awesomeVideos_prop_outputSeparator'] = 'Необязательная строка для разделения результатов работы.';
 $_lang['awesomeVideos_prop_scheme'] = 'Схема формирования url, передаётся в modX::makeUrl().';
 $_lang['awesomeVideos_prop_showLog'] = 'Показывать дополнительную информацию о работе сниппета. Только для авторизованных в контекте "mgr".';

@@ -382,21 +382,30 @@ abstract class awesomeVideosHelper{
     // print_r($config);
     // echo 7777;
 
+    // $config1=array(
+    //   'log_isstyled'=>777,
+    // );
+
     $config=array_merge(array(
       'log_filename'=>$this->classKey ? $this->classKey : 'log',
-      'status'=>false,
-      'isstyled'=>true,
+      'log_status'=>false,
+      'log_isstyled'=>true,
       'log_placeholder'=>false,
       'log_detail'=>false,
       'log_target' => $this->modx->getOption('log_target', null, 'ECHO'),
       'log_level'=> $this->modx->getOption('log_level', null, 1)
     ),$config);
 
+    $config['log_target'] = ( $config['log_target'] == 'SYSTEM' || $config['log_target'] == 'AUTO' )
+      ? $this->modx->getOption('log_target', null, 'ECHO')
+      : $config['log_target']
+    ;
+
     // $config['log_level_val'] = $this->_getModxConst($config['log_level']);  // проверочное значение, для меня.
     $config['log_level'] = $this->_getModxConst($config['log_level']);  // проверочное значение, для меня.
  // is_object( log_target ) modFileRegister
 
-    if ($config['status']==true){
+    if ($config['log_status']==true){
       $this->modx->message = null;
 
 
@@ -433,8 +442,8 @@ abstract class awesomeVideosHelper{
 
    // echo ($curTarget."<br/>");
 
-      // if ($curTarget['target']=='HTML' && $config['isstyled']){
-      if ($config['log_target']=='HTML' && $config['isstyled']){
+      // if ($curTarget['target']=='HTML' && $config['log_isstyled']){
+      if ( ($config['log_target']=='HTML' || $config['log_target']=='PLACEHOLDER') && $config['log_isstyled']){
         // $this->modx->regClientCSS('assets/css/123.css');
         $this->modx->regClientCSS("
           <style>
@@ -518,7 +527,7 @@ abstract class awesomeVideosHelper{
    */
   public function writeLog( $message, $def='', $logLevel = 'INFO' ){
     // $this->modx->log(modX::LOG_LEVEL_WARN,"XXX: ".print_r($this->config['log'],true ));
-    if (!$this->config['log']['status']){return false;}
+    if (!$this->config['log']['log_status']){return false;}
 
     if (is_array($message)) $message=print_r($message,true);
     // $curTarget=&$this->modx->getLogTarget();
@@ -533,13 +542,14 @@ abstract class awesomeVideosHelper{
     // $time= sprintf( "%2.4f s", $this->modx->getMicroTime() );
     $time = date("Y-m-d H:i:s");
     $logDef = ($def)?"# $def # ":'';
-    $delim = ($this->config['log']['isstyled']) ? "\r\n" : '<br/>';
+    $delim = ($this->config['log']['log_isstyled']) ? "\r\n" : '<br/>';
 
     // $logLevel = (!isset($logLevel)) ? $this->config['log']['log_level'] : $logLevel;
     $logLevel=$this->_getModxConst($logLevel);
     $logLevelStr=$this->_getLogLevel($logLevel);
 
-    if ($curTarget['target']=='ECHO' || is_object($curTarget['target'])) $message="<pre>$message</pre>";
+    // if ($curTarget['target']=='ECHO' || is_object($curTarget['target'])) $message="<pre>$message</pre>";
+    if ($curTarget['target']=='HTML' || is_object($curTarget['target'])) $message="<pre>$message</pre>";
 
     if ($curTarget['target']=='HTML'){
       // $status=array(
@@ -563,8 +573,8 @@ abstract class awesomeVideosHelper{
     }
 
 
-    // if ($curTarget['target']=='HTML' && $this->$config['log']['isstyled']){
-    if ($this->config['log']['isstyled'] && $curTarget['target']!=='ECHO'){
+    // if ($curTarget['target']=='HTML' && $this->$config['log']['log_isstyled']){
+    if ($this->config['log']['log_isstyled'] && $curTarget['target']!=='ECHO'){
       // echo 111;
       $message = '<div class="wrap_log_'.strtolower($logLevelStr).'"><h5>[' . strftime('%Y-%m-%d %H:%M:%S') . '] (' . $logLevelStr .' '. $logDef . ')</h5><pre>' . $message . '</pre></div>' . "\n";
       $this->_logContent[]=$message;
@@ -573,7 +583,7 @@ abstract class awesomeVideosHelper{
       $this->_logContent[]="{$logLevelStr} [{$time}] $logDef $clearMessage";
     }
 
-    if ($this->config['log']['log_placeholder']){
+    if ( $this->config['log']['log_placeholder'] && $curTarget['target']=='PLACEHOLDER' ){
       // echo $this->config['log']['log_placeholder'];
       $this->modx->setPlaceholder($this->config['log']['log_placeholder'], implode($delim, $this->_logContent));
     // }else if($curTarget['target']=='HTML'){

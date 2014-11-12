@@ -22,17 +22,19 @@ else {
 
 
 // вытащим только те параметры, которые можно передавать.
-$allowed = array('id','ids','part','page', 'log', 'key', 'limit', 'where', 'offset', 'setOfProperties');
+$allowed = array('id','ids','part','page', 'log_status', 'key', 'limit', 'where', 'offset', 'setOfProperties');
 $config = array_intersect_key($_REQUEST, array_flip($allowed));
 $config = array_merge($config,array(
 	'direct' => true,
-	'log'=>array(
-		'isstyled' => 1,
-		'log_target' => 'HTML',
-		'status' => $config['log']?true:false,
-		'log_placeholder' => $config['log']?'aw_log':false,
-	),
-	'log_placeholder' => $config['log']?'aw_log':false,
+	// 'log'=>array(
+		'log_status' => $config['log_status'] ? true : false,
+		'log_target' => 'PLACEHOLDER',
+		// 'log_isstyled' => 1,
+		// 'log_placeholder' => 'aw_log',
+		// 'log_detail' => false,
+		// 'log_level' => 'INFO',
+	// ),
+	// 'log_placeholder' => $config['log']?'aw_log':false,
 ));
 
 if($snippet = $modx->getObject('modSnippet', array(
@@ -51,7 +53,7 @@ if($snippet = $modx->getObject('modSnippet', array(
 
 $snippetProperties = $snippet->getProperties();
 
-// print_r($config);
+// echo "<pre>";print_r($snippetProperties); die();
 
 /*
 $fqn = $modx->getOption('pdoFetch.class', null, 'pdotools.pdofetch', true);
@@ -84,7 +86,7 @@ switch ($action) {
 
 	  // $result = ($result = $f(array_merge($snippetProperties, $config) )) ? $result : array();
 	  $result = ($result = $f($config)) ? $result : array();
-	  $log = $modx->getPlaceholder($config['log']['log_placeholder']);
+	  $log = $modx->getPlaceholder($snippetProperties['log_placeholder']);
 	  // print_r($result);die();
 		$response = array_merge(array(
 			'success' => true,
@@ -103,7 +105,7 @@ switch ($action) {
 		// $pdoFetch->addTime('Total filter operations: '.$mSearch2->filter_operations);
 		$response = array_merge(array(
 			'success' => true,
-			'log' => $modx->getPlaceholder($config['log']['log_placeholder']),
+			'log' => $modx->getPlaceholder($snippetProperties['log_placeholder']),
 		// 	'message' => '',
 		// 	'data' => array(
 		// 		'results' => !empty($results) ? $results : $modx->lexicon('mse2_err_no_results'),

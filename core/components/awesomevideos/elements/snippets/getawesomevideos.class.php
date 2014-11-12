@@ -35,6 +35,8 @@ class getawesomevideos extends awesomeVideosHelper{
 	function __construct(modX &$modx, array $config = array(), $function_name = 'getAwesomeVideos') {
 		$this->modx =& $modx;
 
+
+
 		// получаем имя или id сниппета из которого вызвали текущий класс
 		$this->snippet_name = str_replace('elements_modsnippet_', '', $function_name);
 
@@ -43,12 +45,16 @@ class getawesomevideos extends awesomeVideosHelper{
 		$this->config = array_merge(array(
 			'corePath' => $this->modx->getOption('awesomevideos_core_path', null, $this->modx->getOption('core_path') . 'components/awesomevideos/'),
       'log' => array(
-      	'status'=>$this->modx->getOption('log_status', $config, true),
-      	'isstyled'=>$this->modx->getOption('log_isstyled', $config, true),
-      	'log_placeholder'=>$this->modx->getOption('log_placeholder', $config, false),
-      	'log_detail'=>$this->modx->getOption('log_detail', $config, false),
-        'log_target'=>($config['log_target'])?$config['log_target']:'HTML',  // INFO, WARN, ERROR, FATAL, DEBUG
-        'log_level'=>($config['log_level'])?$config['log_level']:'INFO',  // INFO, WARN, ERROR, FATAL, DEBUG
+      	// 'status'=>$this->modx->getOption('log_status', $config, true),
+      	// 'isstyled'=>$this->modx->getOption('log_isstyled', $config, true),
+      	// 'log_placeholder'=>$this->modx->getOption('log_placeholder', $config, false),
+      	// 'log_detail'=>$this->modx->getOption('log_detail', $config, false),
+      	'log_status'      => $config['log_status']      ? $config['log_status']      : true,
+      	'log_isstyled'    => $config['log_isstyled']    ? $config['log_isstyled']    : true,
+      	'log_placeholder' => $config['log_placeholder'] ? $config['log_placeholder'] : 'aw_log',
+      	'log_detail'      => $config['log_detail']      ? $config['log_detail']      : false,
+      	'log_target'      => $config['log_target']      ? $config['log_target']      : 'HTML',  // HTML, ECHO, FILE, PLACEHOLDER, SYSTEM || AUTO
+      	'log_level'       => $config['log_level']       ? $config['log_level']       : 'INFO',  // INFO, WARN, ERROR, FATAL, DEBUG
       ),
 
       'fastMode'=>isset($config['fastMode'])?!$config['fastMode']:false,
@@ -84,10 +90,9 @@ class getawesomevideos extends awesomeVideosHelper{
 			'tvsSelect' => array(),
 
 		));
-// print_r($this->config);
     $this->logConfig($this->config['log']);
 
-		unset($config['addDataToUrl'],$config['fastMode'],$config['log_status'],$config['log_isstyled'],$config['log_placeholder'],$config['log_detail'],$config['log_target'],$config['log_level']);
+		// unset($config['addDataToUrl'],$config['fastMode'],$config['log_status'],$config['log_isstyled'],$config['log_placeholder'],$config['log_detail'],$config['log_target'],$config['log_level']);
 		// $this->config = array_merge($this->config, $config);
 
 		// unset($config['log_status'],$config['log_isstyled'],$config['log_placeholder'],$config['log_detail'],$config['log_target'],$config['log_level']);
@@ -111,14 +116,15 @@ class getawesomevideos extends awesomeVideosHelper{
 		$snippetStartProperties =  array_diff_key($config,$snippetProperties);
 
 // echo "<pre>";print_r($config);die();
+// array_merge_recursive
 		 $this->config = !$config['direct']
 		 	? array_merge($this->config, $config, $setOfProperties, $snippetStartProperties)
 		  : array_merge($this->config, $snippetProperties, $setOfProperties, $config)
 		;
 
+// echo "<pre>";print_r($setOfProperties);die();
     // $this->config = array_merge( $this->config, $snippetProperties, $setOfProperties, $config );
 
-// echo "<pre>";print_r($this->config);die();
 
 		// if ($config['direct'] && $config['key'] && $tmp=$this->getSessionStore($config['key'], 'config') ) {
 		if ( $config['direct'] ) {
@@ -175,8 +181,14 @@ class getawesomevideos extends awesomeVideosHelper{
 			? (integer) $this->config['offset'] + 1
 			: 1;
 
+		// unset($this->config['addDataToUrl'],$this->config['fastMode'],$this->config['log_status'],$this->config['log_isstyled'],$this->config['log_placeholder'],$this->config['log_detail'],$this->config['log_target'],$this->config['log_level']);
+		unset($this->config['log_status'],$this->config['log_isstyled'],$this->config['log_placeholder'],$this->config['log_detail'],$this->config['log_target'],$this->config['log_level']);
+
 		// продлеваем данные в сессии
 		$this->setSessionStore($this->config['key'], $this->config, 0, 'config' );
+
+// echo "<pre>";print_r($this->config); die();
+
 // echo "</pre>";
   }
 
@@ -1449,7 +1461,10 @@ class getawesomevideos extends awesomeVideosHelper{
 		// if ( !$this->awesomeVideos = $this->modx->getService('awesomeVideos','awesomeVideos', $this->config['corePath'].'model/awesomevideos/', $this->config) ){
 		if ( !$this->awesomeVideos = $this->modx->getService('awesomeVideos','awesomeVideos'
 			, $this->config['corePath'].'model/awesomevideos/'
-			, array('log'=>array('status'=>false), 'pagination' => $this->config['pagination'] )
+			, array(
+				'log'=>array( 'log_status' => false ),
+				'pagination' => $this->config['pagination']
+			)
 		) ){
 			return false;
 		}

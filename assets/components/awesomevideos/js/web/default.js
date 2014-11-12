@@ -24,11 +24,14 @@ $(function() {
 			var that=this;
 			console.log('awesomeVideos initialize"', this);
 			$(document).on("click", ".btn.showMore", that.events.showMore.bind(this));
-			$(document).on("click", ".btn.showMore", that.events.showMore.bind(this));
 			// $(document).on("click", ".paging a[href*='page=']", that.events.showPage.bind(this));
+			$(document).on("click", ".paging .pagination a", that.events.showPage.bind(this));
 			$(document).on("click", "a.link", that.events.getData.bind(this));
 			this.createCarousel($('.aw_wrap_video > .content'));
 		},
+
+		// <li class="control"><a[[+classes]][[+title]] href="[[+href]]?[[+pageVarKey]]=1">First</a></li>
+
 		createCarousel: function($obj,config) {
 			if (typeof $obj === 'undefined' || !$obj ) return false;
 			$( $obj ).owlCarousel({
@@ -76,11 +79,17 @@ $(function() {
 		},
 		events: {
 			showPage: function(event) {
+				this.preventDefault(event);
 				console.log('showPage',arguments);
 				// выясняем есть ли параметр page и если есть вытаскиваем его и отправляем в метод
-				var page = url('?page', event.target.href) || 1,
+				// var page = url('?page', event.target.href) || 1,
+
+				var targetUrl = URI.parse(event.target.href),
+						urlParams = URI.parseQuery(targetUrl.query) || {},
+						page = ( typeof urlParams['page']!=='undefined' && urlParams['page'] ) ? urlParams['page'] : 1,
 					  params={'page':page};
-				console.log('bbb',page);
+				// console.log('bbb',page);
+
 				return this.events.showMore.apply(this,[event,params]);
 			},
 			getData: function(event, params) {
@@ -89,7 +98,8 @@ $(function() {
 
 				// нужно найти родителя самого первого уровня
 
-				var $body=$('body'),
+				var that = this,
+					$body=$('body'),
 					$target = $(event.currentTarget),
 					$wrap = $(awesomeVideos.options.wrapper+':first', $body),
 					$content = $wrap.find('> .content'),
@@ -111,7 +121,7 @@ $(function() {
 					url: "[[+actionUrl]]",
 					cache: false,
 					type: "POST",
-					data: $.extend(urlParams,{'log':1,'action':'getData','return_type':'json'}),
+					data: $.extend(urlParams,{'log_status':1,'action':'getData','return_type':'json'}),
 					dataType:'json',
 					success: function(responce){
 						console.log('success');
@@ -125,10 +135,18 @@ $(function() {
 
 							// добавляем content
 							responce.log = responce.log || '';
-							$content.html(responce.log + responce.data);
+							$('.log').html( responce.log );
+							$content.html( responce.data);
 							$paging.html(responce.paging);
 							// console.info(responce.log);
 							// console.info(config);
+							var $carousels=$content
+								.find('.aw_wrap[data-aw-pagination="carousel"]')
+								.each(function() {
+									// $( this ).addClass( "foo" );
+									that.createCarousel( $( this ).find('.content').filter(':first') );
+									// console.log ('www',this );
+							});
 
 
 						}
@@ -167,7 +185,7 @@ $(function() {
 					url: "[[+actionUrl]]",
 					cache: false,
 					type: "POST",
-					data: $.extend(config,params,{'log':1,'action':'showMore','return_type':'json'}),
+					data: $.extend(config,params,{'log_status':1,'action':'showMore','return_type':'json'}),
 					dataType:'json',
 					beforeSend: function(html){
 						/* console.log('beforesend'); */
