@@ -2,33 +2,32 @@
 
 $_lang['awesomeVideos_prop_ajax'] = 'Использовать AJAX';
 
-$_lang['awesomeVideos_prop_pagination'] = 'Способ пагинации по-умолчанию. Вы можете выбрать свой сниппет, который будет работать в соответствии с правилами пагинации описаной в RTFM.';
+$_lang['awesomeVideos_prop_pagination'] = 'Способ пагинации по-умолчанию. Вы можете выбрать свой сниппет, который будет работать в соответствии
+с правилами пагинации описаной в RTFM.';
 
 $_lang['awesomeVideos_prop_paginationSnippet'] = 'Снипет выполняющий пагинацию.';
 $_lang['awesomeVideos_prop_part'] = 'Тип данных получаемых по-умолчанию.';
 
-$_lang['awesomeVideos_prop_totalVar'] = 'TotalVar имя плейсхолдера значение которого используется в сниппете постраничной навигации';
-$_lang['awesomeVideos_prop_pageVarKey'] = 'Имя переменной для поиска номера страницы в url при использовании сниппета постраничной навигации';
-
+$_lang['awesomeVideos_prop_totalVar'] = 'TotalVar имя для getPage';
 $_lang['awesomeVideos_prop_additionalPlaceholders'] = 'Дополнительные плейсхолдеры, в виде JSON или array, в зависимости от способа вызова сниппета.';
 
 $_lang['awesomeVideos_prop_setOfProperties'] = 'Имя набора параметров из которого будут браться основные параметры. Это нужно для этого чтобы можно было
 сделать безопасную ссылку, которую можно использовать для открытия данного документа. Такое решение было вызвано использованием ключей, по которым в сессии
-хранятся текущие настройки, чьи данные используются при переходах посредством ajax. <b>Имя должно обязательно начинаться с "aw_"<b>';
+хранятся текущие настройки, чьи данные используются при переходах посредством ajax. <b>Имя должно обязательно начинаться с "aw_"</b>';
 
 $_lang['awesomeVideos_prop_fastMode'] = 'Выполнять некешируемые сниппеты в чанках? Это немного замедляет выполнение.';
 
 $_lang['awesomeVideos_prop_includeTVs'] = 'Список ТВ параметров для выборки, через запятую. Например: "action,time" дадут плейсхолдеры [[+action]] и [[+time]].';
-$_lang['awesomeVideos_prop_prepareTVs'] = 'Список ТВ параметров, которые нужно подготовить перед выводом. По умолчанию, установлено в "1", что означает подготовку всех ТВ, указанных в "&amp;includeTVs=&lsquo;&lsquo;"';
-$_lang['awesomeVideos_prop_processTVs'] = 'Список ТВ параметров, которые нужно обработать перед выводом. Если установить в "1" - будут обработаны все ТВ, указанные в "&amp;includeTVs=&lsquo;&lsquo;". По умолчанию параметр пуст.';
-$_lang['awesomeVideos_prop_tvFilters'] = 'Список фильтрова по ТВ, с разделителями AND и OR. Разделитель, указанный в параметре "&amp;tvFiltersOrDelimiter" представляет логическое условие OR и по нему условия группируются в первую очередь.  Внутри каждой группы вы можете задать список значений, разделив их "&amp;tvFiltersAndDelimiter". Поиск значений может проводиться в каком-то конкретном ТВ, если он указан ("myTV==value"), или в любом ("value"). Пример вызова: "&amp;tvFilters=&lsquo;filter2==one,filter1==bar&amp;#37;||filter1==foo&lsquo;". <br />Обратите внимание: фильтрация использует оператор LIKE и знак "&amp;#37;" является метасимволом. <br />И еще: Поиск идёт по значениям, которые физически находятся в БД, то есть, сюда не подставляются значения по умолчанию из настроек ТВ.';
+$_lang['awesomeVideos_prop_prepareTVs'] = 'Список ТВ параметров, которые нужно подготовить перед выводом. По умолчанию, установлено в "1", что означает подготовку всех ТВ, указанных в "&includeTVs=``"';
+$_lang['awesomeVideos_prop_processTVs'] = 'Список ТВ параметров, которые нужно обработать перед выводом. Если установить в "1" - будут обработаны все ТВ, указанные в "&includeTVs=``". По умолчанию параметр пуст.';
+// $_lang['awesomeVideos_prop_tvFilters'] = 'Список фильтрова по ТВ, с разделителями AND и OR. Разделитель, указанный в параметре "&tvFiltersOrDelimiter" представляет логическое условие OR и по нему условия группируются в первую очередь.  Внутри каждой группы вы можете задать список значений, разделив их "&tvFiltersAndDelimiter". Поиск значений может проводиться в каком-то конкретном ТВ, если он указан ("myTV==value"), или в любом ("value"). Пример вызова: "&tvFilters=`filter2==one,filter1==bar&#37;||filter1==foo`". <br />Обратите внимание: фильтрация использует оператор LIKE и знак "&#37;" является метасимволом. <br />И еще: Поиск идёт по значениям, которые физически находятся в БД, то есть, сюда не подставляются значения по умолчанию из настроек ТВ.';
 
 
-// $_lang['awesomeVideos_prop_tvFilters'] = ' TEST STRING <b> () {"&lsquo;&amp; </b> <br/>';
+$_lang['awesomeVideos_prop_tvFilters'] = ' {"&';
 
 
-$_lang['awesomeVideos_prop_tvFiltersAndDelimiter'] = 'Разделитель для условий AND в параметре "&amp;tvFilters". По умолчанию: ",".';
-$_lang['awesomeVideos_prop_tvFiltersOrDelimiter'] = 'Разделитель для условий OR в параметре "&amp;tvFilters". По умолчанию: "||".';
+$_lang['awesomeVideos_prop_tvFiltersAndDelimiter'] = 'Разделитель для условий AND в параметре "&tvFilters". По умолчанию: ",".';
+$_lang['awesomeVideos_prop_tvFiltersOrDelimiter'] = 'Разделитель для условий OR в параметре "&tvFilters". По умолчанию: "||".';
 $_lang['awesomeVideos_prop_tvPrefix'] = 'Префикс для ТВ параметров.';
 
 
@@ -72,7 +71,7 @@ $_lang['awesomeVideos_prop_tplPageFirstEmpty'] = 'Чанк, выводящийс
 $_lang['awesomeVideos_prop_tplPagePrevEmpty'] = 'Чанк, выводящийся при отсутствии ссылки на предыдущую страницу.';
 $_lang['awesomeVideos_prop_tplPageLastEmpty'] = 'Чанк, выводящийся при отсутствии ссылки на последнюю страницу.';
 $_lang['awesomeVideos_prop_tplPageNextEmpty'] = 'Чанк, выводящийся при отсутствии ссылки на следующую страницу.';
-$_lang['awesomeVideos_prop_tplPageSkip'] = 'Чанк оформления пропущенных страниц при продвинутом режиме отображения (&amp;pageLimit >= 7).';
+$_lang['awesomeVideos_prop_tplPageSkip'] = 'Чанк оформления пропущенных страниц при продвинутом режиме отображения (&pageLimit >= 7).';
 $_lang['awesomeVideos_prop_tplPageWrapper'] = 'Чанк оформления всего блока пагинации, содержит плейсхолдеры страниц.';
 // getPage
 
@@ -133,23 +132,23 @@ $_lang['pdotools_prop_tplCondition'] = 'Поле ресурса, из котор
 $_lang['pdotools_prop_conditionalTpls'] = 'JSON строка с массивом, у которого в ключах указано то, с чем будет сравниваться "tplCondition", а в значениях - чанки, которые будут использованы для вывода, если сравнение будет успешно. Оператор сравнения указывается в "tplOperator". Для операторов типа "isempty" можно использовать массив без ключей.';
 $_lang['pdotools_prop_tplCurrent'] = 'Чанк оформления текущего документа в навигации.';
 $_lang['pdotools_prop_tplHome'] = 'Чанк оформления ссылки на главную страницу.';
-$_lang['pdotools_prop_tplMax'] = 'Чанк, который добавляется в начало результатов, если их больше чем "&amp;limit".';
+$_lang['pdotools_prop_tplMax'] = 'Чанк, который добавляется в начало результатов, если их больше чем "&limit".';
 $_lang['pdotools_prop_tplPrev'] = 'Чанк ссылки на предыдущий документ.';
 $_lang['pdotools_prop_tplUp'] = 'Чанк ссылки на родительский документ.';
 $_lang['pdotools_prop_tplNext'] = 'Чанк ссылки на следующий документ.';
 
-$_lang['pdotools_prop_loadModels'] = 'Список компонентов, через запятую, чьи модели нужно загрузить для построения запроса. Например: "&amp;loadModels=&lsquo;ms2gallery,msearch2&lsquo;".';
+$_lang['pdotools_prop_loadModels'] = 'Список компонентов, через запятую, чьи модели нужно загрузить для построения запроса. Например: "&loadModels=`ms2gallery,msearch2`".';
 $_lang['pdotools_prop_direction'] = 'Направление навигации: слева направо (ltr) или справа налево (rtl), например для Арабского языка.';
 $_lang['pdotools_prop_id'] = 'Идентификатор ресурса.';
 $_lang['pdotools_prop_field'] = 'Поле ресурса.';
-$_lang['pdotools_prop_top'] = 'Выбирает родителя указанного "&amp;id" на уровне "&amp;top".';
-$_lang['pdotools_prop_topLevel'] = 'Выбирает родителя указанного "&amp;id" на уровне "&amp;topLevel" от корня контекста.';
+$_lang['pdotools_prop_top'] = 'Выбирает родителя указанного "&id" на уровне "&top".';
+$_lang['pdotools_prop_topLevel'] = 'Выбирает родителя указанного "&id" на уровне "&topLevel" от корня контекста.';
 
 $_lang['pdotools_prop_forceXML'] = 'Принудительно выводить страницу как xml.';
 $_lang['pdotools_prop_sitemapSchema'] = 'Схема карты сайта.';
 
-$_lang['pdotools_prop_field_default'] = 'Укажите дополнительное поле ресурса, которое вернётся, если "&amp;field" окажется пуст.';
-$_lang['pdotools_prop_field_output'] = 'Указанная здесь строка вернётся, если и "&amp;default" и "&amp;field" оказались пусты.';
+$_lang['pdotools_prop_field_default'] = 'Укажите дополнительное поле ресурса, которое вернётся, если "&field" окажется пуст.';
+$_lang['pdotools_prop_field_output'] = 'Указанная здесь строка вернётся, если и "&default" и "&field" оказались пусты.';
 
 $_lang['pdotools_prop_cache'] = 'Кэширование результатов работы сниппета.';
 $_lang['pdotools_prop_cachePageKey'] = 'Имя ключа кэширования.';
@@ -174,7 +173,7 @@ $_lang['pdotools_prop_tplPageFirstEmpty'] = 'Чанк, выводящийся п
 $_lang['pdotools_prop_tplPagePrevEmpty'] = 'Чанк, выводящийся при отсутствии ссылки на предыдущую страницу.';
 $_lang['pdotools_prop_tplPageLastEmpty'] = 'Чанк, выводящийся при отсутствии ссылки на последнюю страницу.';
 $_lang['pdotools_prop_tplPageNextEmpty'] = 'Чанк, выводящийся при отсутствии ссылки на следующую страницу.';
-$_lang['pdotools_prop_tplPageSkip'] = 'Чанк оформления пропущенных страниц при продвинутом режиме отображения (&amp;pageLimit >= 7).';
+$_lang['pdotools_prop_tplPageSkip'] = 'Чанк оформления пропущенных страниц при продвинутом режиме отображения (&pageLimit >= 7).';
 $_lang['pdotools_prop_tplPageWrapper'] = 'Чанк оформления всего блока пагинации, содержит плейсхолдеры страниц.';
 
 $_lang['pdotools_prop_previewUnpublished'] = 'Включить показ неопубликованных документов, если у пользователя есть на это разрешение.';
@@ -208,7 +207,7 @@ $_lang['pdotools_prop_tplParentRowActive'] = 'Чанк оформления ак
 $_lang['pdotools_prop_tplParentRowHere'] = 'Чанк оформления текущего контейнера с потомками.';
 $_lang['pdotools_prop_tplStart'] = 'Чанк оформления корневого пункта, при условии, что включен "displayStart".';
 
-$_lang['pdotools_prop_ultimate'] = 'Параметры &amp;top и &amp;topLevel работают как в сниппете UltimateParent.';
+$_lang['pdotools_prop_ultimate'] = 'Параметры &top и &topLevel работают как в сниппете UltimateParent.';
 
 $_lang['awesomeVideos_prop_outputSeparator'] = 'Разделитель вывода строк.';
 $_lang['awesomeVideos_prop_sortBy'] = 'Поле сортировки.';

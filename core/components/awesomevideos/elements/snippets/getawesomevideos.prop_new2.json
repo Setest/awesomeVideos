@@ -6,7 +6,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Дополнительные плейсхолдеры, в виде JSON или array, в зависимости от способа вызова сниппета.",
         "area": "",
         "area_trans": "",
         "menu": null
@@ -18,7 +19,8 @@
         "options": [],
         "value": true,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Использовать AJAX",
         "area": "",
         "area_trans": "",
         "menu": null
@@ -29,9 +31,9 @@
         "xtype": "list",
         "options": [
             {
-                "text": "sss",
+                "text": "Сниппет",
                 "value": "snippet",
-                "name": "sss"
+                "name": "Сниппет"
             },
             {
                 "text": "scroll",
@@ -51,7 +53,8 @@
         ],
         "value": "button",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Способ пагинации по-умолчанию. Вы можете выбрать свой сниппет, который будет работать в соответствии\nс правилами пагинации описаной в RTFM.",
         "area": "",
         "area_trans": "",
         "menu": null
@@ -63,7 +66,8 @@
         "options": [],
         "value": "getPage",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Снипет выполняющий пагинацию.",
         "area": "",
         "area_trans": "",
         "menu": null
@@ -75,7 +79,8 @@
         "options": [],
         "value": true,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Выполнять некешируемые сниппеты в чанках? Это немного замедляет выполнение.",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -87,7 +92,8 @@
         "options": [],
         "value": "offset",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "awesomeVideos_prop_offsetVar",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -99,7 +105,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Необязательная строка для разделения результатов работы.",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -122,7 +129,8 @@
         ],
         "value": "Playlist",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Тип данных получаемых по-умолчанию.",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -134,7 +142,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя сниппета, который запускается перед обработкой строки (row), в него передается массив в\nэлементе row которого, содержутся все данные текущей строки. Данные получаемые после обработки сливаются с массивом row и передаются в плейсхолдеры.\nЕсли именая ключей row совпадают с именами ключей массива, то данные row бelen переписаны.",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -160,14 +169,15 @@
                 "name": "idx"
             },
             {
-                "text": "Chunk",
+                "text": "Чанк",
                 "value": "chunk",
-                "name": "Chunk"
+                "name": "Чанк"
             }
         ],
         "value": "chunk",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "awesomeVideos_prop_return",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -179,7 +189,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя набора параметров из которого будут браться основные параметры. Это нужно для этого чтобы можно было\nсделать безопасную ссылку, которую можно использовать для открытия данного документа. Такое решение было вызвано использованием ключей, по которым в сессии\nхранятся текущие настройки, чьи данные используются при переходах посредством ajax. <b>Имя должно обязательно начинаться с \"aw_\"</b>",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -191,7 +202,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Если вы укажете слово в этом параметре, то ВСЕ результаты будут выставлены в разные плейсхолдеры, начинающиеся с этого слова и заканчивающиеся порядковым номером строки, от нуля. Например, указав в параметре \"myPl\", вы получите плейсхолдеры [[+myPl0]], [[+myPl1]] и т.д.",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -203,7 +215,8 @@
         "options": [],
         "value": "total",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "TotalVar имя для getPage",
         "area": "Main",
         "area_trans": "Main",
         "menu": null
@@ -215,7 +228,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Указываем одно единственное имя поле для группировки",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -227,7 +241,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Т.к. having выполняется иначе, то его можно использовать для поиска по дефолтным параметрам, where не позволяет делать такого.",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -239,7 +254,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Список ID ресурсов через запятую, которые обязательны для вывода. Может также принимать массив, при вызове сниппета напрямую.",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -251,7 +267,8 @@
         "options": [],
         "value": "10",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Максимальное кол-во элементов на странице",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -263,7 +280,8 @@
         "options": [],
         "value": 0,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Первый элемент (0 = first)",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -275,7 +293,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Критерий выборки по плейлистам, содержит список ресурсов через запятую, которые обязательны для вывода. Распростроняется только на получение видеоресурсов.\n Может также принимать массив, при вызове сниппета напрямую.",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -287,7 +306,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Список полей для выборки, через запятую. Можно указывать JSON строку с массивом, например {\"modResource\":\"id,pagetitle,content\"}.",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -299,7 +319,8 @@
         "options": [],
         "value": "rank",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Любое поле ресурса для сортировки, включая ТВ параметр, если он указан в параметре \"includeTVs\". Можно указывать JSON строку с массивом нескольких полей. Для случайно сортировки укажите \"RAND()\"",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -322,7 +343,8 @@
         ],
         "value": "DESC",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Направление сортировки: по убыванию или возрастанию.",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -334,7 +356,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Массив дополнительных параметров выборки, закодированный в JSON.",
         "area": "Query",
         "area_trans": "Query",
         "menu": null
@@ -346,7 +369,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "awesomeVideos_prop_innerJoin",
         "area": "QueryJoin",
         "area_trans": "QueryJoin",
         "menu": null
@@ -358,7 +382,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "",
         "area": "QueryJoin",
         "area_trans": "QueryJoin",
         "menu": null
@@ -370,7 +395,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "",
         "area": "QueryJoin",
         "area_trans": "QueryJoin",
         "menu": null
@@ -382,7 +408,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Список ТВ параметров для выборки, через запятую. Например: \"action,time\" дадут плейсхолдеры [[+action]] и [[+time]].",
         "area": "TV",
         "area_trans": "TV",
         "menu": null
@@ -394,7 +421,8 @@
         "options": [],
         "value": "1",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Список ТВ параметров, которые нужно подготовить перед выводом. По умолчанию, установлено в \"1\", что означает подготовку всех ТВ, указанных в \"&includeTVs=``\"",
         "area": "TV",
         "area_trans": "TV",
         "menu": null
@@ -406,7 +434,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Список ТВ параметров, которые нужно обработать перед выводом. Если установить в \"1\" - будут обработаны все ТВ, указанные в \"&includeTVs=``\". По умолчанию параметр пуст.",
         "area": "TV",
         "area_trans": "TV",
         "menu": null
@@ -418,7 +447,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Список фильтрова по ТВ, с разделителями AND и OR. Разделитель, указанный в параметре \"&tvFiltersOrDelimiter\" представляет логическое условие OR и по нему условия группируются в первую очередь.  Внутри каждой группы вы можете задать список значений, разделив их \"&tvFiltersAndDelimiter\". Поиск значений может проводиться в каком-то конкретном ТВ, если он указан (\"myTV==value\"), или в любом (\"value\"). Пример вызова: \"&tvFilters=`filter2==one,filter1==bar%||filter1==foo`\". <br />Обратите внимание: фильтрация использует оператор LIKE и знак \"%\" является метасимволом. <br />И еще: Поиск идёт по значениям, которые физически находятся в БД, то есть, сюда не подставляются значения по умолчанию из настроек ТВ.",
         "area": "TV",
         "area_trans": "TV",
         "menu": null
@@ -430,7 +460,8 @@
         "options": [],
         "value": ",",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Разделитель для условий AND в параметре \"&tvFilters\". По умолчанию: \",\".",
         "area": "TV",
         "area_trans": "TV",
         "menu": null
@@ -442,7 +473,8 @@
         "options": [],
         "value": "||",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Разделитель для условий OR в параметре \"&tvFilters\". По умолчанию: \"||\".",
         "area": "TV",
         "area_trans": "TV",
         "menu": null
@@ -454,7 +486,8 @@
         "options": [],
         "value": "tv.",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Префикс для ТВ параметров.",
         "area": "TV",
         "area_trans": "TV",
         "menu": null
@@ -466,7 +499,8 @@
         "options": [],
         "value": "@FILE: aw.item.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя чанка для оформления ресурса. Если не указан, то содержимое полей ресурса будет распечатано на экран.",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -478,7 +512,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя чанка для первого ресурса в результатах.",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -490,7 +525,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя чанка для последнего ресурса в результатах.",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -502,7 +538,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя чанка для каждого второго ресурса.",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -514,7 +551,8 @@
         "options": [],
         "value": "@FILE: pagination/aw.button.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя чанка кнопки выполняющую для получения ресурсов",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -526,7 +564,8 @@
         "options": [],
         "value": "@FILE: pagination/aw.buttonEmpty.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Имя чанка не активной (пустой) кнопки",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -538,7 +577,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Чанк-обертка раздела постраничной навигации",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -550,7 +590,8 @@
         "options": [],
         "value": "awesomeVideos/core/components/awesomevideos/elements/chunks/",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Путь к файлам чанков (можно указывать от корня системы или от корня сайта). Используется если чанк не найден в общем списке",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -562,7 +603,8 @@
         "options": [],
         "value": "@FILE: aw.wrapper.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Чанк-обёртка, для заворачивания всех результатов. Понимает один плейсхолдер: [[+output]]. Не работает вместе с параметром \"toSeparatePlaceholders\".",
         "area": "Template",
         "area_trans": "Template",
         "menu": null
@@ -574,10 +616,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
     {
         "name": "pageFirstTpl",
@@ -586,10 +625,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
     {
         "name": "pageLastTpl",
@@ -598,10 +634,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
     {
         "name": "pageNavOuterTpl",
@@ -610,10 +643,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
     {
         "name": "pageNavTpl",
@@ -622,10 +652,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
     {
         "name": "pageNextTpl",
@@ -634,10 +661,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
     {
         "name": "pagePrevTpl",
@@ -646,10 +670,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
     {
         "name": "tplPage",
@@ -658,10 +679,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageActive",
@@ -670,10 +688,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageFirst",
@@ -682,10 +697,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageFirstEmpty",
@@ -694,10 +706,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageLast",
@@ -706,10 +715,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageLastEmpty",
@@ -718,10 +724,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageNext",
@@ -730,10 +733,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageNextEmpty",
@@ -742,10 +742,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPagePrev",
@@ -754,10 +751,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPagePrevEmpty",
@@ -766,10 +760,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageSkip",
@@ -778,10 +769,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "tplPageWrapper",
@@ -790,10 +778,7 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
     {
         "name": "scheme",
@@ -828,7 +813,8 @@
         ],
         "value": "-1",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Схема формирования url, передаётся в modX::makeUrl().",
         "area": "Unused",
         "area_trans": "Unused",
         "menu": null
@@ -840,7 +826,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Показывать дополнительную информацию о работе сниппета. Только для авторизованных в контекте \"mgr\".",
         "area": "Unused",
         "area_trans": "Unused",
         "menu": null
@@ -852,7 +839,8 @@
         "options": [],
         "value": true,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "",
         "area": "Unused",
         "area_trans": "Unused",
         "menu": null
@@ -864,7 +852,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Показывать неопубликованные ресурсы.",
         "area": "Unused",
         "area_trans": "Unused",
         "menu": null
@@ -876,7 +865,8 @@
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Если не пусто, сниппет сохранит все данные в плейсхолдер с этим именем, вместо вывода не экран.",
         "area": "Unused",
         "area_trans": "Unused",
         "menu": null
@@ -904,7 +894,8 @@
         ],
         "value": "0",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
+        "overridden": false,
+        "desc_trans": "Включает вывод чанка-обертки (tplWrapper) даже если результатов нет.",
         "area": "Unused",
         "area_trans": "Unused",
         "menu": null

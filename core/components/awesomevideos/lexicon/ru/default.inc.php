@@ -14,6 +14,13 @@ $_lang['awesomeVideos_err'] = 'Ошибка!';
 $_lang['awesomeVideos_err_ajax'] = 'Ошибка получения данных!';
 
 /**
+ * PAGINATION
+ */
+
+$_lang['awesomeVideos_pagination_button'] = 'Показать еще [[+limit]] записей, осталось [[+balance]]. Показано: [[+offset]] из [[+total]]!';
+
+
+/**
  * ITEMS
  */
 

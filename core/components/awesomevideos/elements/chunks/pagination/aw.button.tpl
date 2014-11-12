@@ -1,0 +1,1 @@
+<a class="btn btn-primary showMore" href="[[+uri]]" role="button">[[%awesomeVideos_pagination_button? &balance=`[[+balance]]` &limit=`[[+limit]]` &offset=`[[+offset]]` &total=`[[+total]]`]]</a>

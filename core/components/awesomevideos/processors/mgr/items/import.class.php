@@ -110,7 +110,9 @@ return $modx->error->success();
 			if ($cacheKey && $config = $this->modx->cacheManager->get('awesomevideos/prep_' . $cacheKey)) {
 				$this->modx->log(modX::LOG_LEVEL_INFO,'Loading class with cacheKey');
 				if (!class_exists('awesomeVideos')) {require_once $config['modelPath'].'awesomeVideos/awesomeVideos.class.php';}
-				$config['log']['log_target']=false;
+				// $config['log']['log_target']='FILE';
+				// $config['log']['log_level']='INFO';
+				$config['log']['log_target']=$this->modx->getLogTarget();	// иначе в консоль ничего не попадет
 				$config['log']['log_level']='LOG_LEVEL_INFO';
 				$this->awesomeVideos = new awesomeVideos($this->modx, $config);
 			}elseif( $classPath= MODX_CORE_PATH.'components/awesomeVideos/model/awesomeVideos/awesomeVideos.class.php' && file_exists($classPath) ){

@@ -37,7 +37,8 @@ class awesomeVideos extends awesomeVideosHelper {
 	function __construct(modX &$modx, array $config = array()) {
 		$this->modx =& $modx;
 
-		$corePath = $this->modx->getOption('awesomevideos_core_path', $config, $this->modx->getOption('core_path') . 'components/awesomevideos/');
+    $corePath = $this->modx->getOption('awesomevideos_core_path', $config, $this->modx->getOption('core_path') . 'components/awesomevideos/');
+		$basePath = $this->modx->getOption('awesomevideos_base_path', $config, $this->modx->getOption('base_path'));
 		// $corePath =dirname(__FILE__);
 		$assetsUrl = $this->modx->getOption('awesomevideos_assets_url', $config, $this->modx->getOption('assets_url') . 'components/awesomevideos/');
 		$connectorUrl = $assetsUrl . 'connector.php';
@@ -45,27 +46,31 @@ class awesomeVideos extends awesomeVideosHelper {
 		$this->config = array_merge(array(
 			'assetsUrl' => $assetsUrl,
 			'cssUrl' => $assetsUrl . 'css/',
-			'jsUrl' => $assetsUrl . 'js/',
+      'jsUrl' => $assetsUrl . 'js/',
+			// 'jsUrl' => ltrim($assetsUrl . 'js/', '/'),
 			'imagesUrl' => $assetsUrl . 'images/',
 			'connectorUrl' => $connectorUrl,
 
-			'corePath' => $corePath,
-			'basePath' => $corePath,
-			'processorsPath' => $corePath . 'processors/',
-			'modelPath' => $corePath . 'model/',
-			'chunksPath' => $corePath . 'elements/chunks/',
-			'templatesPath' => $corePath . 'elements/templates/',
-			'chunkSuffix' => '.chunk.tpl',
-			'snippetsPath' => $corePath . 'elements/snippets/',
+      'actionUrl' => $assetsUrl . 'action.php', // тот что вызывается при ajax
+      'corePath' => $corePath,
+      'basePath' => $basePath,
+      'sitePath' => MODX_BASE_PATH, // используется в админке
+      'processorsPath' => $corePath . 'processors/',
+      'modelPath' => $corePath . 'model/',
+      'chunksPath' => $corePath . 'elements/chunks/',
+      'templatesPath' => $corePath . 'elements/templates/',
+      'chunkSuffix' => '.chunk.tpl',
+      'snippetsPath' => $corePath . 'elements/snippets/',
 
-			'cacheTime' => 1800,	// кеш работает и в менеджере и у клиента
+      'cacheTime' => 1800,  // кеш работает и в менеджере и у клиента
 
-			'restHost' => 'http://gdata.youtube.com/',
+      'restHost' => 'http://gdata.youtube.com/',
       'restPath' => 'feeds/api/users/username/uploads',
       'restMethod' => 'get',
-      'sitePath' => MODX_BASE_PATH,
       //Права на только что созданный файл
       'new_file_permissions' => (int)$this->modx->getOption('awesomeVideos.video.newFilePermissions',null,'0664'),
+
+      'direct' => false,  // может быть true только при прямом вызове например из ajax
 
       'imageSourceId' => $this->modx->getOption('awesomeVideos.video.imageSourceId'),
       'imageNoPhoto' => $this->modx->getOption('awesomeVideos.video.imageNoPhoto',null, $assetsUrl.'img/noimage.jpg'),
@@ -81,7 +86,11 @@ class awesomeVideos extends awesomeVideosHelper {
 
       'log' => array(
       	'log_filename'=>'awesomeVideos',
-      	'status'=>$this->modx->getOption('awesomeVideos.main.log', null, true),
+        'status'=>$this->modx->getOption('awesomeVideos.main.log', null, true),
+
+        // 'status'=>$this->modx->getOption('log_status', $config, true),
+        // 'isstyled'=>$this->modx->getOption('log_isstyled', $config, true),
+
       	'log_placeholder'=>$this->modx->getOption('log_placeholder', null, false), //getImgLog
       	'log_detail'=>$this->modx->getOption('log_detail', null, false),
 				// 'log_target'=>( 1==1 )
@@ -89,15 +98,19 @@ class awesomeVideos extends awesomeVideosHelper {
 					// ? $this->modx->getLogTarget()->subscriptions[0]	// это на случай вывода в консоль
 					// : false,
 				// 'log_target' => $this->modx->getOption('awesomeVideos.main.log_target', null, 'ECHO'),	// FILE, HTML, ECHO
-				'log_target' => !is_null($this->modx->getOption('log_target', $config, null))
-					? $this->modx->getOption('log_target', $config['log_target'])
-					: $this->modx->getOption('log_target', null, 'ECHO'),	// FILE, HTML, ECHO
+
+				'log_target' => ($config['log_target'])?$config['log_target']:'ECHO',	// FILE, HTML, ECHO
+
+        // 'log_target' => 'FILE',
+
         'log_level'=>$this->_getModxConst($this->modx->getOption('log_level', $config, 'LOG_LEVEL_INFO')),  // INFO, WARN, ERROR, FATAL, DEBUG
         // 'log_level'=>$this->_getModxConst(3), // INFO, WARN, ERROR, FATAL, DEBUG
       	// 'log_level'=>123,	// INFO, WARN, ERROR, FATAL, DEBUG
       ),
 
 		), $config);
+
+    $this->logConfig($config['log']);
 
     if (strpos($this->config['topicSource'], '[') === false ) {
       // это только для быстрой выборки статичных данных внутри грида.
@@ -111,7 +124,7 @@ class awesomeVideos extends awesomeVideosHelper {
         $MediaSource = $this->modx->getObject('modMediaSource', array('id' => $this->config['imageSourceId']));
         $msproperties = $MediaSource->getProperties(true);
         $this->config = array_merge($this->config, array(
-            'imageSourceFullBasePath'=>$this->config['sitePath'].$msproperties['basePath']['value'],
+            'imageSourceFullBasePath'=>$this->config['basePath'].$msproperties['basePath']['value'],
             'imageSourceBasePath'=>$msproperties['basePath']['value'],
             'imageSourceBaseUrl'=>$msproperties['baseUrl']['value']
         ));
@@ -123,50 +136,6 @@ class awesomeVideos extends awesomeVideosHelper {
     // $this->writeLog("LOG LEVEL:".$this->modx->getOption('log_level', $config, 'LOG_LEVEL_WARN'));
     // $this->writeLog("LOG LEVEL2:".$this->_getModxConst($this->modx->getOption('log_level', $config, 'LOG_LEVEL_WARN')));
     // $this->writeLog("LOG LEVEL3:".$this->_getModxConst('LOG_LEVEL_WARN'));
-
-
-    if ($this->config['log']['status']==true){
-      $this->modx->message = null;
-      // $this->modx->log(modX::LOG_LEVEL_INFO,'Установленный уровень отладки0: '.print_r($this->config['log'], true) );
-      // $this->modx->log(modX::LOG_LEVEL_INFO,'Установленный уровень отладки1: '.$this->config['log']['log_level']);
-      // $this->modx->log(modX::LOG_LEVEL_INFO,'Установленный уровень отладки: '.$this->modx->getLogLevel());
-      $this->modx->setLogLevel( $this->_getModxConst($this->config['log']['log_level']) );
-      // $this->modx->log(modX::LOG_LEVEL_ERROR,'ПОСЛЕ: '.$this->modx->getLogLevel());
-
-
-      // var_dump($this->config['log']['log_target']);
-
-      if ($this->config['log']['log_target']){
-        $date = date('Y-m-d__H-i-s');  // использовать в выводе даты : - нельзя, иначе не создается лог в файл
-        $logFileName="{$this->config['log']['log_filename']}_$date.log";
-        $this->modx->setLogTarget(array(
-           'target' => $this->config['log']['log_target'],
-           'options' => array('filename' => $logFileName )
-        ));
-      }
-
-      if ($this->config['log']['log_target']=="FILE"){
-        $this->result['log_filename']=$logFileName;
-        $this->result['log_fullPath']=$this->config['corePath']."cache/logs/{$logFileName}";
-        $this->result['log_urlPath']=$this->config['siteUrl']."core/cache/logs/{$logFileName}";
-      }
-
-      $this->writeLog("ModX version:".$modx->getOption('settings_version'));
-
-
-      if ($this->config['log']['log_detail']){
-        $log_detail=debug_backtrace();  // этот вывод жрет ООООЧЕНЬ много памяти
-                        // и при малом таймауте возможно даст 500-ю ошибку
-        $this->writeLog("PHP version: ".PHP_VERSION);
-        $this->writeLog("Server API: ".PHP_SAPI);
-        $this->writeLog("Loaded modules: \n\n".print_r(get_loaded_extensions(),true)."\n");
-        $this->writeLog("Run command: \n\n{$log_detail[2][object]->_tag}\n");
-        $this->writeLog("Properties: \n".print_r($log_detail[2][object]->_properties,true));
-        $this->writeLog("Loaded config: \n\n".print_r($this->config,true )."\n");
-        unset($log_detail);
-      }
-    }
-
 
 
     if (!isset($this->config['cacheKey'])){
@@ -206,42 +175,54 @@ class awesomeVideos extends awesomeVideosHelper {
             // проверяем было ли загружено ранее, т.к. делать это можно только один раз
             // и не из ajax запроса.
 
-            if (!defined('MODX_API_MODE') || !MODX_API_MODE) {
+            if ( !$this->config['direct'] && ( !defined('MODX_API_MODE') || !MODX_API_MODE ) ) {
               // $initializing = !empty($this->modx->loadedjscripts[$this->config['jsUrl'] . 'web/default.js']);
-  						$this->modx->regClientStartupScript($this->config['jsUrl'] . 'web/default.js');
+
               // $this->config = array_merge($this->config, $scriptProperties);
+              $config = $this->makePlaceholders($this->config);
 
-					    // if ($css = $this->modx->getOption('awesomeVideos.video.frontend_css')) {
-					    //     $this->modx->regClientCSS($this->config['cssUrl'].$css);
-					    // }
+              $jsPath = $this->config['basePath'].$this->config['jsUrl'] . 'web/default.js';
 
-					    // if ($js = trim($this->modx->getOption('awesomeVideos.video.frontend_js'))) {
-					    //     if (!empty($js) && preg_match('/\.js/i', $js)) {
-					    //         $this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
-					    //         <script type="text/javascript">
-					    //             if(typeof jQuery == "undefined") {
-					    //                 document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
-					    //             }
-					    //         </script>
-					    //         '), true);
-					    //         $this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
-					    //     }
-					    // }
 
-							/*$config = $this->makePlaceholders($this->config);
-							if ($css = trim($this->modx->getOption('mse2_frontend_css'))) {
-								$this->modx->regClientCSS(str_replace($config['pl'], $config['vl'], $css));
-							}
-							if ($js = trim($this->modx->getOption('mse2_frontend_js'))) {
-								$this->modx->regClientScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
-								<script type="text/javascript">
-								if(typeof jQuery == "undefined") {
-									document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
-								}
-								</script>
-								'), true);
-								$this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
-							}*/
+
+              if ($content = @file_get_contents($jsPath)){
+                $this->writeLog('Loaded JS: '. $jsPath);
+                // $this->writeLog($this->config);
+                $content = str_replace($config['pl'], $config['vl'], trim($content));
+                $content = $this->fastProcess($content, true);
+                $this->modx->regClientStartupScript(preg_replace(array('/^\n/', '/\t{7}/'), '', "<script type='text/javascript'>{$content}</script>"), true);
+                // $this->modx->regClientStartupScript($this->config['jsUrl'].'web/lib/url.min.js');
+                $this->modx->regClientStartupScript($this->config['jsUrl'].'web/lib/URI.min.js');
+                // if ( $this->config['pagination'] == 'carousel' ){
+                  $this->modx->regClientCSS($this->config['cssUrl'].'web/owl.carousel.css');
+                  $this->modx->regClientCSS($this->config['cssUrl'].'web/default.css');
+                  $this->modx->regClientStartupScript($this->config['jsUrl'].'web/lib/owl.carousel.min.js');
+                // }
+                // https://github.com/websanova/js-url
+                // https://github.com/allmarkedup/purl - хорошая вещь, нудо будет заюзать
+                // http://medialize.github.io/URI.js/ - хорошая вещь, нужно будет заюзать
+              }else{
+                $this->writeLog('Cant load JS: '. $this->config['jsUrl'] . 'web/default.js', '', 'ERROR');
+              }
+
+              if ($js = trim($this->modx->getOption('awesomeVideos.frontend.js'))) {
+                  // if (!empty($js) && preg_match('/\.js/i', $js)) {
+                      $this->modx->regClientStartupScript(preg_replace(array('/^\n/', '/\t{7}/'), '', '
+					            <script type="text/javascript">
+					                if(typeof jQuery == "undefined") {
+                              document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery.min.js\" type=\"text/javascript\"><\/script>");
+					                    document.write("<script src=\"'.$this->config['jsUrl'].'web/lib/jquery-migrate.min.js\" type=\"text/javascript\"><\/script>");
+					                }
+					            </script>
+					            '), true);
+					            // $this->modx->regClientScript(str_replace($config['pl'], $config['vl'], $js));
+					        // }
+					    }
+
+              if ($css = trim($this->modx->getOption('awesomeVideos.frontend.css'))) {
+                $this->modx->regClientCSS(str_replace($config['pl'], $config['vl'], $css));
+              }
+
 						}
           break;
       }
@@ -818,7 +799,7 @@ class awesomeVideos extends awesomeVideosHelper {
         // строим запрос
         $query=$baseUrl."?".urldecode(http_build_query($params));
 
-        $this->writeLog('TEST: '.date('h:i:s'));
+        // $this->writeLog('TEST: '.date('h:i:s'));
         $this->writeLog('Параметры запроса: <p style="font-size:9px;">'.print_r($params, true).'</p>');
         $this->writeLog('Запрос на youtube: '.$query);
 

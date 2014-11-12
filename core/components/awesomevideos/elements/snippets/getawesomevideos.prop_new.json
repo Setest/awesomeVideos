@@ -1,912 +1,691 @@
-[
-    {
+[{
+    "additionalPlaceholders": {
         "name": "additionalPlaceholders",
         "desc": "awesomeVideos_prop_additionalPlaceholders",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "",
-        "area_trans": "",
-        "menu": null
+        "area": ""
     },
-    {
+    "ajax": {
         "name": "ajax",
         "desc": "awesomeVideos_prop_ajax",
-        "xtype": "combo-boolean",
+        "type": "textfield",
         "options": [],
         "value": true,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "",
-        "area_trans": "",
-        "menu": null
+        "area": ""
     },
-    {
+    "pagination": {
         "name": "pagination",
         "desc": "awesomeVideos_prop_pagination",
-        "xtype": "list",
+        "type": "textfield",
         "options": [
             {
-                "text": "sss",
-                "value": "snippet",
-                "name": "sss"
+                "text": "Сниппет",
+                "value": "snippet"
             },
             {
                 "text": "scroll",
-                "value": "scroll",
-                "name": "scroll"
+                "value": "scroll"
             },
             {
                 "text": "button",
-                "value": "button",
-                "name": "button"
+                "value": "button"
             },
             {
                 "text": "carousel ???",
-                "value": "carousel",
-                "name": "carousel ???"
+                "value": "carousel"
             }
         ],
-        "value": "button",
+        "value": "snippet",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "",
-        "area_trans": "",
-        "menu": null
+        "area": ""
     },
-    {
+    "paginationSnippet": {
         "name": "paginationSnippet",
         "desc": "awesomeVideos_prop_paginationSnippet",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "getPage",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "",
-        "area_trans": "",
-        "menu": null
+        "area": ""
     },
-    {
+    "fastMode": {
         "name": "fastMode",
         "desc": "awesomeVideos_prop_fastMode",
-        "xtype": "combo-boolean",
+        "type": "textfield",
         "options": [],
         "value": true,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "offsetVar": {
         "name": "offsetVar",
         "desc": "awesomeVideos_prop_offsetVar",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "offset",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "outputSeparator": {
         "name": "outputSeparator",
         "desc": "awesomeVideos_prop_outputSeparator",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "part": {
         "name": "part",
         "desc": "awesomeVideos_prop_part",
-        "xtype": "list",
+        "type": "textfield",
         "options": [
             {
                 "text": "video",
-                "value": "Item",
-                "name": "video"
+                "value": "Item"
             },
             {
                 "text": "playlist",
-                "value": "Playlist",
-                "name": "playlist"
+                "value": "Playlist"
             }
         ],
         "value": "Playlist",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "prepareSnippet": {
         "name": "prepareSnippet",
         "desc": "awesomeVideos_prop_prepareSnippet",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "return": {
         "name": "return",
         "desc": "awesomeVideos_prop_return",
-        "xtype": "list",
+        "type": "textfield",
         "options": [
             {
                 "text": "data",
-                "value": "data",
-                "name": "data"
+                "value": "data"
             },
             {
                 "text": "json",
-                "value": "json",
-                "name": "json"
+                "value": "json"
             },
             {
                 "text": "idx",
-                "value": "idx",
-                "name": "idx"
+                "value": "idx"
             },
             {
-                "text": "Chunk",
-                "value": "chunk",
-                "name": "Chunk"
+                "text": "Чанк",
+                "value": "chunk"
             }
         ],
         "value": "chunk",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "setOfProperties": {
         "name": "setOfProperties",
         "desc": "awesomeVideos_prop_setOfProperties",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "toSeparatePlaceholders": {
         "name": "toSeparatePlaceholders",
         "desc": "awesomeVideos_prop_toSeparatePlaceholders",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "totalVar": {
         "name": "totalVar",
         "desc": "awesomeVideos_prop_totalVar",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "total",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Main",
-        "area_trans": "Main",
-        "menu": null
+        "area": "Main"
     },
-    {
+    "groupby": {
         "name": "groupby",
         "desc": "awesomeVideos_prop_groupby",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "having": {
         "name": "having",
         "desc": "awesomeVideos_prop_having",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "ids": {
         "name": "ids",
         "desc": "awesomeVideos_prop_ids",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "limit": {
         "name": "limit",
         "desc": "awesomeVideos_prop_limit",
-        "xtype": "numberfield",
+        "type": "textfield",
         "options": [],
         "value": "10",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "offset": {
         "name": "offset",
         "desc": "awesomeVideos_prop_offset",
-        "xtype": "numberfield",
+        "type": "textfield",
         "options": [],
         "value": 0,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "parentIds": {
         "name": "parentIds",
         "desc": "awesomeVideos_prop_parentIds",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "select": {
         "name": "select",
         "desc": "awesomeVideos_prop_select",
-        "xtype": "textarea",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "sortby": {
         "name": "sortby",
         "desc": "awesomeVideos_prop_sortby",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "rank",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "sortdir": {
         "name": "sortdir",
         "desc": "awesomeVideos_prop_sortdir",
-        "xtype": "list",
+        "type": "textfield",
         "options": [
             {
                 "text": "ASC",
-                "value": "ASC",
-                "name": "ASC"
+                "value": "ASC"
             },
             {
                 "text": "DESC",
-                "value": "DESC",
-                "name": "DESC"
+                "value": "DESC"
             }
         ],
         "value": "DESC",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "where": {
         "name": "where",
         "desc": "awesomeVideos_prop_where",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Query",
-        "area_trans": "Query",
-        "menu": null
+        "area": "Query"
     },
-    {
+    "innerJoin": {
         "name": "innerJoin",
         "desc": "awesomeVideos_prop_innerJoin",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "QueryJoin",
-        "area_trans": "QueryJoin",
-        "menu": null
+        "area": "QueryJoin"
     },
-    {
+    "leftJoin": {
         "name": "leftJoin",
         "desc": "awesomeVideos_prop_leftJoin",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "QueryJoin",
-        "area_trans": "QueryJoin",
-        "menu": null
+        "area": "QueryJoin"
     },
-    {
+    "rightJoin": {
         "name": "rightJoin",
         "desc": "awesomeVideos_prop_rightJoin",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "QueryJoin",
-        "area_trans": "QueryJoin",
-        "menu": null
+        "area": "QueryJoin"
     },
-    {
+    "includeTVs": {
         "name": "includeTVs",
         "desc": "awesomeVideos_prop_includeTVs",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "TV",
-        "area_trans": "TV",
-        "menu": null
+        "area": "TV"
     },
-    {
+    "prepareTVs": {
         "name": "prepareTVs",
         "desc": "awesomeVideos_prop_prepareTVs",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "1",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "TV",
-        "area_trans": "TV",
-        "menu": null
+        "area": "TV"
     },
-    {
+    "processTVs": {
         "name": "processTVs",
         "desc": "awesomeVideos_prop_processTVs",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "TV",
-        "area_trans": "TV",
-        "menu": null
+        "area": "TV"
     },
-    {
+    "tvFilters": {
         "name": "tvFilters",
         "desc": "awesomeVideos_prop_tvFilters",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "TV",
-        "area_trans": "TV",
-        "menu": null
+        "area": "TV"
     },
-    {
+    "tvFiltersAndDelimiter": {
         "name": "tvFiltersAndDelimiter",
         "desc": "awesomeVideos_prop_tvFiltersAndDelimiter",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": ",",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "TV",
-        "area_trans": "TV",
-        "menu": null
+        "area": "TV"
     },
-    {
+    "tvFiltersOrDelimiter": {
         "name": "tvFiltersOrDelimiter",
         "desc": "awesomeVideos_prop_tvFiltersOrDelimiter",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "||",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "TV",
-        "area_trans": "TV",
-        "menu": null
+        "area": "TV"
     },
-    {
+    "tvPrefix": {
         "name": "tvPrefix",
         "desc": "awesomeVideos_prop_tvPrefix",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "tv.",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "TV",
-        "area_trans": "TV",
-        "menu": null
+        "area": "TV"
     },
-    {
+    "tpl": {
         "name": "tpl",
         "desc": "awesomeVideos_prop_tpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "@FILE: aw.item.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplFirst": {
         "name": "tplFirst",
         "desc": "awesomeVideos_prop_tplFirst",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplLast": {
         "name": "tplLast",
         "desc": "awesomeVideos_prop_tplLast",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplOdd": {
         "name": "tplOdd",
         "desc": "awesomeVideos_prop_tplOdd",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplPagingButton": {
         "name": "tplPagingButton",
         "desc": "awesomeVideos_prop_tplPagingButton",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "@FILE: pagination/aw.button.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplPagingButtonEmpty": {
         "name": "tplPagingButtonEmpty",
         "desc": "awesomeVideos_prop_tplPagingButtonEmpty",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "@FILE: pagination/aw.buttonEmpty.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplPagingSnippet": {
         "name": "tplPagingSnippet",
         "desc": "awesomeVideos_prop_tplPagingSnippet",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplPath": {
         "name": "tplPath",
         "desc": "awesomeVideos_prop_tplPath",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "awesomeVideos/core/components/awesomevideos/elements/chunks/",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "tplWrapper": {
         "name": "tplWrapper",
         "desc": "awesomeVideos_prop_tplWrapper",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "@FILE: aw.wrapper.tpl",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Template",
-        "area_trans": "Template",
-        "menu": null
+        "area": "Template"
     },
-    {
+    "pageActiveTpl": {
         "name": "pageActiveTpl",
         "desc": "awesomeVideos_prop_pageActiveTpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
-    {
+    "pageFirstTpl": {
         "name": "pageFirstTpl",
         "desc": "awesomeVideos_prop_pageFirstTpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
-    {
+    "pageLastTpl": {
         "name": "pageLastTpl",
         "desc": "awesomeVideos_prop_pageLastTpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
-    {
+    "pageNavOuterTpl": {
         "name": "pageNavOuterTpl",
         "desc": "awesomeVideos_prop_pageNavOuterTpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
-    {
+    "pageNavTpl": {
         "name": "pageNavTpl",
         "desc": "awesomeVideos_prop_pageNavTpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
-    {
+    "pageNextTpl": {
         "name": "pageNextTpl",
         "desc": "awesomeVideos_prop_pageNextTpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
-    {
+    "pagePrevTpl": {
         "name": "pagePrevTpl",
         "desc": "awesomeVideos_prop_pagePrevTpl",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (getPage snippet)",
-        "area_trans": "Template pagination (getPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (getPage snippet)"
     },
-    {
+    "tplPage": {
         "name": "tplPage",
         "desc": "awesomeVideos_prop_tplPage",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageActive": {
         "name": "tplPageActive",
         "desc": "awesomeVideos_prop_tplPageActive",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageFirst": {
         "name": "tplPageFirst",
         "desc": "awesomeVideos_prop_tplPageFirst",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageFirstEmpty": {
         "name": "tplPageFirstEmpty",
         "desc": "awesomeVideos_prop_tplPageFirstEmpty",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageLast": {
         "name": "tplPageLast",
         "desc": "awesomeVideos_prop_tplPageLast",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageLastEmpty": {
         "name": "tplPageLastEmpty",
         "desc": "awesomeVideos_prop_tplPageLastEmpty",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageNext": {
         "name": "tplPageNext",
         "desc": "awesomeVideos_prop_tplPageNext",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageNextEmpty": {
         "name": "tplPageNextEmpty",
         "desc": "awesomeVideos_prop_tplPageNextEmpty",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPagePrev": {
         "name": "tplPagePrev",
         "desc": "awesomeVideos_prop_tplPagePrev",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPagePrevEmpty": {
         "name": "tplPagePrevEmpty",
         "desc": "awesomeVideos_prop_tplPagePrevEmpty",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageSkip": {
         "name": "tplPageSkip",
         "desc": "awesomeVideos_prop_tplPageSkip",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "tplPageWrapper": {
         "name": "tplPageWrapper",
         "desc": "awesomeVideos_prop_tplPageWrapper",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "area": "Template pagination (pdoPage snippet)",
-        "area_trans": "Template pagination (pdoPage snippet)",
-        "menu": null,
-        "overridden": 0
+        "area": "Template pagination (pdoPage snippet)"
     },
-    {
+    "scheme": {
         "name": "scheme",
         "desc": "awesomeVideos_prop_scheme",
-        "xtype": "list",
+        "type": "textfield",
         "options": [
             {
                 "text": "-1 (relative to site_url)",
-                "value": -1,
-                "name": "-1 (relative to site_url)"
+                "value": -1
             },
             {
                 "text": "full (absolute, prepended with site_url)",
-                "value": "full",
-                "name": "full (absolute, prepended with site_url)"
+                "value": "full"
             },
             {
                 "text": "abs (absolute, prepended with base_url)",
-                "value": "abs",
-                "name": "abs (absolute, prepended with base_url)"
+                "value": "abs"
             },
             {
                 "text": "http (absolute, forced to http scheme)",
-                "value": "http",
-                "name": "http (absolute, forced to http scheme)"
+                "value": "http"
             },
             {
                 "text": "https (absolute, forced to https scheme)",
-                "value": "https",
-                "name": "https (absolute, forced to https scheme)"
+                "value": "https"
             }
         ],
         "value": "-1",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Unused",
-        "area_trans": "Unused",
-        "menu": null
+        "area": "Unused"
     },
-    {
+    "showLog": {
         "name": "showLog",
         "desc": "awesomeVideos_prop_showLog",
-        "xtype": "combo-boolean",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Unused",
-        "area_trans": "Unused",
-        "menu": null
+        "area": "Unused"
     },
-    {
+    "showSpecial": {
         "name": "showSpecial",
         "desc": "awesomeVideos_prop_showSpecial",
-        "xtype": "combo-boolean",
+        "type": "textfield",
         "options": [],
         "value": true,
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Unused",
-        "area_trans": "Unused",
-        "menu": null
+        "area": "Unused"
     },
-    {
+    "showUnactive": {
         "name": "showUnactive",
         "desc": "awesomeVideos_prop_showUnactive",
-        "xtype": "combo-boolean",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Unused",
-        "area_trans": "Unused",
-        "menu": null
+        "area": "Unused"
     },
-    {
+    "toPlaceholder": {
         "name": "toPlaceholder",
         "desc": "awesomeVideos_prop_toPlaceholder",
-        "xtype": "textfield",
+        "type": "textfield",
         "options": [],
         "value": "",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Unused",
-        "area_trans": "Unused",
-        "menu": null
+        "area": "Unused"
     },
-    {
+    "wrapIfEmpty": {
         "name": "wrapIfEmpty",
         "desc": "awesomeVideos_prop_wrapIfEmpty",
-        "xtype": "list",
+        "type": "textfield",
         "options": [
             {
                 "text": "false",
-                "value": "0",
-                "name": "false"
+                "value": "0"
             },
             {
                 "text": "true",
-                "value": "1",
-                "name": "true"
+                "value": "1"
             },
             {
                 "text": "tplWrapperEmpty",
-                "value": "\"-1\"",
-                "name": "tplWrapperEmpty"
+                "value": "\"-1\""
             }
         ],
         "value": "0",
         "lexicon": "awesomeVideos:properties",
-        "overridden": 0,
-        "area": "Unused",
-        "area_trans": "Unused",
-        "menu": null
+        "area": "Unused"
     }
-]
+}]

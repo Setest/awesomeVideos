@@ -1,0 +1,65 @@
+.aw_wrap_playlist{}
+
+.aw_wrap_playlist .title{
+	font-size: 20px;
+	margin: 20px 0 10px;
+	font-weight: bold;
+}
+
+.aw_wrap_playlist .playlist{
+	background-color: #d6e7d4;
+	border: 1px solid #D5D5D5;
+	margin: 0px 0px 15px 0px;
+	padding: 0px 10px 15px;
+}
+.aw_wrap_playlist .playlist:nth-child(even){
+	background-color: #ebe0e0;
+}
+
+.aw_wrap_video{}
+
+.aw_wrap_video .item {}
+
+.aw_wrap_video .owl-stage-outer{
+	margin: 0 35px;
+}
+
+.aw_wrap_video .item .title {
+	font-size: 15px;
+	line-height: 20px;
+	margin: 0;
+	padding: 10px 5px 0;
+	color: #141613;
+}
+.aw_wrap_video .item .desc {
+	color: #6f7170;
+	font-size: 15px;
+	line-height: 20px;
+	margin: 0;
+	padding: 10px 5px 0;
+}
+.aw_wrap_video .item .thumb {
+	border: 2px solid #fff;
+}
+
+
+.owl-prev, .owl-next {
+	position: absolute;
+	font-size: 40px;
+	font-weight: bold;
+	color: #9D0C11;
+	font-family: cursive;
+	z-index: 1;
+	top: 33px;
+}
+.owl-prev:hover,
+.owl-next:hover{
+	color:#000;
+	text-decoration: none;
+}
+.owl-prev {
+	left: 5px;
+}
+.owl-next{
+	right: 5px;
+}

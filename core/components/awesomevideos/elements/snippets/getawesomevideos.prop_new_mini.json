@@ -1,0 +1,13 @@
+[{
+    "name": "tvFilters",
+    "desc": "awesomeVideos_prop_tvFilters",
+    "xtype": "textfield",
+    "options": [],
+    "value": "",
+    "lexicon": "awesomeVideos:properties",
+    "overridden": false,
+    "area": "TV",
+    "area_trans": "TV",
+    "menu": null
+}
+]
