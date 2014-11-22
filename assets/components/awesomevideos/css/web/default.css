@@ -1,3 +1,60 @@
+.aw-loading-animate {
+/* 	animation-name: rotateThis;
+animation-duration: .5s;
+animation-iteration-count: infinite;
+animation-timing-function: linear;
+*/
+
+	-animation: spin .7s infinite linear;
+	-webkit-animation: spin2 .7s infinite linear;
+
+}
+
+@keyframes rotateThis {
+	from { transform: scale( 1 ) rotate( 0deg );   }
+	to   { transform: scale( 1 ) rotate( 360deg ); }
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+.aw-loading {
+	width: 100%;
+	text-align: center;
+	padding: 10px;
+}
+
+.aw-loading-spinner {
+	font-size: 30px;
+	color: #5AC0DD;
+	text-align: center;
+	vertical-align: middle;
+}
+
+
+.aw_wrap {
+	border: 2px dashed gray;
+	/*display: inline-block;*/
+	/*display: inline;*/
+	/*max-height: 300px;*/
+ /*overflow: scroll;*/
+ overflow: auto;
+ /*overflow: visible;*/
+
+ /*padding: 20px 0 100px;*/
+
+}
+.aw_wrap .content .thumbLink{
+	/*display: inline-block;*/
+}
+
 .aw_wrap_playlist{}
 
 .aw_wrap_playlist .title{
@@ -11,12 +68,33 @@
 	border: 1px solid #D5D5D5;
 	margin: 0px 0px 15px 0px;
 	padding: 0px 10px 15px;
+	width: 100%;
 }
 .aw_wrap_playlist .playlist:nth-child(even){
 	background-color: #ebe0e0;
 }
 
-.aw_wrap_video{}
+.aw_wrap_video {
+/*	display: inline-block;
+	position: relative;
+	list-style: none outside none;
+	padding: 10px 0;
+	text-align: left;
+	line-height: 0;
+	font-size: 1px;
+	text-justify: newspaper;
+	zoom: 1;
+	text-align-last: justify;
+*/}
+
+.aw_wrap_playlist .catalog .item{
+	margin-right: 20px;
+	width: 217px;
+	padding-bottom: 20px;
+}
+.aw_wrap_playlist .catalog .item:nth-child(4n){
+	margin-right: 0px;
+}
 
 .aw_wrap_video .item {}
 
@@ -40,8 +118,38 @@
 }
 .aw_wrap_video .item .thumb {
 	border: 2px solid #fff;
+	/*height: 300px;*/
 }
 
+
+/*  pagination  */
+
+/* .aw_wrap[data-aw-pagination="scroll"] > .paging {
+	position: fixed;
+	right: 30px;
+	top: 70px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	opacity: 0.5;
+}
+.aw_wrap[data-aw-pagination="scroll"] > .paging li > span,
+.aw_wrap[data-aw-pagination="scroll"] > .paging li > a {
+	border: none;
+	background: #000;
+	color: #CCC;
+	font-weight: bold;
+	zoom: 1;
+	padding: 5px 7px;
+}
+
+
+.aw_wrap[data-aw-pagination="scroll"] > .paging ul li.active a,
+.aw_wrap[data-aw-pagination="scroll"] > .paging ul li:hover a
+{
+	color: #FFF;
+} */
 
 .owl-prev, .owl-next {
 	position: absolute;

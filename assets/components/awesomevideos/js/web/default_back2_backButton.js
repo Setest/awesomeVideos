@@ -18,8 +18,6 @@ $.fn.hasScrollBar = function() {
 			firstContentSelector: '> .content:eq(0)',
 			firstPagingSelector: '> .content:eq(0)',
 			log: '.aw_log',
-			pausedTimer: 500,	// таймер паузы в мс., при нажатии back кнопки history и при наличии скрола, он не допускает выполнение подгрузки данных
-												// сразу, дабы не переписать history не нужными данными, если же юзер остался на странице то происходит загрузка после ожидания.
 			defScrollSize: 0,
 			paddingBottom: 15,	// фактически это погрешность при вычислении скролинга, так как на разных устройствах, браузерах,
 													// масштабах, размерах шрифта и неконтролируемом поведении при разных padding-ах, мы получаем величины
@@ -43,8 +41,6 @@ $.fn.hasScrollBar = function() {
 			// prefix: 'mse2_'
 		},
 		hashes: {},	// хранит изменения которые нужно сделать с кешем браузера
-		cancelAction: false,
-		backButtonClicked: false,
 		eventCounterPrev: 0,
 		eventCounter: 0, // счетчик действий, на основе него можно определять нажали юзер кнопку Back или переходит по действиям вперед
 										 // это важно для пагинации в виде скролинга
@@ -53,7 +49,6 @@ $.fn.hasScrollBar = function() {
 			var that=this;
 
 			this.baseTitle = document.title;
-			this.timer = this._dateNow();
 
 			// нужно найти все элементы среди родителей которых нет
 			// элементов с классом .aw_wrap. Т.е. найдем всех первых родителей.
@@ -76,11 +71,9 @@ $.fn.hasScrollBar = function() {
 			// this.createCarousel($('.aw_wrap_video > .content'));
 		},
 
-		// _reloadDataByKeys: function(prop,eventCounter) {
-		_reloadDataByKeys: function(prop,bindHistory) {
+		_reloadDataByKeys: function(prop,eventCounter) {
 			prop = prop || {};
-			bindHistory = (typeof bindHistory !=='undefined') ? bindHistory : true;
-			// eventCounter = eventCounter || 0;
+			eventCounter = eventCounter || 0;
 
 			var that=this, key;
 			console.log('Reloading page',prop);
@@ -97,20 +90,14 @@ $.fn.hasScrollBar = function() {
 			// var hashConfig = hash.data[keyReal].config;
 			// var hashConfig = History.getLastStoredState().data[keyReal].config;
 
-			if ( bindHistory && that.hashes[hashId]) {
-				// alert ('ups')
+			if (that.hashes[hashId]) {
 				prop = that.hashes[hashId];
 				delete (that.hashes[hashId]);
 			}
 			for(key in prop) if (prop.hasOwnProperty(key)) {
 				var props = prop[key];
-				if (props.firstInit && props.config.pagination=="scroll"){
-					// это сработает только при нажатии на кнопку Back в тот момент когда юзер дойдет до открытия данной страницы.
-					props.config['offset']=0; // иначе мы откроем вторую запись
-					// props.config['offset']
-				}
 				console.log('Reloading data by key: ', key, props);
-				that.sendData(key,props);
+				that.sendData(key,props,eventCounter);
 			}
 
 		},
@@ -307,13 +294,6 @@ $.fn.hasScrollBar = function() {
 			// console.log('bindScroll',this);
 		},
 
-		_scrollTo: function($obj) {
-			if (typeof $obj === 'undefined' || !$obj ) return false;
-			var offset = $obj.offset().top;
-			offset=(offset<0)?0:offset;
-			$(window).scrollTop(offset);
-		},
-
 		_scrollObserve: function($obj, _isWindow) {
 			// console.log ('Вычисляем размер скрола и выполянем загрузку данных по необходимости', $obj);
 			_isWindow = _isWindow || false;
@@ -364,28 +344,11 @@ $.fn.hasScrollBar = function() {
 			}
 		},
 
-		_dateNow: function () {
-			return (!Date.now)
-				? new Date().getTime()
-				: Date.now()
-			;
-		},
-
 		_checkScroll: function($obj) {
 			var that=this,
-					$target = $($obj.currentTarget),
-					timer = 0
+					$target = $($obj.currentTarget)
 			;
-			// console.log ('СРАБОТАЛО СОБЫТИЕ!!!', backButtonClicked);
-			// console.log ('СРАБОТАЛО СОБЫТИЕ!!!', that.backButtonClicked );
-
-			// if (that.backButtonClicked){
-				// that.timer = this._dateNow() + that.options.pausedTimer;
-				// that.backButtonClicked = false;
-			// }
-
-			if ( that.timer > this._dateNow() ) return;
-			// if (that.cancelAction) return;
+			// console.log ('СРАБОТАЛО СОБЫТИЕ!!!', $target);
 
 			if ($target.get(0) == window) {
 				// сработал общий скролинг ищем все объекты, которые реагируют
@@ -398,7 +361,6 @@ $.fn.hasScrollBar = function() {
 			}else{
 				that._scrollObserve($target);
 			}
-
 		},
 
 
@@ -483,6 +445,11 @@ $.fn.hasScrollBar = function() {
 				console.log('disable animation');
 
 			}
+
+// $('body').prepend($("<div>",{
+// 					class: 'aw-loading-animate aw-loading',
+// 				}));
+
 		},
 
 		_loadData: function($obj, action, params) {
@@ -502,8 +469,6 @@ $.fn.hasScrollBar = function() {
 
 					$wrapCurrent = this.getCurrent('object', $target),
 
-					title = $target.attr('title') || '',
-
 					$wrap=( action =='getData' )
 						? $(that.options.wrapper+':first', $body)
 						: $wrapCurrent,
@@ -519,11 +484,8 @@ $.fn.hasScrollBar = function() {
 					idx = this.getCurrent('idx', $target),
 
 					configOriginal = this.getCurrent('config', $target),
-
-					bindHistory = (typeof configOriginal['bindHistory'] ==='undefined') || ( configOriginal['bindHistory'] )?true:false,
-
 					parentsWrap = $wrapCurrent.parents(this.options.wrapper),
-					// backButtonClicked = (that.eventCounterPrev > (that.eventCounter)) ? true : false,
+					backButtonClicked = (that.eventCounterPrev > (that.eventCounter)) ? true : false,
 
 					config = ( action =='getData' )
 						? {}
@@ -592,26 +554,16 @@ $.fn.hasScrollBar = function() {
 				var keyReal = key;
 				if ( parentsWrap.length ){
 					var $parent = $(parentsWrap.eq(0)),
-							// parentObject = this.getCurrent('object', $parent),
-							// parentConfig = this.getCurrent('config', $parent),
-							pagination = this.getCurrent('pagination', $parent),
+							pagination = this.getCurrent('pagination', $parent)
 							keyReal = this.getCurrent('key', $parent)
 					;
 				}
 
 				var curOffset = $target.data('aw-idx');
-				// config['offset'] = 777;
 				if ( pagination == 'scroll' && curOffset ){
 					// нужно заменить текущее состояни
-					var hashConfig,
-							hash = that.hash.getState();
-					// var hashConfig = hash.data[keyReal].config;
-
-					try {
-						hashConfig = hash.data[keyReal].config;
-					} catch(e) {
-						hashConfig = $.extend(config);
-					}
+					var hash = that.hash.getState();
+					var hashConfig = hash.data[keyReal].config;
 					// var hashConfig = History.getLastStoredState().data[keyReal].config;
 
 					console.warn('keyReal',keyReal);
@@ -635,7 +587,6 @@ $.fn.hasScrollBar = function() {
 			}
 
 			var sendData = $.extend(config, params, {'action':action}),
-					eventCounter = that.eventCounter++,
 					sendParam = {
 						// 'wrap' : $wrap,
 						// 'content' : $content,
@@ -644,30 +595,22 @@ $.fn.hasScrollBar = function() {
 						'action' : action,
 						'config' : config,
 						'sendData' : sendData,
-						'eventCounter' : eventCounter,
-
 					}, temp;
 			temp[key]=sendParam;
-			// temp['eventCounter']=eventCounter;
 
 
-			// если отключен ajax значит
-			if ( typeof configOriginal['ajax'] !=='undefined' && !configOriginal['ajax'] && $target.attr('href') && $target.attr('href').length ){
-				window.location.href = $target.attr('href');
+			// не фиксируем history у вложенных элементов
+			if (
+						!parentsWrap.length && (
+						       action =='getData'
+							|| ( action =='showPage' )
+							|| ( action =='showMore' && config.pagination =='scroll' )
+				)){
+				// записываем данные в history
+				that.hash.set( sendData, temp, that.eventCounter++ );
 			}else{
-				// не фиксируем history у вложенных элементов
-				if (
-							bindHistory && !parentsWrap.length && (
-							       action =='getData'
-								|| ( action =='showPage' )
-								|| ( action =='showMore' && config.pagination =='scroll' )
-					)){
-					// записываем данные в history
-					that.hash.set( sendData, temp, title );
-				}else{
-					// alert ('интересно когда это сработает?')
-					that._reloadDataByKeys(temp,bindHistory);
-				}
+				// alert ('интересно когда это сработает?')
+				that._reloadDataByKeys(temp, that.eventCounter++);
 			}
 
 		},
@@ -692,19 +635,12 @@ $.fn.hasScrollBar = function() {
 
 					config = prop.config,
 
-					curEventCounter = prop.eventCounter || 0,
-
 					backButtonClicked = (that.eventCounterPrev > curEventCounter) ? true : false,
-
 					scrollTop = $(window).scrollTop()
 					// $wrap = prop.wrap,
 					// $content = prop.content,
 					// $paging = prop.paging
 			;
-
-			that.backButtonClicked = backButtonClicked;
-
-// alert (config['id']);
 
 			// if ( backButtonClicked && action=='showMore' ){
 			if ( backButtonClicked ){
@@ -848,17 +784,15 @@ $.fn.hasScrollBar = function() {
 
 						setTimeout(function() {
 							console.info('ща отработаем');
-							$content.waitForImages(function() {
-								if (backButtonClicked){
-									that.timer = that._dateNow() + that.options.pausedTimer;
-									that._scrollTo($content);
-								// that._bindScroll();
-							// }else{
+							if (backButtonClicked){
+								that._bindScroll();
+							}else{
+								$content.waitForImages(function() {
 								    // All descendant images have loaded, now slide up.
 										// пагинация скролингом, прежде нужно дождаться загрузки всех изображений!
-								}
-								that._bindScroll();
-							});
+										that._bindScroll();
+								});
+							}
 						}, 0)
 
 
@@ -928,7 +862,6 @@ $.fn.hasScrollBar = function() {
 		    // this.clear();
 
 				var that = this,
-						bindHistory = true,
 						res={},
 						History = window.History;
 				if ( !History.enabled ) {
@@ -947,13 +880,9 @@ $.fn.hasScrollBar = function() {
 					;
 
 
-					// if (config['offset']==2) config['offset'] = 0;
-
 					if (key){
-						bindHistory = (typeof config['bindHistory'] ==='undefined') || ( config['bindHistory'] ) ? true : false;
 						config['key'] = key;
 						res[key]={
-							'firstInit' : true,
 							'action' : 'getData',
 							'config' : config,
 							'sendData' : $.extend(config, { 'action' : 'getData' })
@@ -963,13 +892,16 @@ $.fn.hasScrollBar = function() {
 
 				console.log('initialize history: ', res);
 
-
-
-				if (res && bindHistory){
-					that.set(hash, res);
+				if (res){
+					that.set(hash, res, 'initialize');
 					// that.eventCounter = 5;
-					// that.set(hash, res, awesomeVideos.eventCounter);
+					that.set(hash, res, awesomeVideos.eventCounter);
 				}
+
+				History.Adapter.bind(window,'anchorchange ',function(){
+		    		var State = History.getState(); // Note: We are using History.getState() instead of event.state
+				    console.warn ('ANCHOR binded', State, arguments);
+				});
 
 				History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
 				    var firstInit = false,
@@ -995,7 +927,7 @@ $.fn.hasScrollBar = function() {
 				    // 	History.saveState(State);
 				    // 	alert ('заменили - 3');
 				    }else{
-				    	awesomeVideos._reloadDataByKeys(State.data);
+				    	awesomeVideos._reloadDataByKeys(State.data,State.title);
 				    }
 
 				    	// awesomeVideos._reloadPage(State.data);
@@ -1017,7 +949,6 @@ $.fn.hasScrollBar = function() {
 
 			},
 			getState: function() {
-				if ( !History.enabled ) return {};
 				return this.history.getState();
 			},
 			get: function() {

@@ -1,1 +1,1 @@
-<a class="btn btn-primary showMore disabled" href="[[+uri]]" role="button">Нет записей</a>
+<a class="btn btn-success showMore disabled" href="[[+uri]]" role="button">Нет записей</a>

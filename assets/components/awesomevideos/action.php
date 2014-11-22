@@ -82,6 +82,7 @@ else {
 unset($_REQUEST['pageId'], $_REQUEST['action'], $_REQUEST['key']);
 */
 switch ($action) {
+	case 'getFirstData':
 	case 'getData':
 
 	  // $result = ($result = $f(array_merge($snippetProperties, $config) )) ? $result : array();
@@ -95,6 +96,7 @@ switch ($action) {
 		$response = $modx->toJSON($response);
 		break;
 
+	case 'showPage':
 	case 'showMore':
 
 	  $result = ($result = $f($config)) ? $result : array();
@@ -233,7 +235,7 @@ switch ($action) {
 		$response = $modx->toJSON(array('success' => false, 'message' => 'Could not load config'));
 		break;
 	default:
-		$response = $modx->toJSON(array('success' => false, 'message' => 'Access denied'));
+		$response = $modx->toJSON(array('success' => false, 'message' => 'Действие не найденно'));
 }
 
 @session_write_close();

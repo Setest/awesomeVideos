@@ -197,6 +197,7 @@ class awesomeVideos extends awesomeVideosHelper {
                   $this->modx->regClientCSS($this->config['cssUrl'].'web/owl.carousel.css');
                   $this->modx->regClientCSS($this->config['cssUrl'].'web/default.css');
                   $this->modx->regClientStartupScript($this->config['jsUrl'].'web/lib/owl.carousel.min.js');
+                  $this->modx->regClientStartupScript($this->config['jsUrl'].'web/lib/jquery.waitforimages.min.js');
                 // }
                 // https://github.com/websanova/js-url
                 // https://github.com/allmarkedup/purl - хорошая вещь, нудо будет заюзать

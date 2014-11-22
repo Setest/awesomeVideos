@@ -49,13 +49,16 @@ class getawesomevideos extends awesomeVideosHelper{
       	// 'isstyled'=>$this->modx->getOption('log_isstyled', $config, true),
       	// 'log_placeholder'=>$this->modx->getOption('log_placeholder', $config, false),
       	// 'log_detail'=>$this->modx->getOption('log_detail', $config, false),
-      	'log_status'      => $config['log_status']      ? $config['log_status']      : true,
-      	'log_isstyled'    => $config['log_isstyled']    ? $config['log_isstyled']    : true,
-      	'log_placeholder' => $config['log_placeholder'] ? $config['log_placeholder'] : 'aw_log',
-      	'log_detail'      => $config['log_detail']      ? $config['log_detail']      : false,
-      	'log_target'      => $config['log_target']      ? $config['log_target']      : 'HTML',  // HTML, ECHO, FILE, PLACEHOLDER, SYSTEM || AUTO
-      	'log_level'       => $config['log_level']       ? $config['log_level']       : 'INFO',  // INFO, WARN, ERROR, FATAL, DEBUG
+      	'log_status'      => isset($config['log_status'])   ? $config['log_status']      : true,
+      	'log_isstyled'    => isset($config['log_isstyled']) ? $config['log_isstyled']    : true,
+      	'log_placeholder' => $config['log_placeholder']     ? $config['log_placeholder'] : 'aw_log',
+      	'log_detail'      => isset($config['log_detail'])   ? $config['log_detail']      : false,
+      	'log_target'      => $config['log_target']          ? $config['log_target']      : 'HTML',  // HTML, ECHO, FILE, PLACEHOLDER, SYSTEM || AUTO
+      	'log_level'       => $config['log_level']           ? $config['log_level']       : 'INFO',  // INFO, WARN, ERROR, FATAL, DEBUG
       ),
+
+      'ajax'=>isset($config['ajax'])?$config['ajax']:true,	// позволяет переходить по ссылкам посредством ajax без обновления страницы
+      'bindHistory'=>isset($config['bindHistory'])?$config['bindHistory']:true,
 
       'fastMode'=>isset($config['fastMode'])?!$config['fastMode']:false,
 
@@ -114,6 +117,7 @@ class getawesomevideos extends awesomeVideosHelper{
 
 		// вытащим параметры которые были переданы напрямую в сниппет
 		$snippetStartProperties =  array_diff_key($config,$snippetProperties);
+		$this->config['snippetStartProperties'] = $snippetStartProperties;
 
 // echo "<pre>";print_r($config);die();
 // array_merge_recursive
@@ -133,6 +137,7 @@ class getawesomevideos extends awesomeVideosHelper{
 				$key = $config['key'];
 		    $this->config = array_merge($tmp, $config);
 			}
+
 			if ($resourceId=$this->getSessionStore('resource-id')){
 			  $this->modx->resource = $this->modx->getObject('modResource', $resourceId);
 			}
@@ -172,10 +177,19 @@ class getawesomevideos extends awesomeVideosHelper{
 		// echo($this->config['mainUri']['href']);
 
 
+		// if ( $this->config['pagination'] == 'snippet' || $this->config['pagination'] == 'scroll' ){
 		if ( $this->config['pagination'] == 'snippet' ){
 			$this->config['offset'] = $this->config['limit'] * ( ($this->config['page']<=1)?0:$this->config['page']-1 );
+			// $this->config['offset'] = $this->config['limit'] * ( ($this->config['page']<=1)?0:$this->config['page'] );
 			// unset($_REQUEST['page']);
 		}
+		// if ( $this->config['pagination'] == 'scroll' ){
+			// $this->config['page'] = ($this->config['total'] / $this->config['limit']) * ( ($this->config['page']<=1)?0:$this->config['page']-1 );
+		// }
+
+		// if ( $this->config['pagination'] == 'scroll' && $this->config['offset']>1 ){
+		// 	$this->config['page'] == $this->config['limit'] * $this->config['offset'];
+		// }
 
 		$this->idx = !empty($this->config['offset'])
 			? (integer) $this->config['offset'] + 1
@@ -186,6 +200,12 @@ class getawesomevideos extends awesomeVideosHelper{
 
 		// продлеваем данные в сессии
 		$this->setSessionStore($this->config['key'], $this->config, 0, 'config' );
+
+		// нужно объединить данные пришедшие из get с config
+		// и удалить их из get, чтоб вложенные в чанк сниппеты не могли им воспользоваться
+		// ... нет при direct get быть не может... как то нужно давать понять тем сниппетам
+		// что их вызывают из внешнего чанка и тогда они не имеют брать данные из GET,
+		// но что делать если у нас есть несколько сниппетов на одной странице ???
 
 // echo "<pre>";print_r($this->config); die();
 
@@ -782,12 +802,17 @@ class getawesomevideos extends awesomeVideosHelper{
 // die();
 
 
-						$uri=$this->makeLink(array_merge(array(
+
+
+						$uri=$this->makeLink($uriParams=array_merge(array(
 							'part'=>$this->config['part'],
 							'id'=>$row['id'],
 							'setOfProperties'=>$this->config['setOfProperties'],
 						),$addDataToUrlArr), 0);
 
+						$uriParams=$this->modx->toJSON($uriParams);
+
+						$row['uriParams'] = $uriParams;
 						$row['uri'] = $uri['href'];
 
 						$tpl = $this->defineChunk($row);
@@ -808,10 +833,12 @@ class getawesomevideos extends awesomeVideosHelper{
 							// echo $tpl;
 						}
 					}
+// print_r($this->config);
+// die();
 
 					// $offset = $this->config['limit'] + $this->config['offset'];
 					$this->modx->setPlaceholder($this->config['offsetVar'], $this->idx--);
-					$this->config['offset'] = $this->idx;
+					$this->config['offset'] = $this->idx--;
 
 					$this->writeLog('Returning processed chunks', microtime(true) - $time);
 					// $this->writeLog('Result: '.print_r($output, true), microtime(true) - $time, 'WARN');
@@ -822,18 +849,23 @@ class getawesomevideos extends awesomeVideosHelper{
 					}
 					// elseif (!empty($output)) {
 					else{
-						$output = implode($this->config['outputSeparator'], $output);
+						if ($output) $output = implode($this->config['outputSeparator'], $output);
 					// }else{
 
 						$balance = (int)$this->config['total'] - (int)$this->config['offset'];
 						// $limit = ($this->config['limit'] > $balance) ? $balance : $this->config['limit'];
-						$limit = ($this->config['limit'] > $balance && $balance) ? $balance : $this->config['limit'];
+						$limit = ($this->config['pagination']!=='snippet' && $this->config['limit'] > $balance) ? $balance : $this->config['limit'];
 
 						$config = array(
+							'ajax' => $this->config['ajax'],
+							'bindHistory' => $this->config['bindHistory'],
+							'log_status'=>$this->config['log']['log_status'],
+							// 'limit' => 8,
 							'limit' => $limit,
 							// 'offset' => $this->config['limit'] + $this->config['offset'],
 							// 'offset' => $this->modx->getPlaceholder($this->config['offsetVar']),
 							'offset' => $this->config['offset'],
+							// 'offset' => $this->config['offset'] - $this->config['limit'],
 							'total' => $this->config['total'],
 							'balance' => $balance,
 							'part' => $this->config['part'],
@@ -841,17 +873,31 @@ class getawesomevideos extends awesomeVideosHelper{
 							'key' => $this->config['key'],
 							'setOfProperties' => $this->config['setOfProperties'],
 							'pagination' => $this->config['pagination'],
+							// 'page' => $this->config['page'],
 							// 'page' => 1,
 						);
 // echo 777;
-// print_r($config);
 // $this->modx->resource = $this->modx->getObject('modResource', 19230);
 // var_dump($this->modx->resource);
-// die();
 						$paging = $this->getPaging($config);
+						// $config['limit'] = ($this->config['limit'] > $balance && $balance) ? $balance : $this->config['limit'];
+						// $config['offset'] = $this->config['offset'];
 
 						// оборачиваем все в главную обертку
 						if (!$this->config['direct'] && $this->config['tplWrapper']){
+
+							// нужно создать массив содержащий РАЗРЕШЕННЫЕ стартовые параметры, это на случай если клиент в браузере
+							// возвратиться на первую страницу. Без начальных параметров он может получить не правильное смещение offset
+
+							// $snippetStartProperties = array_intersect_key($this->config['snippetStartProperties'], $config);
+							// $snippetStartProperties = $this->config['snippetStartProperties'];
+							// if (empty($snippetStartProperties['offset']))
+							// $snippetStartProperties = $config;
+							// $denied = array('offset','balance','total','addDataToUrl');
+							// $snippetStartProperties = array_merge( $config, $this->config['snippetStartProperties'] );
+							// $snippetStartProperties = array_diff_key($snippetStartProperties, array_flip($denied) );
+							// $snippetStartProperties=array('key'=>$this->config['key']);
+
 							$result_ph=array(
 								'config' => $this->modx->toJSON($config),
 								'part' => $this->config['part'],
@@ -859,6 +905,8 @@ class getawesomevideos extends awesomeVideosHelper{
 								'output' => $output,
 								'paging' => $paging,
 								'paginationType' => $this->config['pagination'],
+								// 'configStart' => $this->modx->toJSON( $snippetStartProperties ),
+								// $this->config['snippetStartProperties']
 								// 'log' => $this->modx->getPlaceholder($this->config['totalVar']),
 								// 'total' => $this->modx->getPlaceholder($this->config['totalVar']),
 								'total' => $this->config['total'],
@@ -907,6 +955,10 @@ class getawesomevideos extends awesomeVideosHelper{
   }
 
   public function getPaging($config){
+  	$this->writeLog('Параметры пагинации', '','ERROR');
+  	// $this->writeLog($_GET, '','ERROR');
+  	$this->writeLog($config, '','ERROR');
+
   	// if ( in_array($config['pagination'], array('button','button') ))
   	$tplEmpty=(!$config['balance'])?'Empty':false;
   	$result=$tpl='';
@@ -919,6 +971,7 @@ class getawesomevideos extends awesomeVideosHelper{
 				break;
 
 			case 'snippet':
+			// case 'scroll':
 				if (!$this->config['paginationSnippet']){
 					$this->writeLog('Не указано имя сниппета для создания пагинации', '','ERROR');
 					return false;
@@ -934,19 +987,34 @@ class getawesomevideos extends awesomeVideosHelper{
 				// получам только нужные параметры
 				$allowed = array('page', 'limit', 'total', 'offset');
 				$config = array_intersect_key($config, array_flip($allowed));
-				$snippetProperties=array_merge($config, $snippetProperties, array ('element'=>null,'totalVar'=>$this->config['totalVar']));
+				$snippetProperties=array_merge($snippetProperties, $config, array ('element'=>null,'totalVar'=>$this->config['totalVar']));
 // echo 123;
 
 				$this->modx->setPlaceholder($this->config['totalVar'], $snippetProperties['total']);
-				$prevPage=$_REQUEST['page'];
+				$prevRequest=$_REQUEST;
 				if (!$this->config['direct'] || ($this->config['direct'] && $_REQUEST['page']<=1)){
 					unset($_REQUEST['page']);
 				}
-// print_r($snippetProperties);
-				$output = $this->runSnippet($paginationSnippet, $snippetProperties);
-				$_REQUEST['page'] = $prevPage;
 
-				// echo '<pre>';
+		  	$this->writeLog('Параметры пагинации перед передачей в сниппет', '','ERROR');
+		  	$this->writeLog($snippetProperties, '','ERROR');
+
+		  	$_REQUEST = array_merge($_REQUEST, array(
+		  		'limit'=>$snippetProperties['limit'],
+		  		'offset'=>$snippetProperties['offset'],
+		  		// 'page'=>$snippetProperties['offset'],
+		  		'total'=>$snippetProperties['total'],
+		  	));
+
+		  	// $_REQUEST['offset']=5;
+		  	// $_REQUEST['page']=$snippetProperties['page']=0;
+		  	// $snippetProperties['offset']=8;
+		  	// $snippetProperties['page']=8;
+
+				// echo '<pre>';	print_r($_REQUEST); die();
+				$output = $this->runSnippet($paginationSnippet, $snippetProperties);
+				$_REQUEST = $prevRequest;
+
 				// print_r($this->makeLink($this->config['mainUri']));
 				// print_r($this->config['mainUri']['href']);
 				// echo '</pre> ';

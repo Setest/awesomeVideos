@@ -1,6 +1,7 @@
 <?php
 
 $_lang['awesomeVideos_prop_ajax'] = 'Использовать AJAX';
+$_lang['awesomeVideos_prop_bindHistory'] = 'Управлять историей браузера?';
 
 $_lang['awesomeVideos_prop_pagination'] = 'Способ пагинации по-умолчанию. Вы можете выбрать свой сниппет, который будет работать в соответствии с правилами пагинации описаной в RTFM.';
 
