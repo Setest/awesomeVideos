@@ -327,7 +327,7 @@ awesomeVideos.window.CreateItem = function(config) {
 							fieldLabel: _('awesomeVideos_item_author'),
 							name: 'author',
 							anchor: '90%',
-							allowBlank: false
+							allowBlank: true
 						}, {
 							// xtype: 'numberfield'
 							xtype: 'hidden',
@@ -340,7 +340,7 @@ awesomeVideos.window.CreateItem = function(config) {
 							fieldLabel: _('awesomeVideos_item_name'),
 							name: 'name',
 							anchor: '90%',
-							allowBlank: false
+							allowBlank: true
 						}, {
 							xtype: 'textfield',
 							fieldLabel: _('awesomeVideos_item_keywords'),

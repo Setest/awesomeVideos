@@ -51,6 +51,7 @@ $.fn.hasScrollBar = function() {
 		wrap : {}, // массив ссылок на объекты, ключами которых являются ключи
 		initialize: function(selector) {
 			var that=this;
+			// return;
 
 			this.baseTitle = document.title;
 			this.timer = this._dateNow();
@@ -547,6 +548,14 @@ $.fn.hasScrollBar = function() {
 									|| (config.pagination!=='snippet' && !config.balance)
 					)) return;	// прерываем на случай повторного вызова
 
+			// если отключен ajax значит
+			if ( typeof configOriginal['ajax'] !=='undefined' && (
+					 configOriginal['ajax']=='0' || String(configOriginal['ajax']).toLowerCase()=='false' || !configOriginal['ajax']
+				 ) && $target.attr('href') && $target.attr('href').length ){
+				window.location.href = $target.attr('href');
+				return;
+			}
+
 			switch (action){
 				case 'getData':
 					$content.html( '' );
@@ -634,6 +643,7 @@ $.fn.hasScrollBar = function() {
 
 			}
 
+			// var sendData = $.extend(config, params, {'action':action}),
 			var sendData = $.extend(config, params, {'action':action}),
 					eventCounter = that.eventCounter++,
 					sendParam = {
@@ -643,7 +653,7 @@ $.fn.hasScrollBar = function() {
 						// 'key' : key,
 						'action' : action,
 						'config' : config,
-						'sendData' : sendData,
+						// 'sendData' : sendData,
 						'eventCounter' : eventCounter,
 
 					}, temp;
@@ -651,10 +661,8 @@ $.fn.hasScrollBar = function() {
 			// temp['eventCounter']=eventCounter;
 
 
-			// если отключен ajax значит
-			if ( typeof configOriginal['ajax'] !=='undefined' && !configOriginal['ajax'] && $target.attr('href') && $target.attr('href').length ){
-				window.location.href = $target.attr('href');
-			}else{
+
+			// else{
 				// не фиксируем history у вложенных элементов
 				if (
 							bindHistory && !parentsWrap.length && (
@@ -663,12 +671,13 @@ $.fn.hasScrollBar = function() {
 								|| ( action =='showMore' && config.pagination =='scroll' )
 					)){
 					// записываем данные в history
-					that.hash.set( sendData, temp, title );
+					// alert ('hash');
+					that.hash.set( params, temp, title );
 				}else{
-					// alert ('интересно когда это сработает?')
+					// alert ('интересно когда это сработает?');
 					that._reloadDataByKeys(temp,bindHistory);
 				}
-			}
+			// }
 
 		},
 
@@ -703,6 +712,8 @@ $.fn.hasScrollBar = function() {
 			;
 
 			that.backButtonClicked = backButtonClicked;
+
+			if ( typeof config['action']=='undefined' ) config['action'] = action;
 
 // alert (config['id']);
 
@@ -955,8 +966,8 @@ $.fn.hasScrollBar = function() {
 						res[key]={
 							'firstInit' : true,
 							'action' : 'getData',
-							'config' : config,
-							'sendData' : $.extend(config, { 'action' : 'getData' })
+							'config' : config
+							// 'sendData' : $.extend(config, { 'action' : 'getData' })
 						};
 					}
 				});
@@ -967,6 +978,7 @@ $.fn.hasScrollBar = function() {
 
 				if (res && bindHistory){
 					that.set(hash, res);
+					// that.set(null, res);
 					// that.eventCounter = 5;
 					// that.set(hash, res, awesomeVideos.eventCounter);
 				}
@@ -1050,38 +1062,39 @@ $.fn.hasScrollBar = function() {
 			}
 
 			,set: function(vars,props,title,replace) {
+				console.info ('MS2', arguments);
+				// alert ('stop');
 				title = title || '';
 				props = props || null;
 				replace = replace || false;
-				console.log('MS2: VARS', vars);
+
 				var that=this,
 						hash = '',
 						result = {};
+
 				for (var i in vars) {
-					console.log('MS2: i=', i);
 					if (vars.hasOwnProperty(i)) {
 						// if (typeof result[i] == 'undefined') result[i] = vars[i];
 						hash += '&' + i + '=' + vars[i];
 					}
 				}
-				console.log('MS2: after', hash);
 
 				if (!this.oldbrowser()) {
 					if (hash.length != 0) {
 						hash = '?' + hash.substr(1);
 					}
 					// console.log('MS2: PPPUSH', result);
+					console.log('MS2: PPPUSH', document.location.pathname + hash);
 					title = awesomeVideos.rewriteTitle(title);
 					if (replace){
 						console.log('заменяем hash = replace',props, title);
 						that.hashIsReplaceNow = true;
-						this.history.replaceState(props, title, document.location.pathname);
+						this.history.replaceState(props, title, document.location.pathname + hash);
 						that.hashIsReplaceNow = false;
 					}else{
 						that.hashIsReplaceNow = false;
 						console.log('добавляем hash',props, title);
-						this.history.pushState(props, title, document.location.pathname);
-						// this.history.pushState(props, title, document.location.pathname + hash);
+						this.history.pushState(props, title, document.location.pathname + hash);
 					}
 				}
 				else {

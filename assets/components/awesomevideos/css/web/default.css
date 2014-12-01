@@ -1,28 +1,30 @@
 .aw-loading-animate {
-/* 	animation-name: rotateThis;
-animation-duration: .5s;
-animation-iteration-count: infinite;
-animation-timing-function: linear;
-*/
+	-webkit-animation: rotateThis 1s linear infinite; /* Chrome, Safari 5 */
+	   -moz-animation: rotateThis 1s linear infinite; /* Firefox 5-15 */
+	     -o-animation: rotateThis 1s linear infinite; /* Opera 12+ */
+	        animation: rotateThis 1s linear infinite; /* Chrome, Firefox 16+,
+	                                                  IE 10+, Safari 5 */
 
-	-animation: spin .7s infinite linear;
-	-webkit-animation: spin2 .7s infinite linear;
+}
 
+@-webkit-keyframes rotateThis {
+    from { -webkit-transform: scale( 1 ) rotate( 0deg ); }
+    to   { -webkit-transform: scale( 1 ) rotate( 360deg ); }
+}
+
+@-moz-keyframes rotateThis {
+    from { -moz-transform: scale( 1 ) rotate( 0deg ); }
+    to   { -moz-transform: scale( 1 ) rotate( 360deg ); }
+}
+
+@-o-keyframes rotateThis {
+    from { -o-transform: scale( 1 ) rotate( 0deg ); }
+    to   { -o-transform: scale( 1 ) rotate( 360deg ); }
 }
 
 @keyframes rotateThis {
-	from { transform: scale( 1 ) rotate( 0deg );   }
-	to   { transform: scale( 1 ) rotate( 360deg ); }
-}
-
-@-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
-}
-
-@keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
+    from { transform: scale( 1 ) rotate( 0deg ); }
+    to   { transform: scale( 1 ) rotate( 360deg ); }
 }
 
 .aw-loading {
@@ -40,20 +42,12 @@ animation-timing-function: linear;
 
 
 .aw_wrap {
-	border: 2px dashed gray;
-	/*display: inline-block;*/
-	/*display: inline;*/
-	/*max-height: 300px;*/
- /*overflow: scroll;*/
+	/*border: 2px dashed gray;*/
  overflow: auto;
  /*overflow: visible;*/
-
- /*padding: 20px 0 100px;*/
-
 }
-.aw_wrap .content .thumbLink{
-	/*display: inline-block;*/
-}
+
+.aw_wrap .content .thumbLink{}
 
 .aw_wrap_playlist{}
 

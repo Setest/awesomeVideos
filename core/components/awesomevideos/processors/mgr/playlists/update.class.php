@@ -86,12 +86,18 @@ class awesomeVideosPlaylistUpdateProcessor extends modObjectUpdateProcessor {
 	 * @return bool
 	 */
 	private function loadClass() {
-		if (!$this->awesomeVideos = & $this->modx->getService('awesomevideos', 'awesomeVideos', $this->modx->getOption('awesomevideos_core_path', null, $this->modx->getOption('core_path') . 'components/awesomevideos/') . 'model/awesomevideos/',
-			 array()
+		if (!$this->awesomeVideos = & $this->modx->getService('awesomevideos', 'awesomeVideos',
+		  $this->modx->getOption('awesomevideos_core_path', null, $this->modx->getOption('core_path') . 'components/awesomevideos/') . 'model/awesomevideos/'
+		  ,array(
+				'log'=>array(
+					'log_status'=>false
+				)
+			)
 		 ))
 		{
 			return $this->failure($this->modx->lexicon('awesomeVideos_item_err_class'));
 		}
+		// $this->awesomeVideos(123);
 		return true;
 	}
 

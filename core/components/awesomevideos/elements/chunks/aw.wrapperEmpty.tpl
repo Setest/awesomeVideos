@@ -5,11 +5,8 @@
 	data-aw-configstart='[[+configStart]]'
 	data-aw-idx='[[+idx]]'
 >
-	<!-- <pre>[[-+aw_log]]</pre> -->
+	<pre>[[+aw_log]]</pre>
 	<div class="content">
-		[[+output]]
-	</div>
-	<div class="paging">
-		[[+paging]]
+		<h1>Ничего не найденно!</h1>
 	</div>
 </div>

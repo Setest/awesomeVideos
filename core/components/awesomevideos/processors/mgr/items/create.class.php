@@ -30,6 +30,7 @@ class awesomeVideosItemCreateProcessor extends modObjectCreateProcessor {
 	 */
 	public function beforeSet() {
 
+		$props = $this->getProperties();
 		$name = trim($this->getProperty('name'));
 		$videoId = trim($this->getProperty('videoId'));
 
@@ -44,9 +45,29 @@ class awesomeVideosItemCreateProcessor extends modObjectCreateProcessor {
 			}
 		}
 
-		if (empty($name)) {
-			$this->modx->error->addField('name', $this->modx->lexicon('awesomeVideos_item_err_name'));
-		}
+		// if (empty($name)) {
+		// 	$this->modx->error->addField('name', $this->modx->lexicon('awesomeVideos_item_err_name'));
+		// }else{
+			$videoInfoSnippet=$videoInfo['items'][0]['snippet'];
+
+			$resultImageName='';
+			$thumbs=array_values($videoInfoSnippet['thumbnails']);
+			$bestThumb=(array_key_exists('maxres',$thumbs)) ? $thumbs['maxres']['url'] : current(end($thumbs));
+			$resultImageName=$this->awesomeVideos->_createCacheFile($bestThumb,$videoId);
+
+			// комбинируем данные с сервера с текущими данными
+			$tmp = array_merge($props, array_filter( array(
+				'name'=>$videoInfoSnippet['title'],
+				'description'=>$videoInfoSnippet['description'],
+				'channelId'=>$videoInfoSnippet['channelId'],
+				'author'=>$videoInfoSnippet['channelTitle'],
+				'duration' => $this->awesomeVideos->timeToSeconds($videoInfo['items'][0]['contentDetails']['duration']),
+				'image'=>($resultImageName)?$resultImageName:''
+			),'strval'), array_filter($props, 'strval'));
+			// print_r($tmp);die();
+			$this->setProperties($tmp);
+		// }
+
 		if ($this->modx->getCount($this->classKey, array('videoId' => $videoId))) {
 			$this->modx->error->addField('videoId', $this->modx->lexicon('awesomeVideos_item_err_videoIdExist'));
 			return $this->modx->lexicon('awesomeVideos_item_err_videoIdExist');
@@ -56,7 +77,7 @@ class awesomeVideosItemCreateProcessor extends modObjectCreateProcessor {
 		unset($this->properties['tvs']);
 
 		$tvlist=array();
-		foreach ($this->getProperties() as $key => $val) {
+		foreach ($props as $key => $val) {
 			if (substr($key, 0, 2)=="tv" && strpos($key, "tvbrowser")===false){
 				$tvlist[(int)substr($key, 2)]=$val;
 				unset($this->properties[$key]);

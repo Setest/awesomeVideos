@@ -35,6 +35,7 @@ abstract class awesomeVideosHelper{
       $q_val = isset($_REQUEST[$q_var])
         ? $_REQUEST[$q_var]
         : '';
+        // echo 999;
       $this->req_var = $q_var;
 
       $host = '';
@@ -86,8 +87,6 @@ abstract class awesomeVideosHelper{
 
 
     $request = (!empty($_GET)) ? $_GET : array();
-    unset($request[$this->req_var]);
-    // unset($request[$this->config['pageVarKey']]);
 
     $href .= strpos($href, '?') !== false
       ? '&'
@@ -95,6 +94,11 @@ abstract class awesomeVideosHelper{
 
     // нужно удалить пустые значения из $params
     $params = array_filter($params, create_function('$a','return $a!="";'));
+
+    if ($this->modx->getOption('friendly_urls') ){
+      unset($request[$this->req_var]);
+      unset($params[$this->req_var]);
+    }
 
     if (!empty($request)) {
       $params = ($rewriteRequest) ? array_merge($request,$params) : $params;
@@ -279,6 +283,21 @@ abstract class awesomeVideosHelper{
   }
 
   /**
+   * удаляет данные из сессии
+   *
+   * @param [string] $name - имя переменной в которой будем хранить данные
+   * @param [string] $type - раздел хранения (data(default), snippet, chunk, без разницы)
+   */
+  public function unsetSessionStore($name, $type = 'data') {
+    if (!$this->sessionStoreName){
+      $this->writeLog('Имя сессии не указано','', 'ERROR');
+      return false;
+    }
+    unset( $_SESSION[$this->sessionStoreName][$type][$name] );
+    return true;
+  }
+
+  /**
    * Возвращает набор параметров
    * @param  [string] $name имя набора
    * @return [array]
@@ -374,6 +393,8 @@ abstract class awesomeVideosHelper{
    */
   public function logConfig( &$config=array() ){
 
+    $config = ($config)?$config:array();
+
     // $this->modx->log(modX::LOG_LEVEL_ERROR,'TTTTARGET123: '.$config['log_target']);
     // $this->modx->log(modX::LOG_LEVEL_ERROR,'TTTTARGET123: '.print_r($config, true));
     // $this->modx->log(modX::LOG_LEVEL_ERROR,'TTTTARGET123: '.print_r($this->modx->getLogTarget(), true));
@@ -385,6 +406,10 @@ abstract class awesomeVideosHelper{
     // $config1=array(
     //   'log_isstyled'=>777,
     // );
+
+    if ( (is_string($config['log_status']) && $config['log_status']=='true') || $config['log_status']=='1' ){
+      $config['log_status'] = true;
+    }
 
     $config=array_merge(array(
       'log_filename'=>$this->classKey ? $this->classKey : 'log',
@@ -498,7 +523,7 @@ abstract class awesomeVideosHelper{
      * @param integer $level The logging level to retrieve a string for.
      * @return string The string representation of a valid logging level.
      */
-    private function _getLogLevel($level) {
+    protected function _getLogLevel($level) {
         switch ($level) {
             case modX::LOG_LEVEL_DEBUG :
                 $levelText= 'DEBUG';
@@ -595,5 +620,76 @@ abstract class awesomeVideosHelper{
 
     return false;
   }
+
+
+  /**
+   * Проверка на существование удаленного файла
+   */
+  protected function _remote_file_exists($url){
+      // return(bool)preg_match('~HTTP/1\.\d\s+200\s+OK~', @current(get_headers($url)));
+    $headers = get_headers($url);
+    $result = (bool)preg_match( '~HTTP/1\.\d\s+200\s+OK~', @current($headers) );
+
+    $this->writeLog('FILESIZE: '.print_r($headers, true),'','ERROR');
+
+    if ( $fileExist && (bool)preg_match('/^Content-Length: *+\K\d++$/im', implode("\n", $headers), $fileSize ))
+    {
+      $this->writeLog('FILESIZE: '.print_r($fileSize, true),'','ERROR');
+      $result['filesize']=(int)$fileSize[0];
+    }
+    return $result;
+  }
+
+  /**
+   * Получим размер файла (как локального так и удаленного)
+   */
+  protected function _remote_filesize($url) {
+      static $regex = '/^Content-Length: *+\K\d++$/im';
+      if (!$fp = @fopen($url, 'rb')) {
+          return false;
+      }
+      if (
+          isset($http_response_header) &&
+          preg_match($regex, implode("\n", $http_response_header), $matches)
+      ) {
+          return (int)$matches[0];
+      }
+      return strlen(stream_get_contents($fp));
+  }
+
+
+  /**
+  * Копирование файла с проверкой на существование исходного файла
+  * причем если рузультирующий файл есть он будет перезаписан
+  *
+  * @param $from источник
+  * @param $to получатель
+  * @return bool статус копирования
+  */
+  protected function copyFile($from, $to){
+      $flag = false;
+      if($this->_remote_file_exists($from) && copy($from, $to)){
+          // var_dump(file_exists(https://i.ytimg.com/vi/afXPtUw2Knk/hqdefault.jpg));
+          chmod($to, octdec($this->config['new_file_permissions']));
+          $flag = true;
+      }
+      return $flag;
+  }
+
+
+  protected function _remoteFileData($f) {
+      $h = get_headers($f, 1);
+      $result=array();
+      if (stristr($h[0], '200')) {
+          foreach($h as $k=>$v) {
+              $result[strtolower(trim($k))]=$v;
+              // if(strtolower(trim($k))=="last-modified") {
+                  // return strtotime($v);
+              // }
+          }
+      }
+      return $result;
+  }
+
 
 }

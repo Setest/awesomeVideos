@@ -35,6 +35,7 @@ class awesomeVideos extends awesomeVideosHelper {
    * @param array $config An array of configuration options
    */
 	function __construct(modX &$modx, array $config = array()) {
+    // print_r($config);
 		$this->modx =& $modx;
 
     $corePath = $this->modx->getOption('awesomevideos_core_path', $config, $this->modx->getOption('core_path') . 'components/awesomevideos/');
@@ -109,6 +110,8 @@ class awesomeVideos extends awesomeVideosHelper {
       ),
 
 		), $config);
+
+
 
     $this->logConfig($config['log']);
 
@@ -374,59 +377,6 @@ class awesomeVideos extends awesomeVideosHelper {
 
 
     /**
-     * Проверка на существование удаленного файла
-     */
-    private function _remote_file_exists($url){
-        // return(bool)preg_match('~HTTP/1\.\d\s+200\s+OK~', @current(get_headers($url)));
-      $headers = get_headers($url);
-      $result = (bool)preg_match( '~HTTP/1\.\d\s+200\s+OK~', @current($headers) );
-
-      $this->writeLog('FILESIZE: '.print_r($headers, true),'','ERROR');
-
-      if ( $fileExist && (bool)preg_match('/^Content-Length: *+\K\d++$/im', implode("\n", $headers), $fileSize ))
-      {
-        $this->writeLog('FILESIZE: '.print_r($fileSize, true),'','ERROR');
-        $result['filesize']=(int)$fileSize[0];
-      }
-      return $result;
-    }
-
-    /**
-     * Получим размер файла (как локального так и удаленного)
-     */
-    private function _remote_filesize($url) {
-        static $regex = '/^Content-Length: *+\K\d++$/im';
-        if (!$fp = @fopen($url, 'rb')) {
-            return false;
-        }
-        if (
-            isset($http_response_header) &&
-            preg_match($regex, implode("\n", $http_response_header), $matches)
-        ) {
-            return (int)$matches[0];
-        }
-        return strlen(stream_get_contents($fp));
-    }
-
-    /**
-     * Копирование файла с проверкой на существование исходного файла
-     * причем если рузультирующий файл есть он будет перезаписан
-     *
-     * @param $from источник
-     * @param $to получатель
-     * @return bool статус копирования
-     */
-    protected function copyFile($from, $to){
-        $flag = false;
-        if($this->_remote_file_exists($from) && copy($from, $to)){
-            // var_dump(file_exists(https://i.ytimg.com/vi/afXPtUw2Knk/hqdefault.jpg));
-            chmod($to, octdec($this->config['new_file_permissions']));
-            $flag = true;
-        }
-        return $flag;
-    }
-
-    /**
      * Создание папки
      *
      * @param $dir полный путь к папке которую необходимо создать
@@ -456,20 +406,6 @@ class awesomeVideos extends awesomeVideosHelper {
         return $flag;
     }
 
-    protected function _remoteFileData($f) {
-        $h = get_headers($f, 1);
-        $result=array();
-        if (stristr($h[0], '200')) {
-            foreach($h as $k=>$v) {
-                $result[strtolower(trim($k))]=$v;
-                // if(strtolower(trim($k))=="last-modified") {
-                    // return strtotime($v);
-                // }
-            }
-        }
-        return $result;
-    }
-
     protected function _fileExt($contentType){
         $map = array(
             // 'application/pdf'   => '.pdf',
@@ -493,7 +429,7 @@ class awesomeVideos extends awesomeVideosHelper {
     }
 
 
-    protected function _createCacheFile($f,$videoId) {
+    public function _createCacheFile($f,$videoId) {
       $flag = false;
       // проверяем существует ли папка кеша для изображений, если нет создаем ее
       // $cacheDir=$this->config['imageSourceFullBasePath'].$this->config['imageCachePath'];
@@ -515,7 +451,7 @@ class awesomeVideos extends awesomeVideosHelper {
                   || ( file_exists($newFileName) && ( filesize ($newFileName) <> $fileHeaders['content-length'] ) )
               ){
                 if(copy($f, $newFileName)){
-                  chmod($to, octdec($this->config['new_file_permissions']));
+                  chmod($newFileName, octdec($this->config['new_file_permissions']));
                   $this->writeLog("<p>Скопировали файл thumb ~<a href='{$f}'>{$f}</a>~ <br/>в кеш <i>{$newFileName}</i></p>");
                 }else{
                   $flag = false;
@@ -557,7 +493,7 @@ class awesomeVideos extends awesomeVideosHelper {
         ));*/
     }
 
-    protected function timeToSeconds($time) {
+    public function timeToSeconds($time) {
         if (empty($time)) return 0;
         $duration = new DateInterval($time);
         return ((60 * 60 * $duration->h) + (60 * $duration->i) + $duration->s);

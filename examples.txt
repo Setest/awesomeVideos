@@ -1,0 +1,24 @@
+[[getAwesomeVideos?
+  &return=`json`
+  &log_status=`0`
+  &limit=`3`
+  &part=`video`
+  &parseDate=`d.m.Y`
+  &thumbProperties=`w=1024&h=585&zc=С&q=100`
+  &sortby=`{"chosen":"DESC","rank":"DESC"}`
+  &leftJoin=`{"Resources":{"class":"modResource","alias":"Resources","on":"awesomeVideosItem.topic=Resources.id"}}`
+  &select=`{"awesomeVideosItem":"awesomeVideosItem.*, awesomeVideosItem.name as title","Resources":"Resources.pagetitle as sportname,Resources.id as sportid"}`
+]]
+
+
+[[!getAwesomeVideos?
+    &log_status=`1`
+    &setOfProperties=`aw_combo`
+    &pagination=`button`
+    &pagination=`scroll`
+    &Dpagination=`snippet`
+    &limit=`1`
+    &RAND=`1`
+    &addDataToUrl=`{"setOfProperties":"aw_playlist", "limit":"1", "id":"[[+id]]"}`
+]]
+

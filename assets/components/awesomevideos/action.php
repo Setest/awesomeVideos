@@ -22,7 +22,8 @@ else {
 
 
 // вытащим только те параметры, которые можно передавать.
-$allowed = array('id','ids','part','page', 'log_status', 'key', 'limit', 'where', 'offset', 'setOfProperties');
+// $allowed = array('id','ids','part','page', 'log_status', 'key', 'limit', 'where', 'offset', 'setOfProperties');
+$allowed = array('id','ids','part','page', 'log_status', 'key', 'limit', 'offset', 'setOfProperties');
 $config = array_intersect_key($_REQUEST, array_flip($allowed));
 $config = array_merge($config,array(
 	'direct' => true,

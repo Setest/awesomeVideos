@@ -1,11 +1,16 @@
 <?php
 
-$_lang['awesomeVideos_prop_ajax'] = 'Использовать AJAX';
+$_lang['awesomeVideos_prop_ajax'] = 'Использовать AJAX? Не распространяется на пагинацию scroll и carousel.';
 $_lang['awesomeVideos_prop_bindHistory'] = 'Управлять историей браузера?';
 
 $_lang['awesomeVideos_prop_pagination'] = 'Способ пагинации по-умолчанию. Вы можете выбрать свой сниппет, который будет работать в соответствии с правилами пагинации описаной в RTFM.';
 
-$_lang['awesomeVideos_prop_paginationSnippet'] = 'Снипет выполняющий пагинацию.';
+$_lang['awesomeVideos_prop_paginationSnippet'] = 'Снипет выполняющий пагинацию, например: getPage, pdoPage.';
+$_lang['awesomeVideos_prop_thumbSnippet'] = 'Снипет для генерации изображения в плейсхолдер imageThumb, на основе параметров thumbProperties';
+$_lang['awesomeVideos_prop_thumbProperties'] = 'Параметры сниппета генерации превью, передаются в переменную options при запуске сниппета thumbSnippet	';
+
+$_lang['awesomeVideos_prop_parseDate'] = 'Указывает форматирование даты из UnixTime в соответствии с правилами функции Date (php). В случае если установленно, преобразует значения полей в чанках: created, createdon, editedon. Пример: d.m.Y';
+
 $_lang['awesomeVideos_prop_part'] = 'Тип данных получаемых по-умолчанию.';
 
 $_lang['awesomeVideos_prop_totalVar'] = 'TotalVar имя плейсхолдера значение которого используется в сниппете постраничной навигации';
@@ -38,6 +43,7 @@ $_lang['awesomeVideos_prop_tplFirst'] = 'Имя чанка для первого
 $_lang['awesomeVideos_prop_tplLast'] = 'Имя чанка для последнего ресурса в результатах.';
 $_lang['awesomeVideos_prop_tplOdd'] = 'Имя чанка для каждого второго ресурса.';
 $_lang['awesomeVideos_prop_tplWrapper'] = 'Чанк-обёртка, для заворачивания всех результатов. Понимает один плейсхолдер: [[+output]]. Не работает вместе с параметром "toSeparatePlaceholders".';
+$_lang['awesomeVideos_prop_tplWrapperEmpty'] = 'Чанк-обёртка, используется если нет данных и параметр wrapIfEmpty установлен в tplWrapperEmpty.';
 $_lang['awesomeVideos_prop_tplPagingButton'] = 'Имя чанка кнопки выполняющую для получения ресурсов';
 $_lang['awesomeVideos_prop_tplPagingButtonEmpty'] = 'Имя чанка не активной (пустой) кнопки';
 $_lang['awesomeVideos_prop_tplPagingSnippet'] = 'Чанк-обертка раздела постраничной навигации';
